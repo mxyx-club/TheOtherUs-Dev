@@ -18,11 +18,11 @@ public class Trap
     private static int instanceCounter;
 
     private static ResourceSprite trapSprite = new("Trapper_Trap_Ingame.png", 300);
-    private readonly Arrow arrow = new(Color.blue);
-    private readonly int neededCount;
-    public readonly int instanceId;
+    private Arrow arrow = new(Color.blue);
+    private int neededCount = Trapper.trapCountToReveal;
+    public int instanceId;
     public bool revealed;
-    public readonly GameObject trap;
+    public GameObject trap;
     public List<PlayerControl> trappedPlayer = new();
     public bool triggerable;
     private int usedCount;
@@ -31,7 +31,7 @@ public class Trap
     {
         trap = new GameObject("Trap") { layer = 11 };
         trap.AddSubmergedComponent(SubmergedCompatibility.Classes.ElevatorMover);
-        var position = new Vector3(p.x, p.y, (p.y / 1000) + 0.001f); // just behind player
+        var position = new Vector3(p.x, p.y, p.y / 1000 + 0.001f); // just behind player
         trap.transform.position = position;
         neededCount = Trapper.trapCountToReveal;
 
@@ -46,8 +46,11 @@ public class Trap
         arrow.arrow.SetActive(false);
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(5, new Action<float>(x =>
         {
-            if ((int)x == 1) triggerable = true;
-            trapRenderer.color = Color.white;
+            if (x == 1f)
+            {
+                triggerable = true;
+                trapRenderer.color = Color.white;
+            }
         })));
     }
 
@@ -128,15 +131,16 @@ public class Trap
             if (trap.revealed || !trap.triggerable || trap.trappedPlayer.Contains(player.PlayerControl)) continue;
             if (player.PlayerControl.inVent || !player.PlayerControl.CanMove) continue;
             var distance = Vector2.Distance(trap.trap.transform.position, player.PlayerControl.GetTruePosition());
-            if (!(distance <= ud) || !(distance < closestDistance)) continue;
-            closestDistance = distance;
-            target = trap;
+            if (distance <= ud && distance < closestDistance)
+            {
+                closestDistance = distance;
+                target = trap;
+            }
         }
-
         if (target != null && player.PlayerId != Trapper.trapper.PlayerId && !player.Data.IsDead)
         {
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                (byte)CustomRPC.TriggerTrap, SendOption.Reliable);
+                (byte)CustomRPC.TriggerTrap, SendOption.Reliable, -1);
             writer.Write(player.PlayerId);
             writer.Write(target.instanceId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);

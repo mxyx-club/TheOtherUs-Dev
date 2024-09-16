@@ -17,6 +17,7 @@
 
 | 游戏版本            | 模组版本 | 发布日期  | 链接                                                         |
 | ------------------- | -------- | --------- | ------------------------------------------------------------ |
+| 2024.3.5 ~ 2024.6.4 | v1.0.7.7 | 2024.9.16  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.7.7/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.7.6 | 2024.9.14  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.7.6/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.7.2 | 2024.9.6  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.7.2/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.6.6 | 2024.8.14 | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.6.6/TheOtherUs.zip) |
@@ -32,6 +33,15 @@
 <p align="center">注：本模组只发布经过测试后的文件，其余仅为内测版本。</p>
 
 ## 更新日志
+
+
+###  v1.0.7.7:
+
+ - #### Bug修复与其它优化：
+ 
+    - 修复部分中立职业会跟随好人获胜
+    - 炸弹狂：限制击杀RPC发送者，避免被炸弹炸死时会击多次
+    - 设陷师：修复陷阱报错问题，修复陷阱激活前没有透明效果
 
 ###  v1.0.7.6:
 

@@ -720,8 +720,7 @@ public static class Helpers
             var currentText = textTask.Text;
 
             if (taskTexts.Contains(currentText))
-                taskTexts.Remove(
-                    currentText); // TextTask for this RoleInfo does not have to be added, as it already exists
+                taskTexts.Remove(currentText); // TextTask for this RoleInfo does not have to be added, as it already exists
             else toRemove.Add(t); // TextTask does not have a corresponding RoleInfo and will hence be deleted
         }
 
@@ -744,14 +743,8 @@ public static class Helpers
 
     internal static string getRoleString(RoleInfo roleInfo)
     {
-        if (roleInfo.Name == "Jackal")
-        {
-            var getSidekickText = Jackal.canCreateSidekick ? " and recruit a Sidekick" : "";
-            return cs(roleInfo.color, $"{roleInfo.Name}: Kill everyone{getSidekickText}");
-        }
-
-        if (roleInfo.Name == "Invert")
-            return cs(roleInfo.color, $"{roleInfo.Name}: {roleInfo.ShortDescription} ({Invert.meetings})");
+        if (roleInfo.roleId == RoleId.Invert)
+            return cs(roleInfo.color, $"{roleInfo.Name}: {roleInfo.ShortDescription} \n(还有 {Invert.meetings} 次会议醒酒)");
 
         return cs(roleInfo.color, $"{roleInfo.Name}: {roleInfo.ShortDescription}");
     }

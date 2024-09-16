@@ -2452,7 +2452,8 @@ public static class RPCProcedure
                 if (p == 1f && Bomber.bombActive)
                 {
                     // Perform kill if possible and reset bitten (regardless whether the kill was successful or not)
-                    checkMurderAttemptAndKill(Bomber.bomber, Bomber.hasBombPlayer, false, false, true, true);
+                    if (Bomber.bomber.IsAlive() && CachedPlayer.LocalPlayer.PlayerControl == Bomber.bomber)
+                        checkMurderAttemptAndKill(Bomber.bomber, Bomber.hasBombPlayer, false, false, true, true);
                     Bomber.hasBombPlayer = null;
                     Bomber.bombActive = false;
                     Bomber.hasAlerted = false;

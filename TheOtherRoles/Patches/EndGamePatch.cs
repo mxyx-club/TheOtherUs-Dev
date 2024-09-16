@@ -169,6 +169,8 @@ public class OnGameEndPatch
 
         notWinners.AddRange(Pavlovsdogs.pavlovsdogs.Where(p => p != null));
         notWinners.AddRange(Jackal.formerJackals.Where(p => p != null));
+        notWinners.AddRange(Pursuer.pursuer.Where(p => p != null));
+        notWinners.AddRange(Survivor.survivor.Where(p => p != null));
         if (Akujo.honmeiCannotFollowWin && Akujo.honmei != null) notWinners.Add(Akujo.honmei);
 
         var winnersToRemove = new List<WinningPlayerData>();

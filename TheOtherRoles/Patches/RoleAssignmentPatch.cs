@@ -15,7 +15,8 @@ internal class RoleOptionsDataGetNumPerGamePatch
 {
     public static void Postfix(ref int __result)
     {
-        if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0; // Deactivate Vanilla Roles if the mod roles are active
+        // Deactivate Vanilla Roles if the mod roles are active
+        if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal) __result = 0;
     }
 }
 
@@ -93,9 +94,9 @@ internal class RoleManagerSelectRolesPatch
     public static RoleAssignmentData getRoleAssignmentData()
     {
         // Get the players that we want to assign the roles to. Crewmate and Neutral roles are assigned to natural crewmates. Impostor roles to impostors.
-        var crewmates = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
+        var crewmates = PlayerControl.AllPlayerControls.ToList().OrderBy(x => Guid.NewGuid()).ToList();
         crewmates.RemoveAll(x => x.Data.Role.IsImpostor);
-        var impostors = PlayerControl.AllPlayerControls.ToArray().ToList().OrderBy(x => Guid.NewGuid()).ToList();
+        var impostors = PlayerControl.AllPlayerControls.ToList().OrderBy(x => Guid.NewGuid()).ToList();
         impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
 
         var neutralMin = CustomOptionHolder.neutralRolesCountMin.getSelection();

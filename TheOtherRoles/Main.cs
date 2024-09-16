@@ -88,20 +88,20 @@ public class TheOtherRolesPlugin : BasePlugin
         Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
         defaultRegions = ServerManager.DefaultRegions;
 
+        Harmony.PatchAll();
         UpdateRegions();
         CrowdedPlayer.Start();
-        Harmony.PatchAll();
 
         CustomHatManager.LoadHats();
         CustomColors.Load();
         CustomOptionHolder.Load();
+        ModOption.reloadPluginOptions();
         AssetLoader.LoadAudioAssets();
         if (ToggleCursor.Value) enableCursor(true);
 
         SubmergedCompatibility.Initialize();
         MainMenuPatch.addSceneChangeCallbacks();
         AddToKillDistanceSetting.addKillDistance();
-        ModOption.reloadPluginOptions();
         ModInputManager.Load();
         Info($"\n---------------\n Loading TheOtherUs completed!\n TheOtherUs-Edited v{VersionString}\n---------------");
     }

@@ -31,6 +31,6 @@ public static class Lawyer
         lawyerKnowsRole = CustomOptionHolder.lawyerKnowsRole.getBool();
         targetCanBeJester = CustomOptionHolder.lawyerTargetCanBeJester.getBool();
         stolenWin = CustomOptionHolder.lawyerStolenWin.getBool();
-        canCallEmergency = CustomOptionHolder.jesterCanCallEmergency.getBool();
+        canCallEmergency = CustomOptionHolder.lawyerCanCallEmergency.getBool();
     }
 }

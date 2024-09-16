@@ -257,7 +257,7 @@ public static class StartOptionMenuPatch
         nebulaButton.Content = nebulaTab;
         GameObject textObj = nebulaButton.transform.FindChild("Text_TMP").gameObject;
         textObj.GetComponent<TextTranslatorTMP>().enabled = false;
-        textObj.GetComponent<TMP_Text>().text = "TOR";
+        textObj.GetComponent<TMP_Text>().text = "Ä£×éÉèÖÃ";
 
         tabs.Add(Object.Instantiate(tabs[1], null));
         TabGroup keyBindingTabButton = tabs[^1];

@@ -13,7 +13,7 @@ public static class CustomHatManager
     public const string InnerslothPackageName = "Innersloth Hats";
     public const string DeveloperPackageName = "Developer Hats";
 
-    internal static readonly Tuple<string, string, string> Repository = new("TheOtherRolesAU", "TheOtherHats", "master");
+    /*internal static readonly Tuple<string, string, string> Repository = new("TheOtherRolesAU", "TheOtherHats", "master");
     internal static string RepositoryUrl
     {
         get
@@ -21,7 +21,8 @@ public static class CustomHatManager
             var (owner, repository, branch) = Repository;
             return $"https://raw.githubusercontent.com/{owner}/{repository}/{branch}".GithubUrl();
         }
-    }
+    }*/
+    internal static string RepositoryUrl => "https://hats.mxyx.club/40437";
     internal static readonly string ManifestFileName = "CustomHats.json";
 
     internal static string CustomSkinsDirectory => Path.Combine(Path.GetDirectoryName(Application.dataPath)!, ResourcesDirectory);
