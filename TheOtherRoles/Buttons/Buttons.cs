@@ -3777,7 +3777,7 @@ internal static class HudManagerStartPatch
         terroristButton = new CustomButton(
             () =>
             {
-                if (checkMuderAttempt(Terrorist.terrorist, Terrorist.terrorist) != MurderAttemptResult.BlankKill)
+                if (checkMuderAttempt(Terrorist.terrorist, Terrorist.terrorist, ignoreMedic: true) != MurderAttemptResult.BlankKill)
                 {
                     var pos = CachedPlayer.LocalPlayer.transform.position;
                     var buff = new byte[sizeof(float) * 2];
@@ -3958,7 +3958,6 @@ internal static class HudManagerStartPatch
 
                 if (Yoyo.markedLocation == null)
                 {
-                    Message($"marked location is null in button press");
                     var writer = AmongUsClient.Instance.StartRpc(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.YoyoMarkLocation, SendOption.Reliable);
                     writer.WriteBytesAndSize(buff);
                     writer.EndMessage();
@@ -3971,9 +3970,7 @@ internal static class HudManagerStartPatch
                 }
                 else
                 {
-                    Message("in else for some reason");
                     // Jump to location
-                    Message($"trying to blink!");
                     var exit = (Vector3)Yoyo.markedLocation;
                     if (SubmergedCompatibility.IsSubmerged)
                         SubmergedCompatibility.ChangeFloor(exit.y > -7);
@@ -4098,8 +4095,8 @@ internal static class HudManagerStartPatch
                 return numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool();
             },
             () => { return true; },
-            () => { },
-            UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 180f), // Invisible button!
+			() => { return; },
+			null,
             new Vector3(0.4f, 2.8f, 0),
             __instance,
             KeyCode.KeypadPlus

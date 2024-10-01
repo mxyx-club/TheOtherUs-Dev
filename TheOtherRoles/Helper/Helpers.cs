@@ -134,7 +134,7 @@ public static class Helpers
     /// <summary>
     /// 红狼视野
     /// </summary>
-    public static bool hasImpVision(GameData.PlayerInfo player)
+    public static bool hasImpVision(NetworkedPlayerInfo player)
     {
         return player.Role.IsImpostor
                || (((Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId) || Jackal.formerJackals.Any(x => x.PlayerId == player.PlayerId)) && Jackal.hasImpostorVision)
@@ -339,7 +339,7 @@ public static class Helpers
         !MeetingHud.Instance &&
         !ExileController.Instance;
 
-    public static void NoCheckStartMeeting(this PlayerControl reporter, GameData.PlayerInfo target, bool force = false)
+    public static void NoCheckStartMeeting(this PlayerControl reporter, NetworkedPlayerInfo target, bool force = false)
     {
         if (IsMeeting) return;
 
@@ -840,12 +840,12 @@ public static class Helpers
         return count;
     }
 
-    public static bool IsAlive(this GameData.PlayerInfo player)
+    public static bool IsAlive(this NetworkedPlayerInfo player)
     {
         return player != null && !player.Disconnected && !player.IsDead;
     }
 
-    public static bool IsDead(this GameData.PlayerInfo player)
+    public static bool IsDead(this NetworkedPlayerInfo player)
     {
         return player == null || player.Disconnected || player.IsDead;
     }
@@ -1162,7 +1162,7 @@ public static class Helpers
     }
 
     public static MurderAttemptResult checkMuderAttempt(PlayerControl killer, PlayerControl target,
-        bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false)
+        bool blockRewind = false, bool ignoreBlank = false, bool ignoreIfKillerIsDead = false, bool ignoreMedic = false)
     {
         var targetRole = RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault();
 
@@ -1225,7 +1225,7 @@ public static class Helpers
         }
 
         // Block impostor shielded kill
-        if (!Medic.unbreakableShield && Medic.shielded != null && Medic.shielded == target)
+        if (!ignoreMedic && !Medic.unbreakableShield && Medic.shielded != null && Medic.shielded == target)
         {
             var write = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.PursuerSetBlanked, SendOption.Reliable);
@@ -1443,14 +1443,15 @@ public static class Helpers
                 cam.orthographicSize =
                     orthographicSize; // The UI is scaled too, else we cant click the buttons. Downside: map is super small.
 
-        if (HudManagerStartPatch.zoomOutButton != null)
-        {
-            HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus
-                ? UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.PlusButton.png", 60f)
-                : UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 150f);
-            HudManagerStartPatch.zoomOutButton.PositionOffset =
-                zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
-        }
+		var tzGO = GameObject.Find("TOGGLEZOOMBUTTON");
+		if (tzGO != null)
+		{
+			var rend = tzGO.transform.Find("Inactive").GetComponent<SpriteRenderer>();
+			var rendActive = tzGO.transform.Find("Active").GetComponent<SpriteRenderer>();
+			rend.sprite = zoomOutStatus ? UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.Plus_Button.png", 100f) : UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.Minus_Button.png", 100f);
+			rendActive.sprite = zoomOutStatus ? UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.Plus_ButtonActive.png", 100f) : UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.Minus_ButtonActive.png", 100f);
+			tzGO.transform.localScale = new Vector3(1.2f, 1.2f, 1f) * (zoomOutStatus ? 4 : 1);
+		}
 
         ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height,
             Screen.fullScreen); // This will move button positions to the correct position.

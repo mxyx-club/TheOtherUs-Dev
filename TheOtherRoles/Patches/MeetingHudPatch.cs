@@ -20,7 +20,7 @@ internal class MeetingHudPatch
 {
     private static bool[] selections;
     private static SpriteRenderer[] renderers;
-    private static GameData.PlayerInfo target;
+    private static NetworkedPlayerInfo target;
     private static PassiveButton[] swapperButtonList;
     private static TextMeshPro meetingExtraButtonLabel;
     public static GameObject MeetingExtraButton;
@@ -451,7 +451,7 @@ internal class MeetingHudPatch
             bool tie = false;
             bool tiebreakerHandled = false;
             // TieBreaker 
-            var potentialExiled = new List<GameData.PlayerInfo>();
+            var potentialExiled = new List<NetworkedPlayerInfo>();
             var skipIsTie = false;
             if (self.Count > 0 && !Prosecutor.ProsecuteThisMeeting) // 阻止破平者在检察官会议中生效
             {
@@ -552,7 +552,7 @@ internal class MeetingHudPatch
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.BloopAVoteIcon))]
     private class MeetingHudBloopAVoteIconPatch
     {
-        public static bool Prefix(MeetingHud __instance, GameData.PlayerInfo voterPlayer, int index, Transform parent)
+        public static bool Prefix(MeetingHud __instance, NetworkedPlayerInfo voterPlayer, int index, Transform parent)
         {
             var spriteRenderer = Object.Instantiate(__instance.PlayerVotePrefab);
             var showVoteColors = !GameManager.Instance.LogicOptions.GetAnonymousVotes() || CachedPlayer.LocalPlayer.Data.IsDead ||
@@ -701,7 +701,7 @@ internal class MeetingHudPatch
     private class MeetingHudVotingCompletedPatch
     {
         private static void Postfix(MeetingHud __instance, [HarmonyArgument(0)] byte[] states,
-            [HarmonyArgument(1)] GameData.PlayerInfo exiled, [HarmonyArgument(2)] bool tie)
+            [HarmonyArgument(1)] NetworkedPlayerInfo exiled, [HarmonyArgument(2)] bool tie)
         {
             // Reset swapper values
             Swapper.playerId1 = byte.MaxValue;
@@ -736,7 +736,7 @@ internal class MeetingHudPatch
 
         private static void Prefix(MeetingHud __instance,
             [HarmonyArgument(0)] Il2CppStructArray<MeetingHud.VoterState> states,
-            [HarmonyArgument(1)] GameData.PlayerInfo exiled,
+            [HarmonyArgument(1)] NetworkedPlayerInfo exiled,
             [HarmonyArgument(2)] bool tie)
         {
             if (tie && Balancer.currentAbilityUser != null)
@@ -779,7 +779,7 @@ internal class MeetingHudPatch
     [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.StartMeeting))]
     private class StartMeetingPatch
     {
-        public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo meetingTarget)
+        public static void Prefix(PlayerControl __instance, [HarmonyArgument(0)] NetworkedPlayerInfo meetingTarget)
         {
             var roomTracker = FastDestroyableSingleton<HudManager>.Instance.roomTracker;
             var roomId = byte.MinValue;

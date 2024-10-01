@@ -18,10 +18,10 @@ namespace TheOtherRoles.Patches;
 [HarmonyPriority(Priority.First)]
 internal class ExileControllerBeginPatch
 {
-    public static GameData.PlayerInfo lastExiled;
+    public static NetworkedPlayerInfo lastExiled;
     public static TextMeshPro confirmImpostorSecondText;
     static bool IsSec;
-    public static bool Prefix(ExileController __instance, [HarmonyArgument(0)] ref GameData.PlayerInfo exiled, [HarmonyArgument(1)] bool tie)
+    public static bool Prefix(ExileController __instance, [HarmonyArgument(0)] ref NetworkedPlayerInfo exiled, [HarmonyArgument(1)] bool tie)
     {
         lastExiled = exiled;
 
@@ -281,7 +281,7 @@ internal class ExileControllerWrapUpPatch
         }
     }
 
-    private static void WrapUpPostfix(GameData.PlayerInfo exiled)
+    private static void WrapUpPostfix(NetworkedPlayerInfo exiled)
     {
         // Prosecutor win condition
         if (exiled != null && Executioner.executioner != null && Executioner.target != null &&

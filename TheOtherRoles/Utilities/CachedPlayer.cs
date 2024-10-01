@@ -12,7 +12,7 @@ public class CachedPlayer
     public static readonly Dictionary<IntPtr, CachedPlayer> PlayerPtrs = new();
     public static readonly List<CachedPlayer> AllPlayers = new();
     public static CachedPlayer LocalPlayer;
-    public GameData.PlayerInfo Data;
+    public NetworkedPlayerInfo Data;
     public CustomNetworkTransform NetTransform;
     public PlayerControl PlayerControl;
     public byte PlayerId;
@@ -89,7 +89,7 @@ public static class CachedPlayerPatches
         CachedPlayer.PlayerPtrs.Remove(__instance.Pointer);
     }
 
-    [HarmonyPatch(typeof(GameData), nameof(GameData.Deserialize))]
+    [HarmonyPatch(typeof(NetworkedPlayerInfo), nameof(NetworkedPlayerInfo.Deserialize))]
     [HarmonyPostfix]
     public static void AddCachedDataOnDeserialize()
     {

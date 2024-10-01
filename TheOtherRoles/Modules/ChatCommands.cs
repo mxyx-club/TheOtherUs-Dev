@@ -262,7 +262,7 @@ public static class ChatCommands
             var sourcePlayer = PlayerControl.AllPlayerControls.ToList()
                 .FirstOrDefault(x => x.Data != null && x.Data.PlayerName.Equals(playerName, StringComparison.Ordinal));
 
-            if (CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.Data.Role.IsImpostor && __instance != null
+            if (sourcePlayer != null && CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.Data?.Role?.IsImpostor == true && __instance != null
                  && ((Spy.spy != null && sourcePlayer.PlayerId == Spy.spy.PlayerId)
                  || (Sidekick.sidekick != null && Sidekick.wasTeamRed && sourcePlayer.PlayerId == Sidekick.sidekick.PlayerId)
                  || (Jackal.jackal != null && Jackal.wasTeamRed && sourcePlayer.PlayerId == Jackal.jackal.PlayerId)))

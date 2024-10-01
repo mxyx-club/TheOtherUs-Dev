@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace TheOtherRoles.Patches;
 
-[HarmonyPatch(typeof(RoleOptionsCollectionV07), nameof(RoleOptionsCollectionV07.GetNumPerGame))]
+[HarmonyPatch(typeof(RoleOptionsCollectionV08), nameof(RoleOptionsCollectionV08.GetNumPerGame))]
 internal class RoleOptionsDataGetNumPerGamePatch
 {
     public static void Postfix(ref int __result)
@@ -88,7 +88,7 @@ internal class RoleManagerSelectRolesPatch
         assignRoleTargets(data); // Assign targets for Lawyer & Prosecutor
         if (isGuesserGamemode) assignGuesserGamemode();
         assignModifiers(); // Assign modifier
-        setRolesAgain(); //brb
+        //setRolesAgain(); //brb
         if (Jackal.jackal != null) Jackal.setSwoop();
     }
 
@@ -701,7 +701,7 @@ internal class RoleManagerSelectRolesPatch
 
         playerRoleMap.Add(new Tuple<byte, byte>(playerId, roleId));
 
-        var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+        var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
             (byte)CustomRPC.SetRole, SendOption.Reliable);
         writer.Write(roleId);
         writer.Write(playerId);

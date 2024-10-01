@@ -34,7 +34,7 @@ public static class CrowdedPlayer
         __instance.Timers = new float[MaxPlayer];
     }
 
-    [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Start))]
+    [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.OpenMenu))]
     [HarmonyPostfix]
     public static void GameOptionsMenu_Start_Postfix(ref GameOptionsMenu __instance)
     {

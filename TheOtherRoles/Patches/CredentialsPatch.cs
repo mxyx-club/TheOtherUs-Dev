@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using AmongUs.GameOptions;
 using InnerNet;
 using TMPro;
 using UnityEngine;
@@ -28,11 +29,11 @@ public static class CredentialsPatch
             var fps = Mathf.Ceil(1f / DeltaTime);
             var PingText = $"<size=80%>Ping: {AmongUsClient.Instance.Ping}ms{(ModOption.showFPS ? $"  FPS: {fps}" : "")}</size>";
             __instance.text.SetOutlineThickness(0.1f);
-            var host = $"<size=80%>{"Host".Translate()}: {GameData.Instance?.GetHost()?.PlayerName}</size>";
 
-            __instance.text.alignment = TextAlignmentOptions.TopRight;
+            __instance.text.alignment = TextAlignmentOptions.Top;
             var position = __instance.GetComponent<AspectPosition>();
-            var gameModeText = ModOption.gameMode switch
+			position.Alignment = AspectPosition.EdgeAlignments.Top;
+			var gameModeText = ModOption.gameMode switch
             {
                 CustomGamemodes.HideNSeek => getString("isHideNSeekGM"),
                 CustomGamemodes.Guesser => getString("isGuesserGm"),
@@ -40,17 +41,25 @@ public static class CredentialsPatch
                 _ => ""
             };
             if (ModOption.DebugMode) gameModeText += "(Debug Mode)";
-            if (gameModeText != "") gameModeText = cs(Color.yellow, gameModeText) + "\n";
-            if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
+			if (gameModeText != "") gameModeText = Helpers.cs(Color.yellow, gameModeText);
+			if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
                 __instance.text.text = $"<size=110%>{getString("TouTitle")}</size>  v{Main.Version + "\n" + getString("inGameTitle")}\n{PingText}\n{gameModeText}";
-                position.DistanceFromEdge = new Vector3(2.25f, 0.1f, 0);
-            }
+				position.DistanceFromEdge = new Vector3(2.25f, 0.11f, 0);
+			}
             else
             {
-                __instance.text.text = $"{fullCredentialsVersion}\n {PingText}\n  {gameModeText + fullCredentials}\n {host}";
-                position.DistanceFromEdge = new Vector3(2.85f, 0.1f, 0);
-            }
+				__instance.text.text = $"{fullCredentialsVersion}\n{fullCredentials}\n {__instance.text.text}\n{PingText}";
+				position.DistanceFromEdge = new Vector3(0f, 0.1f, 0);
+				try
+				{
+					var GameModeText = GameObject.Find("GameModeText")?.GetComponent<TextMeshPro>();
+					GameModeText.text = gameModeText == "" ? (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek ? "Van. HideNSeek" : "Classic") : gameModeText;
+					var ModeLabel = GameObject.Find("ModeLabel")?.GetComponentInChildren<TextMeshPro>();
+					ModeLabel.text = "Game Mode";
+				}
+				catch { }
+			}
             position.AdjustPosition();
         }
     }

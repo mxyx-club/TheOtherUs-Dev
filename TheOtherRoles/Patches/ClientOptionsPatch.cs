@@ -72,9 +72,10 @@ public static class StartOptionMenuPatch
     private static ToggleButtonBehaviour enableSoundEffects;
     private static ToggleButtonBehaviour showKeyReminder;
     private static ToggleButtonBehaviour showFPS;
-    private static ToggleButtonBehaviour localHats;
+	private static ToggleButtonBehaviour localHats;
+	private static ToggleButtonBehaviour showChatNotifications;
 
-    public static void Postfix(OptionsMenuBehaviour __instance)
+	public static void Postfix(OptionsMenuBehaviour __instance)
     {
         List<TabGroup> tabs = new(__instance.Tabs.ToArray());
 
@@ -125,15 +126,22 @@ public static class StartOptionMenuPatch
             ModOption.showFPS = Main.ShowFPS.Value = showFPS.onState;
         }, nebulaTab, toggleButtonTemplate);
 
-        //LocalHats
-        localHats = AddButton(new Vector2(0, 2), "LocalHats", () =>
-        {
-            localHats.UpdateToggleText(!localHats.onState, getString("LocalHatsText"));
-            ModOption.localHats = Main.LocalHats.Value = localHats.onState;
-        }, nebulaTab, toggleButtonTemplate);
+		//LocalHats
+		localHats = AddButton(new Vector2(0, 2), "LocalHats", () =>
+		{
+			localHats.UpdateToggleText(!localHats.onState, getString("LocalHatsText"));
+			ModOption.localHats = Main.LocalHats.Value = localHats.onState;
+		}, nebulaTab, toggleButtonTemplate);
 
-        //平奈賃曰絞化示正件
-        GameObject TextObject;
+		//Show Chat Notifications
+		showChatNotifications = AddButton(new Vector2(0, 3), "ShowChatNotifications", () =>
+		{
+			showChatNotifications.UpdateToggleText(!showChatNotifications.onState, "Show Chat Notifications");
+			ModOption.ShowChatNotifications = Main.ShowChatNotifications.Value = showChatNotifications.onState;
+		}, nebulaTab, toggleButtonTemplate);
+
+		//平奈賃曰絞化示正件
+		GameObject TextObject;
 
         List<ToggleButtonBehaviour> allKeyBindingButtons = [];
         int selectedKeyBinding = -1;
@@ -287,8 +295,10 @@ public static class StartOptionMenuPatch
             showKeyReminder.UpdateToggleText(Main.ShowKeyReminder.Value, getString("ShowKeyReminder"));
             toggleCursor.UpdateToggleText(Main.ToggleCursor.Value, getString("ToggleCursorText"));
             localHats.UpdateToggleText(Main.LocalHats.Value, getString("LocalHatsText"));
+            showChatNotifications.UpdateToggleText(Main.ShowChatNotifications.Value, "Show Chat Notifications");
 
-            passiveButton.OnMouseOver.Invoke();
+
+			passiveButton.OnMouseOver.Invoke();
         }
         ));
 

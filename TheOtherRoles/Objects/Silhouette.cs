@@ -20,7 +20,6 @@ public class Silhouette
     {
         if (duration <= 0f)
         {
-            Message("silhouette: permanent!");
             permanent = true;
         }
         this.visibleForEveryOne = visibleForEveryOne;
@@ -67,7 +66,6 @@ public class Silhouette
 
             if (current.timeRemaining < 0 && !current.permanent)
             {
-                Message($"update: permanent: {current.permanent}, time: {current.timeRemaining}");
                 current.gameObject.SetActive(false);
                 Object.Destroy(current.gameObject);
                 silhouettes.Remove(current);

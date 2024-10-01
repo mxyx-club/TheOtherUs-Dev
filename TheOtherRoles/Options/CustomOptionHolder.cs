@@ -742,9 +742,7 @@ public class CustomOptionHolder
         // Role Options
         presetSelection = Create(0, Types.General, cs(new Color32(204, 204, 0, 255), "presetSelection"), presets, null, true);
 
-        anyPlayerCanStopStart = Create(3, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0), "anyPlayerCanStopStart"), false, null, false);
-
-        neutralRolesCountMin = Create(8, Types.General, cs(new Color32(204, 204, 0, 255), "neutralRolesCountMin"), 2f, 0f, 15f, 1f, null, true);
+        neutralRolesCountMin = Create(8, Types.General, cs(new Color32(204, 204, 0, 255), "neutralRolesCountMin"), 2f, 0f, 15f, 1f, null, true, heading: "Min/Max Roles");
         neutralRolesCountMax = Create(9, Types.General, cs(new Color32(204, 204, 0, 255), "neutralRolesCountMax"), 2f, 0f, 15f, 1f);
         killerNeutralRolesCountMin = Create(10, Types.General, cs(new Color32(204, 204, 0, 255), "killerNeutralRolesCountMin"), ratesRandom);
         killerNeutralRolesCountMax = Create(11, Types.General, cs(new Color32(204, 204, 0, 255), "killerNeutralRolesCountMax"), ratesRandom);
@@ -753,9 +751,10 @@ public class CustomOptionHolder
 
         //-------------------------- Other options 1 - 599 -------------------------- //
 
-        resteButtonCooldown = Create(20, Types.General, "resteButtonCooldown", 20f, 2.5f, 30f, 2.5f, null, true);
-        maxNumberOfMeetings = Create(21, Types.General, "maxNumberOfMeetings", 10, 0, 15, 1, null, true);
-        blockSkippingInEmergencyMeetings = Create(22, Types.General, "blockSkippingInEmergencyMeetings", false);
+        maxNumberOfMeetings = Create(21, Types.General, "maxNumberOfMeetings", 10, 0, 15, 1, null, true, heading: "Gameplay Settings");
+		anyPlayerCanStopStart = Create(3, Types.General, cs(new Color(204f / 255f, 204f / 255f, 0), "anyPlayerCanStopStart"), false, null, false);
+		resteButtonCooldown = Create(20, Types.General, "resteButtonCooldown", 20f, 2.5f, 30f, 2.5f, null);
+		blockSkippingInEmergencyMeetings = Create(22, Types.General, "blockSkippingInEmergencyMeetings", false);
         noVoteIsSelfVote = Create(23, Types.General, "noVoteIsSelfVote", false, blockSkippingInEmergencyMeetings);
         shieldFirstKill = Create(24, Types.General, "shieldFirstKill", false);
         hidePlayerNames = Create(25, Types.General, "hidePlayerNames", false);
@@ -778,7 +777,7 @@ public class CustomOptionHolder
         disableTaskGameEnd = Create(43, Types.General, "disableTaskGameEnd", false);
 
         //Map options
-        enableMapOptions = Create(200, Types.General, "enableMapOptions", false, null, true);
+        enableMapOptions = Create(200, Types.General, "enableMapOptions", false, null, true, heading: "Map Options");
 
         IsReactorDurationSetting = Create(201, Types.General, "IsReactorDurationSetting", false, null, true);
         SkeldReactorTimeLimit = Create(202, Types.General, "SkeldReactorTimeLimit", 30f, 0f, 30f, 2.5f, IsReactorDurationSetting);
@@ -1281,7 +1280,7 @@ public class CustomOptionHolder
 
         //-------------------------- Modifier (1000 - 1999) -------------------------- //
 
-        modifiersAreHidden = Create(40000, Types.Modifier, cs(Color.yellow, "modifiersAreHidden"), false, null, true);
+        modifiersAreHidden = Create(40000, Types.Modifier, cs(Color.yellow, "VIP, Bait & Bloody Are Hidden"), false, null, true, heading: cs(Color.yellow, "modifiersAreHidden"));
 
         modifierLover = Create(40160, Types.Modifier, cs(Lovers.color, "Lover"), rates, null, true);
         modifierLoverImpLoverRate = Create(40161, Types.Modifier, "modifierLoverImpLoverRate", rates, modifierLover);
@@ -1374,15 +1373,15 @@ public class CustomOptionHolder
 
         //-------------------------- Guesser Gamemode 2000 - 2999 -------------------------- //
 
-        guesserGamemodeCrewNumber = Create(2001, Types.Guesser, cs(Color.yellow, "guesserGamemodeCrewNumber"), 3f, 0f, 15f, 1f, null, true);
+        guesserGamemodeCrewNumber = Create(2001, Types.Guesser, cs(Color.yellow, "guesserGamemodeCrewNumber"), 3f, 0f, 15f, 1f, null, true, heading: "Amount of Guessers");
         guesserGamemodeNeutralNumber = Create(2002, Types.Guesser, cs(Color.yellow, "guesserGamemodeNeutralNumber"), 3f, 0f, 15f, 1f);
         guesserGamemodeImpNumber = Create(2003, Types.Guesser, cs(Color.yellow, "guesserGamemodeImpNumber"), 3f, 0f, 15f, 1f);
-        guesserForceJackalGuesser = Create(2007, Types.Guesser, "guesserForceJackalGuesser", false, null, true);
+        guesserForceJackalGuesser = Create(2007, Types.Guesser, "guesserForceJackalGuesser", false, null, true, heading: "Force Guessers");
         guesserGamemodeSidekickIsAlwaysGuesser = Create(2012, Types.Guesser, "guesserGamemodeSidekickIsAlwaysGuesser", false);
         guesserForcePavlovsGuesser = Create(2013, Types.Guesser, "guesserForcePavlovsGuesser", false);
         guesserGamemodePavlovsdogIsAlwaysGuesser = Create(2015, Types.Guesser, "guesserGamemodePavlovsdogIsAlwaysGuesser", false);
         guesserForceThiefGuesser = Create(2011, Types.Guesser, "guesserForceThiefGuesser", false);
-        guesserGamemodeHaveModifier = Create(2004, Types.Guesser, "guesserGamemodeHaveModifier", true, null, true);
+        guesserGamemodeHaveModifier = Create(2004, Types.Guesser, "guesserGamemodeHaveModifier", true, null, true, heading: "General Guesser Settings");
         guesserGamemodeNumberOfShots = Create(2005, Types.Guesser, "guesserGamemodeNumberOfShots", 2f, 1f, 15f, 1f);
         guesserGamemodeHasMultipleShotsPerMeeting = Create(2006, Types.Guesser, "guesserGamemodeHasMultipleShotsPerMeeting", false);
         guesserGamemodeKillsThroughShield = Create(2008, Types.Guesser, "guesserGamemodeKillsThroughShield", true);
@@ -1412,7 +1411,7 @@ public class CustomOptionHolder
         hideHuntSpeed = Create(3027, Types.HideNSeekMain, cs(Color.yellow, "hideHuntSpeed"), 1f, 0.5f, 2f, 0.125f);
         hideCrewSpeed = Create(3028, Types.HideNSeekMain, cs(Color.yellow, "hideCrewSpeed"), 1f, 0.5f, 2f, 0.125f);
 
-        hideNSeekHunterWaiting = Create(3022, Types.HideNSeekMain, cs(Color.red, "hideNSeekHunterWaiting"), 15f, 2.5f, 60f, 2.5f, null, true);
+        hideNSeekHunterWaiting = Create(3022, Types.HideNSeekMain, cs(Color.red, "hideNSeekHunterWaiting"), 15f, 2.5f, 60f, 2.5f, null, true, heading: "Hunter Lights Settings");
         hunterLightCooldown = Create(3005, Types.HideNSeekRoles, cs(Color.red, "hunterLightCooldown"), 30f, 5f, 60f, 1f);
         hunterLightDuration = Create(3006, Types.HideNSeekRoles, cs(Color.red, "hunterLightDuration"), 10f, 1f, 60f, 1f);
         hunterLightVision = Create(3007, Types.HideNSeekRoles, cs(Color.red, "hunterLightVision"), 2f, 1f, 5f, 0.25f);
@@ -1424,7 +1423,7 @@ public class CustomOptionHolder
         hunterArrowDuration = Create(3013, Types.HideNSeekRoles, cs(Color.red, "hunterArrowDuration"), 5f, 0f, 60f, 1f);
         hunterArrowPunish = Create(3014, Types.HideNSeekRoles, cs(Color.red, "hunterArrowPunish"), 5f, 0f, 30f, 1f);
 
-        huntedShieldCooldown = Create(3015, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldCooldown"), 30f, 5f, 60f, 1f, null, true);
+        huntedShieldCooldown = Create(3015, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldCooldown"), 30f, 5f, 60f, 1f, null, true, heading: "Hunter Shields Settings");
         huntedShieldDuration = Create(3016, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldDuration"), 5f, 1f, 60f, 1f);
         huntedShieldRewindTime = Create(3018, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldRewindTime"), 3f, 1f, 10f, 1f);
         huntedShieldNumber = Create(3026, Types.HideNSeekRoles, cs(Color.grey, "huntedShieldNumber"), 3f, 1f, 15f, 1f);
@@ -1438,7 +1437,7 @@ public class CustomOptionHolder
                 if (map >= 3) map++;
                 GameOptionsManager.Instance.currentNormalGameOptions.MapId = (byte)map;
             });
-        propHuntTimer = Create(4021, Types.PropHunt, cs(Color.yellow, "propHuntTimer"), 5f, 1f, 30f, 0.5f);
+        propHuntTimer = Create(4021, Types.PropHunt, cs(Color.yellow, "propHuntTimer"), 5f, 1f, 30f, 0.5f, null, true, heading: "General PropHunt Settings");
         propHunterVision = Create(4006, Types.PropHunt, cs(Color.yellow, "propHunterVision"), 0.5f, 0.25f, 2f, 0.25f);
         propVision = Create(4007, Types.PropHunt, cs(Color.yellow, "propVision"), 2f, 0.25f, 5f, 0.25f);
         propHuntSpeed = Create(4025, Types.PropHunt, cs(Color.yellow, "propHuntSpeed"), 1f, 0.5f, 2f, 0.125f);
@@ -1448,7 +1447,7 @@ public class CustomOptionHolder
         propHuntUnstuckCooldown = Create(4011, Types.PropHunt, cs(Color.yellow, "propHuntUnstuckCooldown"), 30f, 2.5f, 60f, 2.5f, propHuntEnableUnstuck);
         propHuntUnstuckDuration = Create(4012, Types.PropHunt, cs(Color.yellow, "propHuntUnstuckDuration"), 3f, 1f, 60f, 1f, propHuntEnableUnstuck);
         // Hunter Options
-        propHuntNumberOfHunters = Create(4000, Types.PropHunt, cs(Color.red, "propHuntNumberOfHunters"), 1f, 1f, 15f, 1f, null, true);
+        propHuntNumberOfHunters = Create(4000, Types.PropHunt, cs(Color.red, "propHuntNumberOfHunters"), 1f, 1f, 15f, 1f, null, true, heading: "Hunter Settings");
         hunterInitialBlackoutTime = Create(4001, Types.PropHunt, cs(Color.red, "hunterInitialBlackoutTime"), 10f, 5f, 20f, 1f);
         hunterMissCooldown = Create(4004, Types.PropHunt, cs(Color.red, "hunterMissCooldown"), 10f, 2.5f, 60f, 2.5f);
         hunterHitCooldown = Create(4005, Types.PropHunt, cs(Color.red, "hunterHitCooldown"), 10f, 2.5f, 60f, 2.5f);
@@ -1459,7 +1458,7 @@ public class CustomOptionHolder
         propHuntFindCooldown = Create(4023, Types.PropHunt, cs(Color.red, "propHuntFindCooldown"), 60f, 2.5f, 1800f, 2.5f);
         propHuntFindDuration = Create(4024, Types.PropHunt, cs(Color.red, "propHuntFindDuration"), 5f, 1f, 15f, 1f);
         // Prop Options
-        propBecomesHunterWhenFound = Create(4003, Types.PropHunt, cs(Palette.CrewmateBlue, "propBecomesHunterWhenFound"), false, null, true);
+        propBecomesHunterWhenFound = Create(4003, Types.PropHunt, cs(Palette.CrewmateBlue, "propBecomesHunterWhenFound"), false, null, true, heading: "Prop Settings");
         propHuntInvisEnabled = Create(4013, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisEnabled"), true, null, true);
         propHuntInvisCooldown = Create(4014, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisCooldown"), 40f, 10f, 120f, 2.5f, propHuntInvisEnabled);
         propHuntInvisDuration = Create(4015, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisDuration"), 5f, 2.5f, 30f, 2.5f, propHuntInvisEnabled);

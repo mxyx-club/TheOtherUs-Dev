@@ -13,7 +13,7 @@ internal class ModOption
     public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
     public static bool DebugMode => CustomOptionHolder.debugMode.getBool();
     public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.getBool();
-    public static NormalGameOptionsV07 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
+    public static NormalGameOptionsV08 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
 
     // Set values
     public static int maxNumberOfMeetings = 10;
@@ -37,8 +37,9 @@ internal class ModOption
     public static bool randomLigherPlayer;
     public static bool disableMedscanWalking;
     public static bool isCanceled;
+	public static bool ShowChatNotifications = true;
 
-    public static int restrictDevices;
+	public static int restrictDevices;
 
     // public static float restrictAdminTime = 600f;
     //public static float restrictAdminTimeMax = 600f;
@@ -113,6 +114,7 @@ internal class ModOption
         ShowVentsOnMeetingMap = CustomOptionHolder.ShowVentsOnMeetingMap.getBool();
         randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.getBool();
         allowModGuess = CustomOptionHolder.allowModGuess.getBool();
+		ShowChatNotifications = TheOtherRolesPlugin.ShowChatNotifications.Value;
         firstKillPlayer = null;
         isRoundOne = true;
         isCanceled = false;

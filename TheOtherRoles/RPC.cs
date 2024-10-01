@@ -136,7 +136,7 @@ public enum RoleId
 public enum CustomRPC
 {
     // Main Controls
-    ResetVaribles = 60,
+    ResetVaribles = 100,
     ShareOptions,
     WorkaroundSetRoles,
     SetRole,
@@ -152,7 +152,7 @@ public enum CustomRPC
     ShareGameMode = 75,
 
     // Role functionality
-    EngineerFixLights = 100,
+    EngineerFixLights = 120,
     EngineerFixSubmergedOxygen,
     EngineerUsedRepair,
     CleanBody,
@@ -323,8 +323,8 @@ public static class RPCProcedure
                 var optionId = reader.ReadPackedUInt32();
                 var selection = reader.ReadPackedUInt32();
                 var option = CustomOption.options.First(option => option.id == (int)optionId);
-                option.updateSelection((int)selection);
-            }
+				option.updateSelection((int)selection, i == numberOfOptions - 1);
+			}
         }
         catch (Exception e)
         {
@@ -335,7 +335,10 @@ public static class RPCProcedure
     public static void shareGameMode(byte gm)
     {
         gameMode = (CustomGamemodes)gm;
-    }
+		LobbyViewSettingsPatch.currentButtons?.ForEach(x => x.gameObject?.Destroy());
+		LobbyViewSettingsPatch.currentButtons?.Clear();
+		LobbyViewSettingsPatch.currentButtonTypes?.Clear();
+	}
 
     public static void stopStart(byte playerId)
     {
@@ -580,7 +583,7 @@ public static class RPCProcedure
             if (AmongUsClient.Instance.AmHost && Helpers.roleCanUseVents(player) && !player.Data.Role.IsImpostor)
             {
                 player.RpcSetRole(RoleTypes.Engineer);
-                player.SetRole(RoleTypes.Engineer);
+                player.CoSetRole(RoleTypes.Engineer, true);
             }
         }
     }
@@ -2589,7 +2592,6 @@ public static class RPCProcedure
 
     public static void yoyoBlink(bool isFirstJump, byte[] buff)
     {
-        Message($"blink fistjumpo: {isFirstJump}");
         if (Yoyo.yoyo == null || Yoyo.markedLocation == null) return;
         var markedPos = (Vector3)Yoyo.markedLocation;
         Yoyo.yoyo.NetTransform.SnapTo(markedPos);
@@ -3037,7 +3039,8 @@ public static class RPCProcedure
             }
         }
 
-        if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == killerId && Lawyer.target != null && Lawyer.target.PlayerId == dyingTargetId)
+		bool lawyerDiedAdditionally = false;
+		if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == killerId && Lawyer.target != null && Lawyer.target.PlayerId == dyingTargetId)
         {
             // Lawyer guessed client.
             if (CachedPlayer.LocalPlayer.PlayerControl == Lawyer.lawyer)
@@ -3047,7 +3050,9 @@ public static class RPCProcedure
             }
 
             Lawyer.lawyer.Exiled();
-        }
+			lawyerDiedAdditionally = true;
+			GameHistory.overrideDeathReasonAndKiller(Lawyer.lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, guesser);
+		}
 
         var partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
 
@@ -3058,17 +3063,17 @@ public static class RPCProcedure
 
         if (MeetingHud.Instance)
         {
-            MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, dyingTargetId);
             foreach (var pva in MeetingHud.Instance.playerStates)
             {
-                if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || pva.TargetPlayerId == akujoPartnerId)
+                if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || pva.TargetPlayerId == akujoPartnerId || lawyerDiedAdditionally && Lawyer.lawyer.PlayerId == pva.TargetPlayerId)
                 {
                     pva.SetDead(pva.DidReport, true);
                     pva.Overlay.gameObject.SetActive(true);
-                }
+					MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, pva.TargetPlayerId);
+				}
 
                 //Give players back their vote if target is shot dead
-                if (pva.VotedFor != dyingTargetId || pva.VotedFor != partnerId) continue;
+                if (pva.VotedFor != dyingTargetId && pva.VotedFor != partnerId && (!lawyerDiedAdditionally || Lawyer.lawyer.PlayerId != pva.VotedFor)) continue;
                 pva.UnsetVote();
                 var voteAreaPlayer = playerById(pva.TargetPlayerId);
                 if (!voteAreaPlayer.AmOwner) continue;

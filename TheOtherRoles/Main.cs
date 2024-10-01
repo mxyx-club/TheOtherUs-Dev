@@ -37,7 +37,8 @@ public class TheOtherRolesPlugin : BasePlugin
     public static ConfigEntry<bool> ToggleCursor { get; set; }
     public static ConfigEntry<bool> ShowFPS { get; set; }
     public static ConfigEntry<bool> LocalHats { get; set; }
-    public static ConfigEntry<bool> ShowKeyReminder { get; set; }
+	public static ConfigEntry<bool> ShowChatNotifications { get; set; }
+	public static ConfigEntry<bool> ShowKeyReminder { get; set; }
     public static ConfigEntry<string> Ip { get; set; }
     public static ConfigEntry<ushort> Port { get; set; }
     public static ConfigEntry<string> ShowPopUpVersion { get; set; }
@@ -86,13 +87,16 @@ public class TheOtherRolesPlugin : BasePlugin
         ShowFPS = Config.Bind("Custom", "Show FPS", true);
         ShowKeyReminder = Config.Bind("Custom", "ShowKeyReminder", true);
         LocalHats = Config.Bind("Custom", "Load Local Hats", false);
+		ShowChatNotifications = Config.Bind("Custom", "Show Chat Notifications", true);
 
-        Ip = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
+		Ip = Config.Bind("Custom", "Custom Server IP", "127.0.0.1");
         Port = Config.Bind("Custom", "Custom Server Port", (ushort)22023);
         defaultRegions = ServerManager.DefaultRegions;
 
         Harmony.PatchAll();
         UpdateRegions();
+		// Removes vanilla Servers
+		ServerManager.DefaultRegions = new Il2CppReferenceArray<IRegionInfo>(new IRegionInfo[0]); 
         CrowdedPlayer.Start();
 
         ModOption.reloadPluginOptions();

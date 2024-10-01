@@ -20,15 +20,15 @@ public class KeyboardHandler
     {
         if (AmongUsClient.Instance && (AmongUsClient.Instance.AmHost || ModOption.DebugMode))
         {
-            // 生成假人
-            if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.F) && Input.GetKeyDown(KeyCode.Return)
+            // 生成假人 (2024.10.1 方块：这玩意好像用不了了)
+            /*if (Input.GetKey(KeyCode.LeftControl) && Input.GetKey(KeyCode.F) && Input.GetKeyDown(KeyCode.Return)
                 && AmongUsClient.Instance.NetworkMode != NetworkModes.OnlineGame && InGame)
             {
                 var playerControl = UnityEngine.Object.Instantiate(AmongUsClient.Instance.PlayerPrefab);
                 _ = playerControl.PlayerId = (byte)GameData.Instance.GetAvailableId();
 
                 bots.Add(playerControl);
-                GameData.Instance.AddPlayer(playerControl);
+                GameData.Instance.AddPlayer(playerControl, new InnerNet.ClientData((IntPtr)0));
                 AmongUsClient.Instance.Spawn(playerControl);
 
                 playerControl.transform.position = CachedPlayer.LocalPlayer.transform.position;
@@ -36,8 +36,9 @@ public class KeyboardHandler
                 playerControl.NetTransform.enabled = false;
                 playerControl.SetName(RandomString(6));
                 playerControl.SetColor((byte)random.Next(Palette.PlayerColors.Length));
-                GameData.Instance.RpcSetTasks(playerControl.PlayerId, Array.Empty<byte>());
-            }
+				playerControl.Data.RpcSetTasks(new byte[0]);
+				playerControl.Data.RpcSetTasks(new byte[0]);
+            }*/
             // 强制开始会议或结束会议
             if (Input.GetKey(ModInputManager.metaControlInput.keyCode) && Input.GetKeyDown(ModInputManager.meetingInput.keyCode) && InGame)
             {

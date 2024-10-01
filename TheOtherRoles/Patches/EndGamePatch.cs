@@ -172,12 +172,12 @@ public class OnGameEndPatch
         notWinners.AddRange(Survivor.survivor.Where(p => p != null));
         if (Akujo.honmeiCannotFollowWin && Akujo.honmei != null) notWinners.Add(Akujo.honmei);
 
-        var winnersToRemove = new List<WinningPlayerData>();
-        foreach (var winner in TempData.winners.GetFastEnumerator())
+        var winnersToRemove = new List<CachedPlayerData>();
+        foreach (var winner in EndGameResult.CachedWinners.GetFastEnumerator())
             if (notWinners.Any(x => x != null && x.Data.PlayerName == winner.PlayerName))
                 winnersToRemove.Add(winner);
 
-        foreach (var winner in winnersToRemove) TempData.winners.Remove(winner);
+        foreach (var winner in winnersToRemove) EndGameResult.CachedWinners.Remove(winner);
         var isCanceled = gameOverReason == (GameOverReason)CustomGameOverReason.Canceled;
         var everyoneDead = AdditionalTempData.playerRoles.All(x => !x.IsAlive);
         var miniLose = Mini.mini != null && gameOverReason == (GameOverReason)CustomGameOverReason.MiniLose;
@@ -217,57 +217,57 @@ public class OnGameEndPatch
         if (miniLose)
         {
             // If "no one is the Mini", it will display the Mini, but also show defeat to everyone
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Mini.mini.Data) { IsYou = false };
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Mini.mini.Data) { IsYou = false };
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.MiniLose;
         }
         else if (isCanceled)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
             AdditionalTempData.winCondition = WinCondition.Canceled;
         }
 
         // Jester win
         else if (jesterWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Jester.jester.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Jester.jester.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.JesterWin;
         }
 
         // Arsonist win
         else if (arsonistWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Arsonist.arsonist.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Arsonist.arsonist.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.ArsonistWin;
         }
 
         // Everyone Died
         else if (everyoneDead)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
             AdditionalTempData.winCondition = WinCondition.EveryoneDied;
         }
 
         // Vulture win
         else if (vultureWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Vulture.vulture.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Vulture.vulture.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.VultureWin;
         }
 
         // Jester win
         else if (executionerWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Executioner.executioner.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Executioner.executioner.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.ExecutionerWin;
         }
 
@@ -278,27 +278,27 @@ public class OnGameEndPatch
             if (!Lovers.existingWithKiller())
             {
                 AdditionalTempData.winCondition = WinCondition.LoversTeamWin;
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                 foreach (PlayerControl p in CachedPlayer.AllPlayers)
                 {
                     if (p == null) continue;
                     if (p == Lovers.lover1 || p == Lovers.lover2)
-                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     else if (Pursuer.pursuer.Any(pc => pc == p) && Pursuer.pursuer.Any(pc => pc.IsAlive()))
-                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     else if (Survivor.survivor.Any(pc => pc == p) && Survivor.survivor.Any(pc => pc.IsAlive()))
-                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                     else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
-                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                 }
             }
             // Lovers solo win
             else
             {
                 AdditionalTempData.winCondition = WinCondition.LoversSoloWin;
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                TempData.winners.Add(new WinningPlayerData(Lovers.lover1.Data));
-                TempData.winners.Add(new WinningPlayerData(Lovers.lover2.Data));
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.lover1.Data));
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(Lovers.lover2.Data));
             }
         }
 
@@ -307,70 +307,70 @@ public class OnGameEndPatch
         {
             // Jackal wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.JackalWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Jackal.jackal.Data);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Jackal.jackal.Data);
             wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners.Add(wpd);
             // If there is a sidekick. The sidekick also wins
             if (Sidekick.sidekick != null)
             {
-                var wpdSidekick = new WinningPlayerData(Sidekick.sidekick.Data);
+                var wpdSidekick = new CachedPlayerData(Sidekick.sidekick.Data);
                 wpdSidekick.IsImpostor = false;
-                TempData.winners.Add(wpdSidekick);
+                EndGameResult.CachedWinners.Add(wpdSidekick);
             }
 
             foreach (var player in Jackal.formerJackals)
             {
-                var wpdFormerJackal = new WinningPlayerData(player.Data);
+                var wpdFormerJackal = new CachedPlayerData(player.Data);
                 wpdFormerJackal.IsImpostor = false;
-                TempData.winners.Add(wpdFormerJackal);
+                EndGameResult.CachedWinners.Add(wpdFormerJackal);
             }
         }
         else if (teamPavlovsWin)
         {
             // Jackal wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.PavlovsWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Pavlovsdogs.pavlovsowner.Data);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Pavlovsdogs.pavlovsowner.Data);
             wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners.Add(wpd);
 
             foreach (var player in Pavlovsdogs.pavlovsdogs)
             {
-                var wpdFormerPavlovs = new WinningPlayerData(player.Data);
+                var wpdFormerPavlovs = new CachedPlayerData(player.Data);
                 wpdFormerPavlovs.IsImpostor = false;
-                TempData.winners.Add(wpdFormerPavlovs);
+                EndGameResult.CachedWinners.Add(wpdFormerPavlovs);
             }
         }
         else if (werewolfWin)
         {
             // Werewolf wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.WerewolfWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Werewolf.werewolf.Data);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Werewolf.werewolf.Data);
             wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners.Add(wpd);
         }
 
         else if (juggernautWin)
         {
             // JuggernautWin wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.JuggernautWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Juggernaut.juggernaut.Data);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Juggernaut.juggernaut.Data);
             wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners.Add(wpd);
         }
 
         else if (impostorWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            foreach (GameData.PlayerInfo player in GameData.Instance.AllPlayers)
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            foreach (NetworkedPlayerInfo player in GameData.Instance.AllPlayers)
             {
-                var wpd = new WinningPlayerData(player) { IsImpostor = true };
+                var wpd = new CachedPlayerData(player) { IsImpostor = true };
                 if (player.Role.IsImpostor)
                 {
-                    TempData.winners.Add(wpd);
+                    EndGameResult.CachedWinners.Add(wpd);
                 }
             }
         }
@@ -379,9 +379,9 @@ public class OnGameEndPatch
         {
             // DoomsayerWin wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.DoomsayerWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Doomsayer.doomsayer.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Doomsayer.doomsayer.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.DoomsayerWin;
         }
 
@@ -390,10 +390,10 @@ public class OnGameEndPatch
         {
             // Swooper wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.SwooperWin;
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Swooper.swooper.Data);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            var wpd = new CachedPlayerData(Swooper.swooper.Data);
             wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners.Add(wpd);
         }
 
         // Akujo win
@@ -404,44 +404,44 @@ public class OnGameEndPatch
                 if (!Akujo.existingWithKiller())
                 {
                     AdditionalTempData.winCondition = WinCondition.AkujoTeamWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
                     foreach (PlayerControl p in CachedPlayer.AllPlayers)
                     {
                         if (p == null) continue;
                         if (p == Akujo.akujo || p == Akujo.honmei)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (Pursuer.pursuer.Contains(p) && !p.Data.IsDead)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (Survivor.survivor.Contains(p) && !p.Data.IsDead)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
                         else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
+                            EndGameResult.CachedWinners.Add(new CachedPlayerData(p.Data));
 
                     }
                 }
                 else
                 {
                     AdditionalTempData.winCondition = WinCondition.AkujoSoloWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    TempData.winners.Add(new WinningPlayerData(Akujo.akujo.Data));
-                    TempData.winners.Add(new WinningPlayerData(Akujo.honmei.Data));
+                    EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Akujo.akujo.Data));
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(Akujo.honmei.Data));
                 }
             }
             else
             {
                 AdditionalTempData.winCondition = WinCondition.AkujoSoloWin;
-                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                TempData.winners.Add(new WinningPlayerData(Akujo.akujo.Data));
-                TempData.winners.Add(new WinningPlayerData(Akujo.honmei.Data));
+                EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(Akujo.akujo.Data));
+                EndGameResult.CachedWinners.Add(new CachedPlayerData(Akujo.honmei.Data));
             }
         }
 
         // Lawyer solo win 
         else if (lawyerSoloWin)
         {
-            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            WinningPlayerData wpd = new(Lawyer.lawyer.Data);
-            TempData.winners.Add(wpd);
+            EndGameResult.CachedWinners = new Il2CppSystem.Collections.Generic.List<CachedPlayerData>();
+            CachedPlayerData wpd = new(Lawyer.lawyer.Data);
+            EndGameResult.CachedWinners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.LawyerSoloWin;
         }
 
@@ -449,23 +449,23 @@ public class OnGameEndPatch
         if (!lawyerSoloWin && Lawyer.lawyer != null && Lawyer.target != null &&
             (!Lawyer.target.Data.IsDead || Lawyer.target == Jester.jester) && !Lawyer.notAckedExiled)
         {
-            WinningPlayerData winningClient = null;
-            foreach (var winner in TempData.winners.GetFastEnumerator())
+            CachedPlayerData winningClient = null;
+            foreach (var winner in EndGameResult.CachedWinners.GetFastEnumerator())
                 if (winner.PlayerName == Lawyer.target.Data.PlayerName)
                     winningClient = winner;
             if (winningClient != null)
             {
-                if (!TempData.winners.ToArray().Any(x => x.PlayerName == Lawyer.lawyer.Data.PlayerName))
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == Lawyer.lawyer.Data.PlayerName))
                 {
                     if (!Lawyer.lawyer.Data.IsDead && Lawyer.stolenWin)
                     {
-                        TempData.winners.Remove(winningClient);
-                        TempData.winners.Add(new WinningPlayerData(Lawyer.lawyer.Data));
+                        EndGameResult.CachedWinners.Remove(winningClient);
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(Lawyer.lawyer.Data));
                         AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalLawyerStolenWin); // The Lawyer replaces the client's victory
                     }
                     else
                     {
-                        TempData.winners.Add(new WinningPlayerData(Lawyer.lawyer.Data));
+                        EndGameResult.CachedWinners.Add(new CachedPlayerData(Lawyer.lawyer.Data));
                         AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalLawyerBonusWin); // The Lawyer wins with the client
                     }
                 }
@@ -477,8 +477,8 @@ public class OnGameEndPatch
         {
             foreach (var player in Pursuer.pursuer.Where(p => !p.Data.IsDead))
             {
-                if (!TempData.winners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
-                    TempData.winners.Add(new WinningPlayerData(player.Data));
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(player.Data));
             }
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalAlivePursuerWin);
         }
@@ -488,15 +488,15 @@ public class OnGameEndPatch
         {
             foreach (var player in Survivor.survivor.Where(p => !p.Data.IsDead))
             {
-                if (!TempData.winners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
-                    TempData.winners.Add(new WinningPlayerData(player.Data));
+                if (!EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
+                    EndGameResult.CachedWinners.Add(new CachedPlayerData(player.Data));
             }
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalAliveSurvivorWin);
         }
 
-        if (PartTimer.partTimer != null && PartTimer.target != null && TempData.winners.ToArray().Any(x => x.PlayerName == PartTimer.target.Data.PlayerName))
+        if (PartTimer.partTimer != null && PartTimer.target != null && EndGameResult.CachedWinners.ToArray().Any(x => x.PlayerName == PartTimer.target.Data.PlayerName))
         {
-            TempData.winners.Add(new WinningPlayerData(PartTimer.partTimer.Data));
+            EndGameResult.CachedWinners.Add(new CachedPlayerData(PartTimer.partTimer.Data));
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalPartTimerWin);
         }
 
@@ -518,10 +518,10 @@ public class EndGameManagerSetUpPatch
         foreach (var pb in __instance.transform.GetComponentsInChildren<PoolablePlayer>())
             Object.Destroy(pb.gameObject);
         var num = Mathf.CeilToInt(7.5f);
-        var list = TempData.winners.ToList().OrderBy(delegate (WinningPlayerData b) { return !b.IsYou ? 0 : -1; }).ToList();
+        var list = EndGameResult.CachedWinners.ToList().OrderBy(delegate (CachedPlayerData b) { return !b.IsYou ? 0 : -1; }).ToList();
         for (var i = 0; i < list.Count; i++)
         {
-            var winningPlayerData2 = list[i];
+            var CachedPlayerData2 = list[i];
             var num2 = i % 2 == 0 ? -1 : 1;
             var num3 = (i + 1) / 2;
             var num4 = num3 / (float)num;
@@ -533,7 +533,7 @@ public class EndGameManagerSetUpPatch
             var num7 = Mathf.Lerp(1f, 0.65f, num4) * 0.9f;
             var vector = new Vector3(num7, num7, 1f);
             poolablePlayer.transform.localScale = vector;
-            if (winningPlayerData2.IsDead)
+            if (CachedPlayerData2.IsDead)
             {
                 poolablePlayer.SetBodyAsGhost();
                 poolablePlayer.SetDeadFlipX(i % 2 == 0);
@@ -543,17 +543,17 @@ public class EndGameManagerSetUpPatch
                 poolablePlayer.SetFlipX(i % 2 == 0);
             }
 
-            poolablePlayer.UpdateFromPlayerOutfit(winningPlayerData2, PlayerMaterial.MaskType.None, winningPlayerData2.IsDead, true);
+            poolablePlayer.UpdateFromPlayerOutfit(CachedPlayerData2.Outfit, PlayerMaterial.MaskType.None, CachedPlayerData2.IsDead, true);
 
             poolablePlayer.cosmetics.nameText.color = Color.white;
             poolablePlayer.cosmetics.nameText.transform.localScale = new Vector3(1f / vector.x, 1f / vector.y, 1f / vector.z);
             var localPosition = poolablePlayer.cosmetics.nameText.transform.localPosition;
             localPosition = new Vector3(localPosition.x, localPosition.y, -15f);
             poolablePlayer.cosmetics.nameText.transform.localPosition = localPosition;
-            poolablePlayer.cosmetics.nameText.text = winningPlayerData2.PlayerName;
+            poolablePlayer.cosmetics.nameText.text = CachedPlayerData2.PlayerName;
 
             foreach (var roles in from data in AdditionalTempData.playerRoles
-                                  where data.PlayerName == winningPlayerData2.PlayerName
+                                  where data.PlayerName == CachedPlayerData2.PlayerName
                                   select poolablePlayer.cosmetics.nameText.text +=
                          $"\n{string.Join("\n", data.Roles.Select(x => cs(x.color, x.Name)))}")
             {
@@ -1037,7 +1037,7 @@ internal class CheckEndCriteriaPatch
         {
             //__instance.enabled = false;
             GameOverReason endReason;
-            switch (TempData.LastDeathReason)
+            switch (GameData.LastDeathReason)
             {
                 case DeathReason.Exile:
                     endReason = GameOverReason.ImpostorByVote;
@@ -1122,7 +1122,7 @@ internal class PlayerStatistics
     public int TeamJuggernautAlive { get; set; }
     public bool TeamJuggernautHasAliveLover { get; set; }
 
-    private static bool isLover(GameData.PlayerInfo p)
+    private static bool isLover(NetworkedPlayerInfo p)
     {
         return (Lovers.lover1 != null && Lovers.lover1.PlayerId == p.PlayerId) ||
                (Lovers.lover2 != null && Lovers.lover2.PlayerId == p.PlayerId);
