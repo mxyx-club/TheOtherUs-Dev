@@ -631,6 +631,8 @@ public class CustomOptionHolder
 
     public static CustomOption disableMedbayWalk;
 
+    public static CustomOption enableCursedTasks;
+
     public static CustomOption enableCamoComms;
     public static CustomOption fungleDisableCamoComms;
 
@@ -776,6 +778,7 @@ public class CustomOptionHolder
         allowParallelMedBayScans = Create(44, Types.General, "allowParallelMedBayScans", false);
         finishTasksBeforeHauntingOrZoomingOut = Create(42, Types.General, "finishTasksBeforeHauntingOrZoomingOut", false);
         disableTaskGameEnd = Create(43, Types.General, "disableTaskGameEnd", false);
+        enableCursedTasks = Create(45, Types.General, cs(Palette.Purple, "enableCursedTasks"), false);
 
         //Map options
         enableMapOptions = Create(200, Types.General, "enableMapOptions", false, null, true);

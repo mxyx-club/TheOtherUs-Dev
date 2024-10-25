@@ -541,6 +541,10 @@
         "0": "Enable Camouflage Comms",
         "13": "通信破坏开启小黑人"
     },
+    "enableCursedTasks": {
+        "0": "Cursed Tasks",
+        "13": "诅咒模式"
+    },
     "restrictDevices": {
         "0": "Restrict Map Information",
         "13": "限制信息设备使用"
@@ -2392,6 +2396,10 @@
     "tasksNum": {
         "0": "Tasks {0}",
         "13": "任务 {0}"
+    },
+    "CursedWeaponsTaskScoreText": {
+        "0": "Destroyed : ({0}/{1})",
+        "13": "破坏 : ({0}/{1})"
     },
     "roleInfoRemaining": {
         "0": " left {0} ",

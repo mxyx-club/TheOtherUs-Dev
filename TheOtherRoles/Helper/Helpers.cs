@@ -555,10 +555,22 @@ public static class Helpers
         if (!self.Contains(item)) self.Add(item);
     }
 
-    public static int GetRandomIndex<T>(List<T> list)
+    public static T GetRandom<T>(this T[] list)
+    {
+        var indexData = UnityEngine.Random.Range(0, list.Length);
+        return list[indexData];
+    }
+
+    public static int GetRandom<T>(List<T> list)
     {
         var indexData = UnityEngine.Random.Range(0, list.Count);
         return indexData;
+    }
+
+    public static T GetRandom<T>(this Il2CppSystem.Collections.Generic.List<T> list)
+    {
+        var indexData = UnityEngine.Random.Range(0, list.Count);
+        return list[indexData];
     }
 
     public static void ForEach<T>(this Il2CppArrayBase<T> list, Action<T> func)
@@ -606,12 +618,6 @@ public static class Helpers
             newList.Add(item);
         }
         return newList;
-    }
-
-    public static T GetRandom<T>(this T[] list)
-    {
-        var indexData = UnityEngine.Random.Range(0, list.Length);
-        return list[indexData];
     }
 
     public static T Find<T>(this Il2CppSystem.Collections.Generic.List<T> data, Predicate<T> match)
