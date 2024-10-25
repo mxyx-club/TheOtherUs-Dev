@@ -229,7 +229,7 @@ public class ExilePros
 
 [HarmonyPatch(typeof(ExileController), nameof(ExileController.Begin))]
 [HarmonyPriority(Priority.First)]
-class ExileControllerPatch
+internal class ExileControllerPatch
 {
     public static ExileController lastExiled;
     public static void Prefix(ExileController __instance)

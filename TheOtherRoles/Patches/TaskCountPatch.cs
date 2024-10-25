@@ -8,15 +8,15 @@ using TheOtherRoles.Utilities;
 
 namespace TheOtherRoles.Patches;
 
-class TaskCount
+internal class TaskCount
 {
     public static bool WireTaskIsRandom => CustomOptionHolder.WireTaskIsRandomOption.getBool();
     public static int WireTaskNum => CustomOptionHolder.WireTaskNumOption.GetInt();
 
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.Initialize))]
-    class NormalPlayerTaskInitializePatch
+    private class NormalPlayerTaskInitializePatch
     {
-        static void Postfix(NormalPlayerTask __instance)
+        private static void Postfix(NormalPlayerTask __instance)
         {
             if (__instance.TaskType != TaskTypes.FixWiring || !WireTaskIsRandom) return;
             List<Console> orgList = MapUtilities.CachedShipStatus.AllConsoles.Where((Console t) => t.TaskTypes.Contains(__instance.TaskType)).ToList();
@@ -28,7 +28,7 @@ class TaskCount
             {
                 if (list.Count == 0)
                     list = new List<Console>(orgList);
-                int index = GetRandomIndex(list);
+                int index = GetRandom(list);
                 __instance.Data[i] = (byte)list[index].ConsoleId;
                 list.RemoveAt(index);
             }

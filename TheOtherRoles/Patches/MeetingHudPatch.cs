@@ -482,7 +482,7 @@ internal class MeetingHudPatch
                 {
                     if (playerVoteArea.VotedFor != Balancer.targetplayerright.PlayerId && playerVoteArea.VotedFor != Balancer.targetplayerleft.PlayerId)
                     {
-                        playerVoteArea.VotedFor = Helpers.GetRandom([Balancer.targetplayerright.PlayerId, Balancer.targetplayerleft.PlayerId]);
+                        playerVoteArea.VotedFor = Helpers.GetRandom((byte[])([Balancer.targetplayerright.PlayerId, Balancer.targetplayerleft.PlayerId]));
                     }
                 }
 

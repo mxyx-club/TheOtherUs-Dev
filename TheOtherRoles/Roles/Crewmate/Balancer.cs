@@ -393,9 +393,14 @@ public class Balancer
             if (currentTarget == null)
             {
                 currentTarget = Target;
-                __instance.playerStates.ForEach(x => { if (x.TargetPlayerId == currentTarget.PlayerId && x.transform.FindChild("BalancerButton") != null) x.transform.FindChild("BalancerButton").gameObject.SetActive(false); });
+                __instance.playerStates.ForEach(x =>
+                {
+                    if (x.TargetPlayerId == currentTarget.PlayerId && x.transform.FindChild("BalancerButton") != null)
+                        x.transform.FindChild("BalancerButton").gameObject.SetActive(false);
+                });
                 return;
             }
+            IsAbilityUsed--;
             if (balancer.IsDead()) return;
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.BalancerBalance, SendOption.Reliable);
@@ -404,8 +409,10 @@ public class Balancer
             writer.Write(Target.PlayerId);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.balancerBalance(PlayerControl.LocalPlayer.PlayerId, currentTarget.PlayerId, Target.PlayerId);
-            IsAbilityUsed--;
-            __instance.playerStates.ForEach(x => { if (x.transform.FindChild("BalancerButton") != null) Object.Destroy(x.transform.FindChild("BalancerButton").gameObject); });
+            __instance.playerStates.ForEach(x =>
+            {
+                if (x.transform.FindChild("BalancerButton") != null) Object.Destroy(x.transform.FindChild("BalancerButton").gameObject);
+            });
         }
 
         private static void Event(MeetingHud __instance)

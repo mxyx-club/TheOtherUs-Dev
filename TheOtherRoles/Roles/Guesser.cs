@@ -50,7 +50,7 @@ public static class Guesser
     public static int Page;
     public static byte guesserCurrentTarget;
 
-    static void guesserSelectRole(RoleTeam Role, bool SetPage = true)
+    private static void guesserSelectRole(RoleTeam Role, bool SetPage = true)
     {
         currentTeamType = Role;
         if (SetPage) Page = 1;

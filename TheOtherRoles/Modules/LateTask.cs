@@ -54,7 +54,7 @@ internal class LateTask
 }
 
 [HarmonyPatch(typeof(ModManager), nameof(ModManager.LateUpdate))]
-class ModManagerLateUpdatePatch
+internal class ModManagerLateUpdatePatch
 {
     public static void Prefix(ModManager __instance)
     {

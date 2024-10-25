@@ -83,12 +83,3 @@ internal static class LanguageExtension
         return getString(key);
     }
 }
-
-[HarmonyPatch(typeof(LanguageSetter), nameof(LanguageSetter.SetLanguage))]
-class SetLanguagePatch
-{
-    static void Postfix()
-    {
-        //ClientOptionsPatch.updateTranslations();
-    }
-}

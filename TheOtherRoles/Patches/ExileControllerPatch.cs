@@ -20,7 +20,7 @@ internal class ExileControllerBeginPatch
 {
     public static GameData.PlayerInfo lastExiled;
     public static TextMeshPro confirmImpostorSecondText;
-    static bool IsSec;
+    private static bool IsSec;
     public static bool Prefix(ExileController __instance, [HarmonyArgument(0)] ref GameData.PlayerInfo exiled, [HarmonyArgument(1)] bool tie)
     {
         lastExiled = exiled;

@@ -1,13 +1,12 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using Object = UnityEngine.Object;
 using static TheOtherRoles.Buttons.HudManagerStartPatch;
+using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Buttons;
 

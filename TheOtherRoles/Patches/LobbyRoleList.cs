@@ -181,7 +181,8 @@ public static class LobbyRoleInfo
             count++;
         }
     }
-    static void AddInfoCard(RoleInfo roleInfo)
+
+    private static void AddInfoCard(RoleInfo roleInfo)
     {
         string roleSettingDescription = roleInfo.FullDescription != "" ? roleInfo.FullDescription : roleInfo.ShortDescription;
         string coloredHelp = cs(Color.white, roleSettingDescription);
@@ -216,7 +217,7 @@ public static class LobbyRoleInfo
 }
 
 [HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.Start))]
-class GameStartPatch
+internal class GameStartPatch
 {
     public static void Prefix(ShipStatus __instance)
     {

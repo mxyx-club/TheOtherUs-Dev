@@ -198,13 +198,13 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
     public IEnumerator CoShowAnnouncement(string announcement, bool show = true, string shortTitle = "TOUE Update", string title = "", string date = "")
     {
         var mgr = FindObjectOfType<MainMenuManager>(true);
-        var popUpTemplate = UnityEngine.Object.FindObjectOfType<AnnouncementPopUp>(true);
+        var popUpTemplate = FindObjectOfType<AnnouncementPopUp>(true);
         if (popUpTemplate == null)
         {
             Error("couldnt show credits, popUp is null");
             yield return null;
         }
-        var popUp = UnityEngine.Object.Instantiate(popUpTemplate);
+        var popUp = Instantiate(popUpTemplate);
 
         popUp.gameObject.SetActive(true);
 
