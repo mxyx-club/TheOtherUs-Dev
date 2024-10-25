@@ -400,8 +400,7 @@ public class Balancer
                 });
                 return;
             }
-            IsAbilityUsed--;
-            if (balancer.IsDead()) return;
+            if (balancer.IsDead() || IsAbilityUsed <= 0) return;
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.BalancerBalance, SendOption.Reliable);
             writer.Write(PlayerControl.LocalPlayer.PlayerId);
@@ -415,7 +414,7 @@ public class Balancer
             });
         }
 
-        private static void Event(MeetingHud __instance)
+        internal static void MeetingHudStartPostfix(MeetingHud __instance)
         {
             if (PlayerControl.LocalPlayer.IsAlive() && IsAbilityUsed > 0)
             {
@@ -438,11 +437,6 @@ public class Balancer
                     }
                 }
             }
-        }
-
-        internal static void MeetingHudStartPostfix(MeetingHud __instance)
-        {
-            Event(__instance);
         }
     }
 }

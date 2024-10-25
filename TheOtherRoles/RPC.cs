@@ -2434,6 +2434,7 @@ public static class RPCProcedure
 
     public static void balancerBalance(byte sourceId, byte player1Id, byte player2Id)
     {
+        Balancer.IsAbilityUsed--;
         PlayerControl source = playerById(sourceId);
         PlayerControl player1 = playerById(player1Id);
         PlayerControl player2 = playerById(player2Id);
