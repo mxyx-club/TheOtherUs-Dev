@@ -78,6 +78,7 @@ internal static class HudManagerStartPatch
     public static CustomButton werewolfRampageButton;
     public static CustomButton werewolfKillButton;
     public static CustomButton minerMineButton;
+    public static CustomButton grenadierFlashButton;
     public static CustomButton mayorMeetingButton;
     public static CustomButton blackmailerButton;
     public static CustomButton thiefKillButton;
@@ -191,6 +192,7 @@ internal static class HudManagerStartPatch
         arsonistButton.MaxTimer = Arsonist.cooldown;
         vultureEatButton.MaxTimer = Vulture.cooldown;
         amnisiacRememberButton.MaxTimer = defaultMaxTimer;
+        grenadierFlashButton.MaxTimer = Grenadier.cooldown;
         bomberGiveButton.MaxTimer = 0f;
         bomberGiveButton.Timer = 0f;
         partTimerButton.MaxTimer = PartTimer.cooldown;
@@ -247,6 +249,7 @@ internal static class HudManagerStartPatch
         vampireKillButton.EffectDuration = Vampire.delay;
         werewolfRampageButton.MaxTimer = Werewolf.rampageCooldown;
         werewolfRampageButton.EffectDuration = Werewolf.rampageDuration;
+        grenadierFlashButton.EffectDuration = Grenadier.duration;
         camouflagerButton.EffectDuration = Camouflager.duration;
         morphlingButton.EffectDuration = Morphling.duration;
         bomberBombButton.EffectDuration = Bomber.bombDelay + Bomber.bombTimer;
@@ -2266,6 +2269,46 @@ internal static class HudManagerStartPatch
             __instance,
             hotkey: null,
             buttonText: "giveBombText".Translate()
+        );
+
+        grenadierFlashButton = new CustomButton(
+            () =>
+            {
+                /* On Use */
+                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                    (byte)CustomRPC.GrenadierFlash, SendOption.Reliable);
+                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                RPCProcedure.grenadierFlash();
+                grenadierFlashButton.Timer = grenadierFlashButton.MaxTimer;
+            },
+            () =>
+            {
+                /* Can See */
+                return Grenadier.grenadier != null && Grenadier.grenadier == CachedPlayer.LocalPlayer.PlayerControl
+                       && !CachedPlayer.LocalPlayer.Data.IsDead;
+            },
+            () =>
+            {
+                /* On Click */
+                return CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+            },
+            () =>
+            {
+                grenadierFlashButton.Timer = grenadierFlashButton.MaxTimer;
+                grenadierFlashButton.isEffectActive = false;
+                grenadierFlashButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
+            },
+            Grenadier.ButtonSprite,
+            ButtonPositions.upperRowLeft,
+            __instance,
+            abilityInput.keyCode,
+            true,
+            Grenadier.duration,
+            () =>
+            {
+                grenadierFlashButton.Timer = grenadierFlashButton.MaxTimer;
+            },
+            buttonText: getString("FlashButton")
         );
 
         // Werewolf Kill

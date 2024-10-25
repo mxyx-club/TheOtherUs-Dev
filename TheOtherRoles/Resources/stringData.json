@@ -1208,6 +1208,28 @@
         "0": "Success probability",
         "13": "赌徒赌博成功的概率"
     },
+    "grenadierCooldown": {
+        "0": "Flash Grenade Cooldown",
+        "13": "闪光弹冷却"
+    },
+    "grenadierDuration": {
+        "0": "Flash Grenade Duration",
+        "13": "闪光弹持续时间"
+    },
+    "grenadierFlashRadius": {
+        "0": "Flash Radius",
+        "13": "闪光影响范围"
+    },
+    "grenadierTeamIndicators": {
+        "0": "Impostors can see affected players",
+        "13": "队友可以得知受影响的玩家"
+    },
+    "grenadierIndicators2": {
+        "13": "闪光提示"
+    },
+    "grenadierIndicators3": {
+        "13": "玩家名称提示"
+    },
     "canUseVents": {
         "0": "Vulture Can Use Vents",
         "13": "可使用管道"
@@ -2373,28 +2395,23 @@
         "13": "嘘！不许说话！"
     },
     "errorNotInstalled": {
-        "0": "{0} has a different or no version of GMIA",
-        "11": "{0} TheOtherRolesGMIAのバージョンが違うか、導入されていません!",
+        "0": "{0} has a different or no version of TheOtherUs",
         "13": "{0} 安装了不同版本的TheOtherUs"
     },
     "errorOlderVersion": {
-        "0": "{0} has an older version of GMIA",
-        "11": "{0} 古いバージョンのTheOtherRolesGMIAを導入しています!",
+        "0": "{0} has an older version of TheOtherUs",
         "13": "{0} 安装了旧版本的TheOtherUs"
     },
     "errorNewerVersion": {
-        "0": "{0} has a newer version of GMIA",
-        "11": "{0} 最新バージョンのTheOtherRolesを導入しています",
+        "0": "{0} has a newer version of TheOtherUs",
         "13": "{0} 安装了较新版本的TheOtherUs"
     },
     "errorWrongVersion": {
-        "0": "{0} has a modified version of GMIA",
-        "11": "{0} TORGMIAのバージョンが変更されています",
+        "0": "{0} has a modified version of TheOtherUs",
         "13": "{0} 安装了修改过的TheOtherUs"
     },
     "errorHostNoVersion": {
-        "0": "The host has no or a different version of GMIA\nYou will be kicked in {0}s",
-        "11": "ホストにTORGMIAが導入されてないかバージョンが違います\n{0}秒後に自動キックされます!!",
+        "0": "The host has no or a different version of TheOtherUs\nYou will be kicked in {0}s",
         "13": "房主没有或不同版本的TheOtherUs\n即将被踢出房间 {0}"
     },
     "errorDifferentVersion": {
@@ -2959,6 +2976,10 @@
         "0": "Give",
         "13": "传递"
     },
+    "FlashButton": {
+        "0": "FLASH",
+        "13": "闪光弹"
+    },
     "GuessserGMInfo": {
         "0": " (Guesser)",
         "13": " (赌怪)"
@@ -3226,6 +3247,10 @@
     },
     "GamblerShortDesc": {
         "13": "击杀冷却会根据你的每次击杀变化"
+    },
+    "Grenadier": {
+        "0": "Grenadier",
+        "13": "掷弹兵"
     },
     "Survivor": {
         "0": "Survivor",

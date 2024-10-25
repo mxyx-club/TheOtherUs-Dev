@@ -43,6 +43,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleTeam roleTeam
     public static RoleInfo yoyo = new("Yoyo", Yoyo.color, RoleId.Yoyo, RoleTeam.Impostor);
     public static RoleInfo evilTrapper = new("EvilTrapper", EvilTrapper.color, RoleId.EvilTrapper, RoleTeam.Impostor);
     public static RoleInfo gambler = new("Gambler", Gambler.color, RoleId.Gambler, RoleTeam.Impostor);
+    public static RoleInfo grenadier = new("Grenadier", Grenadier.color, RoleId.Grenadier, RoleTeam.Impostor);
 
     public static RoleInfo survivor = new("Survivor", Survivor.color, RoleId.Survivor, RoleTeam.Neutral);
     public static RoleInfo amnisiac = new("Amnisiac", Amnisiac.color, RoleId.Amnisiac, RoleTeam.Neutral);
@@ -152,6 +153,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleTeam roleTeam
         yoyo,
         evilTrapper,
         gambler,
+        grenadier,
 
         survivor,
         amnisiac,
@@ -306,6 +308,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleTeam roleTeam
         if (p == TimeMaster.timeMaster) infos.Add(timeMaster);
         if (p == Amnisiac.amnisiac) infos.Add(amnisiac);
         if (p == Veteran.veteran) infos.Add(veteran);
+        if (p == Grenadier.grenadier) infos.Add(grenadier);
         if (p == Medic.medic) infos.Add(medic);
         if (p == Swapper.swapper) infos.Add(swapper);
         if (p == BodyGuard.bodyguard) infos.Add(bodyguard);

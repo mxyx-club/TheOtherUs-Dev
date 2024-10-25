@@ -52,6 +52,7 @@ public enum RoleId
     Yoyo,
     EvilTrapper,
     Gambler,
+    Grenadier,
 
     Survivor,
     Amnisiac,
@@ -232,6 +233,7 @@ public enum CustomRPC
     JackalCanSwooper,
     InfoSleuthTarget,
     InfoSleuthNoTarget,
+    GrenadierFlash,
 
     TrapperKill,
     PlaceTrap,
@@ -424,6 +426,9 @@ public static class RPCProcedure
                         break;
                     case RoleId.PartTimer:
                         PartTimer.partTimer = player;
+                        break;
+                    case RoleId.Grenadier:
+                        Grenadier.grenadier = player;
                         break;
                     case RoleId.Veteran:
                         Veteran.veteran = player;
@@ -1163,6 +1168,13 @@ public static class RPCProcedure
                 Helpers.turnToImpostor(Amnisiac.amnisiac);
                 if (Amnisiac.resetRole) Warlock.clearAndReload();
                 Warlock.warlock = amnisiac;
+                Amnisiac.clearAndReload();
+                break;
+                
+            case RoleId.Grenadier:
+                Helpers.turnToImpostor(Amnisiac.amnisiac);
+                if (Amnisiac.resetRole) Grenadier.clearAndReload();
+                Grenadier.grenadier = amnisiac;
                 Amnisiac.clearAndReload();
                 break;
 
@@ -2032,6 +2044,26 @@ public static class RPCProcedure
         }
     }
 
+    public static void grenadierFlash()
+    {
+        var closestPlayers = GetClosestPlayers(Grenadier.grenadier.GetTruePosition(), Grenadier.radius, true);
+        Grenadier.controls = closestPlayers;
+        foreach (var player in closestPlayers)
+        {
+            if (CachedPlayer.LocalId == player.PlayerId)
+            {
+                if (player.isImpostor() && !player.IsDead() && Grenadier.indicatorsMode > 0 && !MeetingHud.Instance)
+                {
+                    Grenadier.showFlash(Grenadier.flash, Grenadier.duration, 0.2f);
+                }
+                else if (!player.isImpostor() && !player.IsDead() && !MeetingHud.Instance)
+                {
+                    Grenadier.showFlash(Grenadier.flash, Grenadier.duration, 1f);
+                }
+            }
+        }
+    }
+
     public static void morphlingMorph(byte playerId)
     {
         var target = playerById(playerId);
@@ -2312,6 +2344,7 @@ public static class RPCProcedure
         if (player == Blackmailer.blackmailer) Blackmailer.clearAndReload();
         if (player == Terrorist.terrorist) Terrorist.clearAndReload();
         if (player == Gambler.gambler) Gambler.clearAndReload();
+        if (player == Grenadier.grenadier) Grenadier.clearAndReload();
 
         // Other roles
         if (player == Jester.jester) Jester.clearAndReload();
@@ -3289,6 +3322,7 @@ public static class RPCProcedure
         if (target == Gambler.gambler) Gambler.gambler = thief;
         if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
         if (target == Warlock.warlock) Warlock.warlock = thief;
+        if (target == Grenadier.grenadier) Grenadier.grenadier = thief;
         if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
         if (target == Witch.witch)
         {
@@ -4081,6 +4115,9 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.YoyoMarkLocation:
                 RPCProcedure.yoyoMarkLocation(reader.ReadBytesAndSize());
+                break;
+            case CustomRPC.GrenadierFlash:
+                RPCProcedure.grenadierFlash();
                 break;
             case CustomRPC.YoyoBlink:
                 RPCProcedure.yoyoBlink(reader.ReadByte() == byte.MaxValue, reader.ReadBytesAndSize());

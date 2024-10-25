@@ -158,6 +158,12 @@ public class CustomOptionHolder
     public static CustomOption gamblerMaxCooldown;
     public static CustomOption gamblerSuccessRate;
 
+    public static CustomOption grenadierSpawnRate;
+    public static CustomOption grenadierCooldown;
+    public static CustomOption grenadierDuration;
+    public static CustomOption grenadierFlashRadius;
+    public static CustomOption grenadierTeamIndicators;
+
     public static CustomOption swooperSpawnRate;
     public static CustomOption swooperKillCooldown;
     public static CustomOption swooperCooldown;
@@ -968,6 +974,13 @@ public class CustomOptionHolder
         gamblerMinCooldown = Create(10331, Types.Impostor, "gamblerMinCooldown", 2.5f, 0f, 45f, 0.5f, gamblerSpawnRate);
         gamblerMaxCooldown = Create(10332, Types.Impostor, "gamblerMaxCooldown", 40f, 10f, 90f, 2.5f, gamblerSpawnRate);
         gamblerSuccessRate = Create(10333, Types.Impostor, "gamblerSuccessRate", rates, gamblerSpawnRate);
+
+        grenadierSpawnRate = Create(10340, Types.Impostor, cs(Grenadier.color, "Grenadier"), rates, null, true);
+        grenadierCooldown = Create(10341, Types.Impostor, "grenadierCooldown", 25f, 0f, 45f, 0.5f, grenadierSpawnRate);
+        grenadierDuration = Create(10342, Types.Impostor, "grenadierDuration", 9f, 4f, 10f, 0.5f, grenadierSpawnRate);
+        grenadierFlashRadius = Create(10343, Types.Impostor, "grenadierFlashRadius", 1.25f, 0.25f, 5f, 0.125f, grenadierSpawnRate);
+        grenadierTeamIndicators = Create(10344, Types.Impostor, "grenadierTeamIndicators",
+            ["optionOff", "grenadierIndicators2", "grenadierIndicators3"], grenadierSpawnRate);
 
         //-------------------------- Neutral Options 20000-29999 -------------------------- //
 

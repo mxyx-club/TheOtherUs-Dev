@@ -78,6 +78,7 @@ public static class RoleClass
         EvilTrapper.clearAndReload();
         Survivor.clearAndReload();
         PartTimer.clearAndReload();
+        Grenadier.clearAndReload();
 
         // Modifier
         Assassin.clearAndReload();
@@ -210,6 +211,7 @@ public static class RoleClass
             { RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.getSelection() },
             { RoleId.Witch, CustomOptionHolder.witchSpawnRate.getSelection() },
             { RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.getSelection() },
+            { RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.getSelection() },
 
             { RoleId.Akujo, CustomOptionHolder.akujoSpawnRate.getSelection() },
             { RoleId.Amnisiac, CustomOptionHolder.amnisiacSpawnRate.getSelection() },

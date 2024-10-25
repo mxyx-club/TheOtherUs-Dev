@@ -151,6 +151,7 @@ internal class RoleManagerSelectRolesPatch
         impSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.getSelection());
         impSettings.Add((byte)RoleId.EvilTrapper, CustomOptionHolder.evilTrapperSpawnRate.getSelection());
         impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.getSelection());
+        impSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.getSelection());
 
         neutralSettings.Add((byte)RoleId.Survivor, CustomOptionHolder.survivorSpawnRate.getSelection());
         //neutralSettings.Add((byte)RoleId.Pursuer, CustomOptionHolder.pursuerSpawnRate.getSelection());

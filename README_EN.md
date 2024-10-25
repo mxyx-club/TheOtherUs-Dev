@@ -167,7 +167,7 @@ Even more roles are coming soon.
 |  Evil Trapper  |                | SecurityGuard |    Cursed     |
 | Butcher [Beta] |                |    Medium     |    Invert     |
 |    Gambler     |                |    Trapper    |     Blind     |
-|                |                |    Prophet    |    Watcher    |
+|   Grenadier    |                |    Prophet    |    Watcher    |
 |                |                |  Info Sleuth  |     Radar     |
 |                |                |               | Button Barry  |
 |                |                |               |   Chameleon   |
@@ -214,8 +214,8 @@ Thanks to miniduikboot & GD for hosting modded servers (and so much more)
 [Goose-Goose-Duck](https://store.steampowered.com/app/1568590/Goose_Goose_Duck) - Idea for the Vulture role came from **Slushiegoose**\
 [TheEpicRoles](https://github.com/LaicosVK/TheEpicRoles) - Idea for the first kill shield (partly) and the tabbed option menu (fully + some code), by **LaicosVK** **DasMonschta** **Nova**\
 [Ninja](#ninja), [Thief](#thief), [Lawyer](#lawyer) / [Pursuer](#pursuer), [Deputy](#deputy), [Portalmaker](#portalmaker), [Guesser Modifier](#guesser-modifier) - Idea: [K3ndo](https://github.com/K3ndoo) ; Developed by [Gendelo](https://github.com/gendelo3) & [Mallöris](https://github.com/Mallaris) \
-[PropHunt](https://github.com/ugackMiner53/PropHunt) - Idea and core code from ugackMiner53
-
+[PropHunt](https://github.com/ugackMiner53/PropHunt) - Idea and core code from **ugackMiner53**\
+[Cursed Among Us](https://github.com/XiezibanWrite/Cursed-Among-Us-Continued) - Idea by **Kyle Smith**, core code by [XiezibanWrite](https://github.com/XiezibanWrite/Cursed-Among-Us-Continued) and [SuperNewRoles](https://github.com/SuperNewRoles/SuperNewRoles)
 
 ## GCERROR
 If the error message "Fatal Error in GC - Collecting from unknown thread" stops you from playing the game, you can now disable the mod-updater, which causes this error.

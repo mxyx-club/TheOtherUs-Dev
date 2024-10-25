@@ -1124,7 +1124,7 @@ public static class Helpers
         Chameleon.update(); // so that morphling and camo wont make the chameleons visible
     }
 
-    public static void showFlash(Color color, float duration = 1f, string message = "")
+    public static void showFlash(Color color, float duration = 1f, string message = "", float alpha = 0.75f)
     {
         if (FastDestroyableSingleton<HudManager>.Instance == null ||
             FastDestroyableSingleton<HudManager>.Instance.FullScreen == null) return;
@@ -1144,13 +1144,11 @@ public static class Helpers
 
             if (p < 0.5)
             {
-                if (renderer != null)
-                    renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(p * 2 * 0.75f));
+                if (renderer != null) renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(p * 2 * alpha));
             }
             else
             {
-                if (renderer != null)
-                    renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01((1 - p) * 2 * 0.75f));
+                if (renderer != null) renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01((1 - p) * 2 * alpha));
             }
 
             if (p == 1f && renderer != null) renderer.enabled = false;
@@ -1181,6 +1179,28 @@ public static class Helpers
                 fullscreen.enabled = false;
             }
         }
+    }
+
+    public static Il2CppSystem.Collections.Generic.List<PlayerControl> GetClosestPlayers(Vector2 truePosition, float radius, bool includeDead)
+    {
+        Il2CppSystem.Collections.Generic.List<PlayerControl> playerControlList = new Il2CppSystem.Collections.Generic.List<PlayerControl>();
+        float lightRadius = radius * ShipStatus.Instance.MaxLightRadius;
+        Il2CppSystem.Collections.Generic.List<GameData.PlayerInfo> allPlayers = GameData.Instance.AllPlayers;
+        for (int index = 0; index < allPlayers.Count; ++index)
+        {
+            GameData.PlayerInfo playerInfo = allPlayers[index];
+            if (!playerInfo.Disconnected && (!playerInfo.Object.Data.IsDead || includeDead))
+            {
+                Vector2 vector2 = new Vector2(playerInfo.Object.GetTruePosition().x - truePosition.x, playerInfo.Object.GetTruePosition().y - truePosition.y);
+                float magnitude = ((Vector2)vector2).magnitude;
+                if (magnitude <= lightRadius)
+                {
+                    PlayerControl playerControl = playerInfo.Object;
+                    playerControlList.Add(playerControl);
+                }
+            }
+        }
+        return playerControlList;
     }
 
     public static MurderAttemptResult checkMuderAttempt(PlayerControl killer, PlayerControl target,

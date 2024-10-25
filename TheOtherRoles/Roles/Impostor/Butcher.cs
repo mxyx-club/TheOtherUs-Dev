@@ -2,7 +2,6 @@
 
 namespace TheOtherRoles.Roles.Impostor;
 
-
 public class Butcher
 {
     public static PlayerControl butcher;

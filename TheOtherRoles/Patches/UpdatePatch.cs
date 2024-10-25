@@ -118,6 +118,15 @@ internal class HudManagerUpdatePatch
             setPlayerNameColor(Mayor.mayor, Mayor.color);
         }
 
+        if (((localPlayer.isImpostor() && Grenadier.indicatorsMode > 1) || localPlayer == Grenadier.grenadier || localPlayer.IsDead())
+            && Grenadier.grenadier != null)
+        {
+            foreach (var p in Grenadier.controls)
+            {
+                if (p != localPlayer && !p.isImpostor()) setPlayerNameColor(p, Color.black);
+            }
+        }
+
         if (Jackal.jackal != null && Jackal.jackal == localPlayer)
         {
             // Jackal can see his sidekick

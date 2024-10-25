@@ -46,8 +46,7 @@ public class Bomb
                 if ((int)x != 1) return;
                 bomb.SetActive(true);
                 background.SetActive(true);
-                SoundEffectsManager.playAtPosition("bombFuseBurning", p, Terrorist.destructionTime, Terrorist.hearRange,
-                    true);
+                SoundEffectsManager.playAtPosition("bombFuseBurning", p, Terrorist.destructionTime, Terrorist.hearRange, true);
                 Terrorist.isActive = true;
 
                 FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Terrorist.destructionTime,
@@ -106,7 +105,6 @@ public class Bomb
                 GameHistory.overrideDeathReasonAndKiller(CachedPlayer.LocalPlayer, DeadPlayer.CustomDeathReason.Bomb,
                     Terrorist.terrorist);
             }
-
             SoundEffectsManager.playAtPosition("bombExplosion", position, range: Terrorist.hearRange);
         }
 

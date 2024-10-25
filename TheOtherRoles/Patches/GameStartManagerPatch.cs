@@ -80,10 +80,12 @@ public class GameStartManagerPatch
             foreach (InnerNet.ClientData client in AmongUsClient.Instance.allClients.ToArray())
             {
                 if (client.Character == null) continue;
+                var dummyComponent = client.Character.GetComponent<DummyBehaviour>();
+                if (dummyComponent != null && dummyComponent.enabled) continue;
                 else if (!playerVersions.ContainsKey(client.Id))
                 {
                     versionMismatch = true;
-                    message += $"<color=#FF0000FF>{client?.Character?.Data.PlayerName} {"differentVersionTou".Translate()}\n</color>";
+                    message += $"<color=#FF0000FF>{string.Format(getString("errorNotInstalled"), $"{client.Character.Data.PlayerName}")}\n</color>";
                 }
                 else
                 {
@@ -91,18 +93,18 @@ public class GameStartManagerPatch
                     int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
                     if (diff > 0)
                     {
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} {"oldTouVersion".Translate()} (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(getString("errorOlderVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
                         versionMismatch = true;
                     }
                     else if (diff < 0)
                     {
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} {"newTouVersion".Translate()} (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(getString("errorNewerVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
                         versionMismatch = true;
                     }
                     else if (!PV.GuidMatches())
                     {
                         // version presumably matches, check if Guid matches
-                        message += $"<color=#FF0000FF>{client.Character.Data.PlayerName} {"modifiedTouVersion".Translate()} v{playerVersions[client.Id].version} <size=30%>({PV.guid})</size>\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(getString("errorWrongVersion"), $"{client.Character.Data.PlayerName}")} v{playerVersions[client.Id].version} <size=30%>({PV.guid})</size>\n</color>";
                         versionMismatch = true;
                     }
                 }
@@ -173,12 +175,12 @@ public class GameStartManagerPatch
                         SceneChanger.ChangeScene("MainMenu");
                     }
 
-                    __instance.GameStartText.text = $"<color=#FF0000FF>{"HostNoTou".Translate()} {Math.Round(10 - kickingTimer)}s</color>";
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{string.Format(getString("errorHostNoVersion"), Math.Round(10 - kickingTimer))}</color>";
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                 }
                 else if (versionMismatch)
                 {
-                    __instance.GameStartText.text = $"<color=#FF0000FF>{"DifferentTouVersions".Translate()}\n</color>" + message;
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{getString("errorDifferentVersion")}\n</color>" + message;
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                 }
                 else
@@ -303,8 +305,7 @@ public class GameStartManagerPatch
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                     RPCProcedure.dynamicMapOption(mapId);
                 }
-
-                if (CustomOptionHolder.dynamicMap.getBool() && continueStart)
+                else if (CustomOptionHolder.dynamicMap.getBool() && continueStart)
                 {
                     // 0 = Skeld
                     // 1 = Mira HQ
