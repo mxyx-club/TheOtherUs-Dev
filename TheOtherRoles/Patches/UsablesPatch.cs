@@ -121,6 +121,15 @@ public static class JesterEnterVent
     }
 }
 
+[HarmonyPatch(typeof(ShipStatus), nameof(ShipStatus.UpdateSystem), [typeof(SystemTypes), typeof(PlayerControl), typeof(byte)])]
+internal class UpdateSystemPatch
+{
+    public static bool Prefix(ShipStatus __instance)
+    {
+        return !disableSabotage;
+    }
+}
+
 [HarmonyPatch(typeof(Vent), nameof(Vent.Use))]
 public static class VentUsePatch
 {

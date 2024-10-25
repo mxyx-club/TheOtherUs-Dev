@@ -50,6 +50,7 @@ internal class ModOption
     public static bool disableCamsRoundOne;
     public static bool isRoundOne = true;
     public static bool camoComms;
+    public static bool disableSabotage;
     public static bool fungleDisableCamoComms;
     public static bool randomGameStartPosition;
     public static bool allowModGuess;
@@ -115,6 +116,7 @@ internal class ModOption
         randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.getBool();
         allowModGuess = CustomOptionHolder.allowModGuess.getBool();
         CursedTasks = CustomOptionHolder.enableCursedTasks.getBool();
+        disableSabotage = CustomOptionHolder.disableSabotage.getBool();
         firstKillPlayer = null;
         isRoundOne = true;
         isCanceled = false;

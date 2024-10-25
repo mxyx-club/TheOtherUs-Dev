@@ -16,7 +16,7 @@ public static class Swooper
     public static bool hasImpVision;
     public static bool canUseVents;
 
-    public static ResourceSprite SwoopButton = new("Swoop.png");
+    public static ResourceSprite SwoopButtonSprite = new("Swoop.png");
 
     public static void clearAndReload()
     {

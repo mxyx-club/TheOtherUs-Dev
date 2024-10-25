@@ -390,6 +390,9 @@
         "0": "Block Dead Impostor From Sabotaging",
         "13": "伪装者死亡后不能破坏"
     },
+    "disableSabotage": {
+        "13": "禁用破坏功能"
+    },
     "randomLigherPlayer": {
         "13": "随机判断玩家深浅色\n( 不会影响角色外观)"
     },
@@ -2369,27 +2372,32 @@
         "0": "YOU ARE BLACKMAILED",
         "13": "嘘！不许说话！"
     },
-    "differentVersionTou": {
-        "0": "has a different or no version of The Other Us",
-        "13": "安装了不同版本的TheOtherUs"
+    "errorNotInstalled": {
+        "0": "{0} has a different or no version of GMIA",
+        "11": "{0} TheOtherRolesGMIAのバージョンが違うか、導入されていません!",
+        "13": "{0} 安装了不同版本的TheOtherUs"
     },
-    "oldTouVersion": {
-        "0": "has an older version of The Other Us",
-        "13": "安装了旧版本的TheOtherUs"
+    "errorOlderVersion": {
+        "0": "{0} has an older version of GMIA",
+        "11": "{0} 古いバージョンのTheOtherRolesGMIAを導入しています!",
+        "13": "{0} 安装了旧版本的TheOtherUs"
     },
-    "newTouVersion": {
-        "0": "has a newer version of The Other Us",
-        "13": "安装了较新版本的TheOtherUs"
+    "errorNewerVersion": {
+        "0": "{0} has a newer version of GMIA",
+        "11": "{0} 最新バージョンのTheOtherRolesを導入しています",
+        "13": "{0} 安装了较新版本的TheOtherUs"
     },
-    "modifiedTouVersion": {
-        "0": "has a modified version of TOU",
-        "13": "安装了修改过的TheOtherUs"
+    "errorWrongVersion": {
+        "0": "{0} has a modified version of GMIA",
+        "11": "{0} TORGMIAのバージョンが変更されています",
+        "13": "{0} 安装了修改过的TheOtherUs"
     },
-    "HostNoTou": {
-        "0": "The host has no or a different version of The Other Us\nYou will be kicked in",
-        "13": "房主没有或不同版本的TheOtherUs\n即将被踢出房间"
+    "errorHostNoVersion": {
+        "0": "The host has no or a different version of GMIA\nYou will be kicked in {0}s",
+        "11": "ホストにTORGMIAが導入されてないかバージョンが違います\n{0}秒後に自動キックされます!!",
+        "13": "房主没有或不同版本的TheOtherUs\n即将被踢出房间 {0}"
     },
-    "DifferentTouVersions": {
+    "errorDifferentVersion": {
         "0": "Players With Different Versions:",
         "13": "装了不同版本模组的玩家:"
     },

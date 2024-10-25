@@ -1929,7 +1929,7 @@ internal static class HudManagerStartPatch
                 jackalSwoopButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 Jackal.isInvisable = false;
             },
-            Swooper.SwoopButton,
+            Swooper.SwoopButtonSprite,
             ButtonPositions.upperRowLeft,
             __instance,
             secondaryAbilityInput.keyCode,
@@ -2006,7 +2006,7 @@ internal static class HudManagerStartPatch
                 swooperSwoopButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
                 Swooper.isInvisable = false;
             },
-            Swooper.SwoopButton,
+            Swooper.SwoopButtonSprite,
             ButtonPositions.upperRowLeft,
             __instance,
             abilityInput.keyCode,

@@ -378,7 +378,10 @@ public static class Helpers
     public static bool roleCanSabotage(this PlayerControl player)
     {
         var roleCouldUse = false;
-        if (Jackal.canSabotage && (player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player)))
+        if (ModOption.disableSabotage) return false;
+        if (Jackal.canSabotage && (player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player)) && !ModOption.disableSabotage)
+            roleCouldUse = true;
+        if (Pavlovsdogs.canSabotage && (player == Pavlovsdogs.pavlovsowner || Pavlovsdogs.pavlovsdogs.Any(p => p == player)) && !ModOption.disableSabotage)
             roleCouldUse = true;
         if (player.Data?.Role != null && player.Data.Role.IsImpostor)
             roleCouldUse = true;

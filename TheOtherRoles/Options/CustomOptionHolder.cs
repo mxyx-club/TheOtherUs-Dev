@@ -580,6 +580,7 @@ public class CustomOptionHolder
     public static CustomOption allowModGuess;
     public static CustomOption ghostSpeed;
     public static CustomOption finishTasksBeforeHauntingOrZoomingOut;
+    public static CustomOption disableSabotage;
     public static CustomOption camsNightVision;
     public static CustomOption camsNoNightVisionIfImpVision;
 
@@ -768,6 +769,7 @@ public class CustomOptionHolder
         blockGameEnd = Create(29, Types.General, cs(Color.yellow, "blockGameEnd"), true);
         deadImpsBlockSabotage = Create(32, Types.General, cs(Palette.ImpostorRed, "deadImpsBlockSabotage"), false);
         randomLigherPlayer = Create(34, Types.General, "randomLigherPlayer", true);
+        disableSabotage = Create(35, Types.General, cs(Palette.ImpostorRed, "disableSabotage"), false, enableMapOptions);
         allowModGuess = Create(31, Types.General, "allowModGuess", false);
         //ghostSpeed = Create(33, Types.General, "ghostSpeed", 1f, 0.75f, 5f, 0.125f);
 
