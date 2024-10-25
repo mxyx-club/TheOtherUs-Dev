@@ -48,8 +48,17 @@ jobs:
       - name: Download Reactor
         run: wget https://github.com/NuclearPowered/Reactor/releases/download/2.2.0/Reactor.dll -P ./Release/BepInEx/plugins
         
+      - name: Set Build Configuration
+        id: set-config
+        run: |
+          if [[ "${{ github.ref }}" == refs/tags/* ]]; then
+            echo "config=Release" >> $GITHUB_ENV
+          else
+            echo "config=Beta" >> $GITHUB_ENV
+          fi
+
       - name: Build
-        run: dotnet build TheOtherRoles/TheOtherRoles.csproj --configuration Release --output ./Release/BepInEx/plugins
+        run: dotnet build TheOtherRoles/TheOtherRoles.csproj --configuration ${{ env.config }} --output ./Release/BepInEx/plugins
 
       - name: Cleanup
         run: |
