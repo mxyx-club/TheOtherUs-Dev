@@ -118,8 +118,8 @@ internal class HudManagerUpdatePatch
             setPlayerNameColor(Mayor.mayor, Mayor.color);
         }
 
-        if (((localPlayer.isImpostor() && Grenadier.indicatorsMode > 1) || localPlayer == Grenadier.grenadier || localPlayer.IsDead())
-            && Grenadier.grenadier != null)
+        if (Grenadier.grenadier != null && ((localPlayer.isImpostor() && Grenadier.indicatorsMode > 1)
+            || localPlayer == Grenadier.grenadier || localPlayer.IsDead()))
         {
             foreach (var p in Grenadier.controls)
             {

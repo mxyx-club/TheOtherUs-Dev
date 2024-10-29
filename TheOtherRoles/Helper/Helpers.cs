@@ -1295,7 +1295,7 @@ public static class Helpers
         {
             _ = new LateTask(() =>
             {
-                RPCProcedure.aftermathDead(target.PlayerId, killer.PlayerId);
+                Aftermath.aftermathTrigger(target.PlayerId, killer.PlayerId);
 
             }, 0.1f);
         }

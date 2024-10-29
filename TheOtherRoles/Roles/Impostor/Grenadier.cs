@@ -1,9 +1,11 @@
 ﻿using System;
+using Hazel;
 using Il2CppSystem.Collections.Generic;
 using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Impostor;
+
 public class Grenadier
 {
     public static PlayerControl grenadier;
@@ -30,25 +32,40 @@ public class Grenadier
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>(p =>
         {
             var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
-            var fadeFraction = 0.25f / duration;
+            var fadeFraction = 0.5f / duration;
 
             if (IsMeeting)
             {
                 renderer.enabled = false;
-                controls = new();
+                if (CachedPlayer.LocalId == grenadier.PlayerId && controls.Count > 0)
+                {
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                        (byte)CustomRPC.GrenadierFlash, SendOption.Reliable);
+                    writer.Write(true);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    controls.Clear();
+                }
                 return;
             }
 
-            if (p < (float)0.25f / duration)
+            if (p < fadeFraction)
             {
-                float fadeInProgress = p / fadeFraction;
+                var fadeInProgress = p / fadeFraction;
                 if (renderer != null) renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01(fadeInProgress * alpha));
             }
-            else if (p > 1 - ((float)0.25f / duration))
+            else if (p > 1 - fadeFraction)
             {
-                float fadeOutProgress = (p - (1 - fadeFraction)) / fadeFraction;
+                var fadeOutProgress = (p - (1 - fadeFraction)) / fadeFraction;
                 if (renderer != null) renderer.color = new Color(color.r, color.g, color.b, Mathf.Clamp01((1 - fadeOutProgress) * alpha));
-                controls = new();
+
+                if (CachedPlayer.LocalId == grenadier.PlayerId && controls.Count > 0)
+                {
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                        (byte)CustomRPC.GrenadierFlash, SendOption.Reliable);
+                    writer.Write(true);
+                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    controls.Clear();
+                }
             }
             else
             {
@@ -58,7 +75,6 @@ public class Grenadier
             if (p == 1f && renderer != null) renderer.enabled = false;
         })));
     }
-
 
     public static void clearAndReload()
     {

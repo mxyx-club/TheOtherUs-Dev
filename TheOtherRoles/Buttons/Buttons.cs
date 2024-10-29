@@ -2277,9 +2277,9 @@ internal static class HudManagerStartPatch
                 /* On Use */
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.GrenadierFlash, SendOption.Reliable);
+                writer.Write(false);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.grenadierFlash();
-                grenadierFlashButton.Timer = grenadierFlashButton.MaxTimer;
+                RPCProcedure.grenadierFlash(false);
             },
             () =>
             {
