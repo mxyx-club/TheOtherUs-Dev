@@ -1983,7 +1983,7 @@ public static class RPCProcedure
         if (player == Camouflager.camouflager) Camouflager.clearAndReload();
         if (player == Poucher.poucher && !Poucher.spawnModifier) Poucher.clearAndReload();
         if (player == Vampire.vampire) Vampire.clearAndReload();
-        if (player == Eraser.eraser) Eraser.clearAndReload();
+        if (player == Eraser.eraser) Eraser.eraser = null;
         if (player == Trickster.trickster) Trickster.clearAndReload();
         if (player == Cleaner.cleaner) Cleaner.clearAndReload();
         if (player == Undertaker.undertaker) Undertaker.clearAndReload();
@@ -2963,7 +2963,7 @@ public static class RPCProcedure
             Pavlovsdogs.pavlovsdogs.Add(target);
             Pavlovsdogs.pavlovsowner = thief;
         }
-        if (target == Pavlovsdogs.pavlovsdogs.Contains(target))
+        if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))
         {
             Pavlovsdogs.pavlovsdogs.Add(thief);
         }
