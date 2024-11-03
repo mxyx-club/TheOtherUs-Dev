@@ -10,6 +10,7 @@ using Hazel;
 using Il2CppSystem.Linq;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.Buttons;
+using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -1465,6 +1466,17 @@ public static class GameOptionsNextPagePatch
             var position = (Vector3)FastDestroyableSingleton<HudManager>.Instance?.GameSettings?.transform.localPosition;
             FastDestroyableSingleton<HudManager>.Instance.GameSettings.transform.localPosition = new Vector3(position.x, 2.9f, position.z);
         }
+
+        if (Input.GetKeyDown(ModInputManager.helpInput.keyCode))
+        {
+            if (LobbyRoleInfo.RolesSummaryUI == null)
+                LobbyRoleInfo.RoleSummaryOnClick();
+            else
+            {
+                Object.Destroy(LobbyRoleInfo.RolesSummaryUI);
+                LobbyRoleInfo.RolesSummaryUI = null;
+            }
+        }
     }
 }
 
@@ -1645,15 +1657,46 @@ public class HudManagerUpdate
             toggleSettingsButtonObject = Object.Instantiate(__instance.MapButton.gameObject, __instance.MapButton.transform.parent);
             toggleSettingsButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -0.66f, -500f);
             var renderer = toggleSettingsButtonObject.GetComponent<SpriteRenderer>();
-            renderer.sprite = UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.CurrentSettingsButton.png", 180f);
+            renderer.sprite = new ResourceSprite("TheOtherRoles.Resources.CurrentSettingsButton.png", 180f);
             toggleSettingsButton = toggleSettingsButtonObject.GetComponent<PassiveButton>();
             toggleSettingsButton.OnClick.RemoveAllListeners();
             toggleSettingsButton.OnClick.AddListener((Action)(() => ToggleSettings(__instance)));
             _ = CustomButton.SetKeyGuideOnSmallButton(toggleSettingsButtonObject, ModInputManager.showOptionPageInput.keyCode);
         }
 
-
-        toggleSettingsButtonObject.SetActive(__instance.MapButton.gameObject.active && !(MapBehaviour.Instance && MapBehaviour.Instance.IsOpen) && GameOptionsManager.Instance.currentGameOptions.GameMode != GameModes.HideNSeek);
+        toggleSettingsButtonObject.SetActive(__instance.MapButton.gameObject.active && !IsHideNSeek && !(MapBehaviour.Instance && MapBehaviour.Instance.IsOpen));
         toggleSettingsButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -0.66f, -500f);
+    }
+
+    private static PassiveButton rolesSummaryButton;
+    private static GameObject rolesSummaryButtonObject;
+
+    [HarmonyPostfix]
+    public static void Postfix2(HudManager __instance)
+    {
+        if (!rolesSummaryButton || !rolesSummaryButtonObject)
+        {
+            // add a special button for settings viewing:
+            rolesSummaryButtonObject = Object.Instantiate(__instance.MapButton.gameObject, __instance.MapButton.transform.parent);
+            rolesSummaryButtonObject.transform.localPosition = __instance.MapButton.transform.localPosition + new Vector3(0, -1.31f, -500f);
+            var renderer = rolesSummaryButtonObject.GetComponent<SpriteRenderer>();
+            renderer.sprite = new ResourceSprite("TheOtherRoles.Resources.HelpButton.png", 100f);
+            rolesSummaryButton = rolesSummaryButtonObject.GetComponent<PassiveButton>();
+            rolesSummaryButton.OnClick.RemoveAllListeners();
+            rolesSummaryButton.OnClick.AddListener((Action)(() =>
+            {
+                if (LobbyRoleInfo.RolesSummaryUI == null)
+                    LobbyRoleInfo.RoleSummaryOnClick();
+                else
+                {
+                    Object.Destroy(LobbyRoleInfo.RolesSummaryUI);
+                    LobbyRoleInfo.RolesSummaryUI = null;
+                }
+            }));
+            _ = CustomButton.SetKeyGuideOnSmallButton(rolesSummaryButtonObject, ModInputManager.helpInput.keyCode);
+        }
+
+        rolesSummaryButtonObject.SetActive(__instance.MapButton.gameObject.active && !IsHideNSeek && !(MapBehaviour.Instance && MapBehaviour.Instance.IsOpen));
+        rolesSummaryButtonObject.transform.localPosition = __instance.MapButton.transform.transform.localPosition + new Vector3(0, -1.31f, -500f);
     }
 }

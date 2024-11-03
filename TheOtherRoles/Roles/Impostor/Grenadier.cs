@@ -34,7 +34,7 @@ public class Grenadier
             var renderer = FastDestroyableSingleton<HudManager>.Instance.FullScreen;
             var fadeFraction = 0.5f / duration;
 
-            if (IsMeeting)
+            if (InMeeting)
             {
                 renderer.enabled = false;
                 if (CachedPlayer.LocalId == grenadier.PlayerId && controls.Count > 0)

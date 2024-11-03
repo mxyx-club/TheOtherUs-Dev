@@ -224,7 +224,7 @@ internal class MeetingHudPatch
                 localScale.x * 1.7f,
                 localScale.x * 1.7f);
             meetingExtraButtonLabel.transform.localScale = localScale;
-            meetingExtraButtonLabel.text = cs(Mayor.color, "揭示");
+            meetingExtraButtonLabel.text = cs(Mayor.color, "揭示身份");
 
             var passiveButton = meetingExtraButton.GetComponent<PassiveButton>();
             passiveButton.OnClick.RemoveAllListeners();
@@ -238,7 +238,6 @@ internal class MeetingHudPatch
                 if ((int)p == 1) meetingExtraButton.parent.gameObject.SetActive(true);
             })));
         }
-
 
         var isGuesser = HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId);
 
@@ -273,9 +272,6 @@ internal class MeetingHudPatch
 
                 if (!Eraser.canEraseGuess && CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.PlayerControl == Eraser.eraser
                     && Eraser.alreadyErased.Contains(playerVoteArea.TargetPlayerId)) continue;
-
-                if (CachedPlayer.LocalPlayer != null && CachedPlayer.LocalPlayer.PlayerControl == Specoality.specoality
-                    && Specoality.canNoGuess != null && Specoality.canNoGuess.PlayerId == playerVoteArea.TargetPlayerId) continue;
 
                 var template = playerVoteArea.Buttons.transform.Find("CancelButton").gameObject;
                 var targetBox = Object.Instantiate(template, playerVoteArea.transform);

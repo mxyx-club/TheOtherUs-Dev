@@ -308,7 +308,7 @@ public static class PlayerControlFixedUpdatePatch
     {
         if (Detective.detective == null
             || Detective.detective != CachedPlayer.LocalPlayer.PlayerControl
-            || IsMeeting
+            || InMeeting
             || Detective.detective.IsDead()) return;
 
         Detective.timer -= Time.fixedDeltaTime;
@@ -1040,8 +1040,6 @@ public static class PlayerControlFixedUpdatePatch
             writer.Write(byte.MaxValue);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.partTimerSet(byte.MaxValue);
-
-            PartTimer.deathTurn = PartTimer.DeathDefaultTurn;
         }
     }
 
@@ -2371,7 +2369,7 @@ public static class MurderPlayerPatch
             }
         }
         // Snitch
-        if (Snitch.snitch != null && CachedPlayer.LocalPlayer.PlayerId == Snitch.snitch.PlayerId &&
+        /*if (Snitch.snitch != null && CachedPlayer.LocalPlayer.PlayerId == Snitch.snitch.PlayerId &&
             MapBehaviourPatch.herePoints.Keys.Any(x => x.PlayerId == target.PlayerId))
         {
             foreach (var a in MapBehaviourPatch.herePoints.Where(x => x.Key.PlayerId == target.PlayerId))
@@ -2379,7 +2377,7 @@ public static class MurderPlayerPatch
                 Object.Destroy(a.Value);
                 MapBehaviourPatch.herePoints.Remove(a.Key);
             }
-        }
+        }*/
         // Akujo Lovers trigger suicide
         if ((Akujo.akujo != null && target == Akujo.akujo) || (Akujo.honmei != null && target == Akujo.honmei))
         {
@@ -2602,5 +2600,13 @@ public static class GameDataHandleDisconnectPatch
     public static void Prefix(GameData __instance, PlayerControl player, DisconnectReasons reason)
     {
         if (MeetingHud.Instance) MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, player.PlayerId);
+        if (Executioner.executioner != null && Executioner.executioner == PlayerControl.LocalPlayer
+            && Executioner.target == player && !Executioner.executioner.Data.IsDead)
+        {
+            var writer = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
+                (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.executionerPromotesRole();
+        }
     }
 }

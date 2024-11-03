@@ -82,7 +82,6 @@ public static class Chameleon
             }
             catch
             {
-                Error("无法设定变色龙文本透明度");
             }
         }
     }

@@ -16,7 +16,7 @@ public class Balancer
     public static int IsAbilityUsed;
     public static int BalancerVoteTime;
 
-    public static Sprite BackSprite = new ResourceSprite("Balancer.MeetingBack.png");
+    public static Sprite BackSprite = new ResourceSprite("Balancer.MeetingBack.png", 170);
     public static Sprite iconSprite = new ResourceSprite("Balancer.icon_average.png", 225);
     public static Sprite BackObjectSprite = new ResourceSprite("Balancer.FlareEffect.png", 115);
     public static Sprite eyeBackRenderSprite = new ResourceSprite("Balancer.eye-of-horus_parts.png", 115);
@@ -229,8 +229,8 @@ public class Balancer
 
     public static PlayerControl targetplayerleft;
     public static PlayerControl targetplayerright;
-    private static readonly Vector3 leftpos = new(-2.9f, 0, -0.9f);
-    private static readonly Vector3 rightpos = new(2.3f, 0, -0.9f);
+    private static readonly Vector3 leftpos = new(-2.0f, -0.62f, -0.9f);
+    private static readonly Vector3 rightpos = new(1.4f, -0.62f, -0.9f);
     private static PlayerVoteArea leftplayerarea;
     private static PlayerVoteArea rightplayerarea;
     public static bool IsDoubleExile;

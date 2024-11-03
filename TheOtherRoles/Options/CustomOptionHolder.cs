@@ -393,7 +393,6 @@ public class CustomOptionHolder
     public static CustomOption escapistSpawnRate;
     public static CustomOption escapistEscapeTime;
     public static CustomOption escapistResetPlaceAfterMeeting;
-    public static CustomOption escapistMaxCharges;
 
     public static CustomOption werewolfSpawnRate;
     public static CustomOption werewolfRampageCooldown;
@@ -848,15 +847,6 @@ public class CustomOptionHolder
 
         //-------------------------- Impostor Options 10000-19999 -------------------------- //
 
-        modifierAssassin = Create(10000, Types.Impostor, cs(Assassin.color, "modifierAssassin"), rates, null, true);
-        modifierAssassinQuantity = Create(10001, Types.Impostor, "modifierAssassinQuantity", ratesCount, modifierAssassin);
-        modifierAssassinNumberOfShots = Create(10002, Types.Impostor, "modifierAssassinNumberOfShots", 3f, 1f, 15f, 1f, modifierAssassin);
-        modifierAssassinMultipleShotsPerMeeting = Create(10003, Types.Impostor, "modifierAssassinMultipleShotsPerMeeting", true, modifierAssassin);
-        guesserEvilCanKillSpy = Create(10004, Types.Impostor, "guesserEvilCanKillSpy", true, modifierAssassin);
-        guesserEvilCanKillCrewmate = Create(10005, Types.Impostor, "guesserEvilCanKillCrewmate", true, modifierAssassin);
-        guesserCantGuessSnitchIfTaksDone = Create(10006, Types.Impostor, "guesserCantGuessSnitchIfTaksDone", true, modifierAssassin);
-        modifierAssassinKillsThroughShield = Create(10007, Types.Impostor, "modifierAssassinKillsThroughShield", false, modifierAssassin);
-
         morphlingSpawnRate = Create(10110, Types.Impostor, cs(Morphling.color, "Morphling"), rates, null, true);
         morphlingCooldown = Create(10111, Types.Impostor, "morphlingCooldown", 15f, 10f, 60f, 2.5f, morphlingSpawnRate);
         morphlingDuration = Create(10112, Types.Impostor, "morphlingDuration", 15f, 1f, 20f, 0.5f, morphlingSpawnRate);
@@ -901,7 +891,6 @@ public class CustomOptionHolder
 
         escapistSpawnRate = Create(10180, Types.Impostor, cs(Escapist.color, "Escapist"), rates, null, true);
         escapistEscapeTime = Create(10181, Types.Impostor, "escapistEscapeTime", 15f, 0f, 60f, 2.5f, escapistSpawnRate);
-        escapistMaxCharges = Create(10185, Types.Impostor, "escapistMaxCharges", 3, 1, 10, 1, escapistSpawnRate);
         escapistResetPlaceAfterMeeting = Create(10183, Types.Impostor, "escapistResetPlaceAfterMeeting", false, escapistSpawnRate);
 
         tricksterSpawnRate = Create(10200, Types.Impostor, cs(Trickster.color, "Trickster"), rates, null, true);
@@ -1147,8 +1136,8 @@ public class CustomOptionHolder
         mayorMeetingButton = Create(30113, Types.Crewmate, "mayorMeetingButton", true, mayorSpawnRate);
         mayorMaxRemoteMeetings = Create(30114, Types.Crewmate, "mayorMaxRemoteMeetings", 1f, 1f, 5f, 1f, mayorMeetingButton);
         mayorSabotageRemoteMeetings = Create(30115, Types.Crewmate, "mayorSabotageRemoteMeetings", false, mayorMeetingButton);
-        mayorVote = Create(30117, Types.Crewmate, "mayorVote", 2, 1, 4, 1, mayorMeetingButton);
-        mayorRevealVision = Create(30116, Types.Crewmate, "mayorRevealVision", ["-20%", "-30%", "-40%", "-50%"], mayorMeetingButton);
+        mayorVote = Create(30117, Types.Crewmate, "mayorVote", 2, 1, 4, 1, mayorSpawnRate);
+        mayorRevealVision = Create(30116, Types.Crewmate, "mayorRevealVision", ["-20%", "-30%", "-40%", "-50%"], mayorSpawnRate);
 
         prosecutorSpawnRate = Create(30370, Types.Crewmate, cs(Prosecutor.color, "Prosecutor"), rates, null, true);
         prosecutorCanSeeVoteColors = Create(30111, Types.Crewmate, "mayorCanSeeVoteColors", true, prosecutorSpawnRate);
@@ -1305,6 +1294,17 @@ public class CustomOptionHolder
         modifierLoverImpLoverRate = Create(40161, Types.Modifier, "modifierLoverImpLoverRate", rates, modifierLover);
         modifierLoverBothDie = Create(40162, Types.Modifier, "modifierLoverBothDie", true, modifierLover);
         modifierLoverEnableChat = Create(40163, Types.Modifier, "modifierLoverEnableChat", true, modifierLover);
+
+        modifierAssassin = Create(10000, Types.Modifier, cs(Assassin.color, "modifierAssassin"), rates, null, true);
+        modifierAssassinQuantity = Create(10001, Types.Modifier, "modifierAssassinQuantity", ratesCount, modifierAssassin);
+        modifierAssassinNumberOfShots = Create(10002, Types.Modifier, "modifierAssassinNumberOfShots", 3f, 1f, 15f, 1f, modifierAssassin);
+        modifierAssassinMultipleShotsPerMeeting = Create(10003, Types.Modifier, "modifierAssassinMultipleShotsPerMeeting", true, modifierAssassin);
+        guesserEvilCanKillSpy = Create(10004, Types.Modifier, "guesserEvilCanKillSpy", true, modifierAssassin);
+        guesserEvilCanKillCrewmate = Create(10005, Types.Modifier, "guesserEvilCanKillCrewmate", true, modifierAssassin);
+        guesserCantGuessSnitchIfTaksDone = Create(10006, Types.Modifier, "guesserCantGuessSnitchIfTaksDone", true, modifierAssassin);
+        modifierAssassinKillsThroughShield = Create(10007, Types.Modifier, "modifierAssassinKillsThroughShield", false, modifierAssassin);
+
+        modifierSpecoality = Create(40350, Types.Modifier, cs(Palette.ImpostorRed, "Specoality"), rates, null, true);
 
         modifierDisperser = Create(40100, Types.Modifier, cs(Palette.ImpostorRed, "Disperser"), rates, null, true);
         //modifierDisperserRemainingDisperses = CustomOption.Create(40102, Types.Modifier, "分散次数", 1f,1f,5f,1f, modifierDisperser);

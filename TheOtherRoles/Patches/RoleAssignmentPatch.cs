@@ -808,7 +808,7 @@ internal class RoleManagerSelectRolesPatch
         if (modifiers.Contains(RoleId.Cursed))
         {
             playerId = setModifierToRandomPlayer((byte)RoleId.Cursed, crewPlayer);
-            crewPlayer.RemoveAll(x => x.PlayerId == playerId);
+            if (!Cursed.hideModifier) crewPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
             modifiers.RemoveAll(x => x == RoleId.Cursed);
         }
@@ -828,6 +828,7 @@ internal class RoleManagerSelectRolesPatch
             var WatcherPlayer = new List<PlayerControl>(playerList);
             WatcherPlayer.RemoveAll(x => x.Data.Role.IsImpostor || x == Prosecutor.prosecutor);
             playerId = setModifierToRandomPlayer((byte)RoleId.Watcher, WatcherPlayer);
+            crewPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
             modifiers.RemoveAll(x => x == RoleId.Watcher);
         }
@@ -869,6 +870,7 @@ internal class RoleManagerSelectRolesPatch
 
             modifiers.RemoveAll(x => x == RoleId.Sunglasses);
         }
+
         if (modifiers.Contains(RoleId.Aftermath))
         {
             playerId = setModifierToRandomPlayer((byte)RoleId.Aftermath, noImpPlayer);

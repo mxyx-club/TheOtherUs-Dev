@@ -14,6 +14,7 @@ namespace TheOtherRoles.Helper;
 
 public static class UnityHelper
 {
+    public static Dictionary<string, Sprite> CachedSprites = new();
     public static IRegionInfo CurrentServer => FastDestroyableSingleton<ServerManager>.Instance.CurrentRegion;
     public static bool IsCustomServer => CurrentServer.TranslateName
         is StringNames.NoTranslation || CurrentServer.TranslateName != StringNames.ServerAS && CurrentServer.TranslateName != StringNames.ServerEU && CurrentServer.TranslateName != StringNames.ServerNA;

@@ -23,7 +23,7 @@ public static class LobbyRoleInfo
             if (!LobbyBehaviour.Instance || AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started) return;
             try
             {
-                if (HudManagerStartPatch.roleSummaryButton == null) HudManagerStartPatch.createRoleSummaryButton(__instance);
+                //if (HudManagerStartPatch.roleSummaryButton == null) HudManagerStartPatch.createRoleSummaryButton(__instance);
                 if (HudManagerStartPatch.roleSummaryButton.Timer > 0f) HudManagerStartPatch.roleSummaryButton.Timer = 0f;
                 HudManagerStartPatch.roleSummaryButton.Update();
             }

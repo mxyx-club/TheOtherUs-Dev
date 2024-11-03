@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
+using Reactor.Utilities;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -358,6 +359,7 @@ public static class Guesser
                         AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                         RPCProcedure.shieldedMurderAttempt(0);
                         SoundEffectsManager.play("fail");
+                        RPCProcedure.seedGuessChat(CachedPlayer.LocalPlayer.PlayerControl, dyingTarget, (byte)roleInfo.roleId);
                         return;
                     }
 
@@ -369,6 +371,27 @@ public static class Guesser
                         {
                             dyingTarget = focusedTarget;
                             continue;
+                        }
+                    }
+
+                    if (Specoality.specoality != null && CachedPlayer.LocalPlayer.PlayerControl == Specoality.specoality && Specoality.linearfunction > 0)
+                    {
+                        if (Specoality.specoality.IsAlive() && focusedTarget != dyingTarget)
+                        {
+                            if (guesserUI != null) guesserUIExitButton.OnClick.Invoke();
+
+                            Coroutines.Start(showFlashCoroutine(Color.red, 0.75f, 0.4f));
+                            Specoality.linearfunction--;
+                            RPCProcedure.seedGuessChat(CachedPlayer.LocalPlayer.PlayerControl, dyingTarget, (byte)roleInfo.roleId);
+                            __instance.playerStates.ForEach(x =>
+                            {
+                                if (x.TargetPlayerId == focusedTarget.PlayerId && x.transform.FindChild("ShootButton") != null)
+                                {
+                                    Message("清除按钮");
+                                    Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
+                                }
+                            });
+                            return;
                         }
                     }
 

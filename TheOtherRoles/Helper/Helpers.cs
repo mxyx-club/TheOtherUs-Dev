@@ -70,14 +70,12 @@ public enum LogLevel
 
 public static class Helpers
 {
-    public static Dictionary<string, Sprite> CachedSprites = new();
-
     public static bool zoomOutStatus;
 
     public static bool InGame => AmongUsClient.Instance != null && AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
     public static bool IsCountDown => GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
-    public static bool IsMeeting => InGame && MeetingHud.Instance;
-
+    public static bool InMeeting => InGame && MeetingHud.Instance;
+    public static bool IsHideNSeek => GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
     public static bool isSkeld => GameOptionsManager.Instance.CurrentGameOptions.MapId == 0;
     public static bool isMira => GameOptionsManager.Instance.CurrentGameOptions.MapId == 1;
     public static bool isPolus => GameOptionsManager.Instance.CurrentGameOptions.MapId == 2;
@@ -85,7 +83,10 @@ public static class Helpers
     public static bool isAirship => GameOptionsManager.Instance.CurrentGameOptions.MapId == 4;
     public static bool isFungle => GameOptionsManager.Instance.CurrentGameOptions.MapId == 5;
 
+    public static readonly System.Random rnd = new((int)DateTime.Now.Ticks);
+
     public static PlayerControl GetHostPlayer => GameData.Instance.GetHost().Object;
+    public static bool isUsingTransportation(this PlayerControl pc) => pc.inMovingPlat || pc.onLadder;
 
 
     /// <summary>
@@ -343,7 +344,7 @@ public static class Helpers
 
     public static void NoCheckStartMeeting(this PlayerControl reporter, GameData.PlayerInfo target, bool force = false)
     {
-        if (IsMeeting) return;
+        if (InMeeting) return;
 
         handleVampireBiteOnBodyReport();
         handleBomberExplodeOnBodyReport();
@@ -1358,9 +1359,9 @@ public static class Helpers
             return MurderAttemptResult.SuppressKill;
         }
 
-        if (TransportationToolPatches.isUsingTransportation(target) && !blockRewind && killer == Vampire.vampire)
+        if (target.isUsingTransportation() && !blockRewind && killer == Vampire.vampire)
             return MurderAttemptResult.DelayVampireKill;
-        if (TransportationToolPatches.isUsingTransportation(target))
+        if (target.isUsingTransportation())
             return MurderAttemptResult.SuppressKill;
         return MurderAttemptResult.PerformKill;
     }
@@ -1402,11 +1403,10 @@ public static class Helpers
         {
             HudManager.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>(p =>
             {
-                if (!TransportationToolPatches.isUsingTransportation(target) && Vampire.bitten != null)
+                if (!target.isUsingTransportation() && Vampire.bitten != null)
                 {
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(
-                        CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.VampireSetBitten,
-                        SendOption.Reliable);
+                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                        (byte)CustomRPC.VampireSetBitten, SendOption.Reliable);
                     writer.Write(byte.MaxValue);
                     writer.Write(byte.MaxValue);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -1421,7 +1421,7 @@ public static class Helpers
             // Kill the Killer
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
-            writer.Write(killer.PlayerId);
+            writer.Write(BodyGuard.bodyguard.PlayerId);
             writer.Write(killer.PlayerId);
             writer.Write(showAnimation ? byte.MaxValue : 0);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
@@ -1430,12 +1430,11 @@ public static class Helpers
             // Kill the BodyGuard
             var writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
-            writer2.Write(BodyGuard.bodyguard.PlayerId);
+            writer2.Write(killer.PlayerId);
             writer2.Write(BodyGuard.bodyguard.PlayerId);
             writer2.Write(showAnimation ? byte.MaxValue : 0);
             AmongUsClient.Instance.FinishRpcImmediately(writer2);
             RPCProcedure.uncheckedMurderPlayer(BodyGuard.bodyguard.PlayerId, BodyGuard.bodyguard.PlayerId, 0);
-
 
             var writer3 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.ShowBodyGuardFlash, SendOption.Reliable);
@@ -1482,20 +1481,19 @@ public static class Helpers
         Camera.main.orthographicSize = orthographicSize;
         foreach (var cam in Camera.allCameras)
             if (cam != null && cam.gameObject.name == "UI Camera")
-                cam.orthographicSize =
-                    orthographicSize; // The UI is scaled too, else we cant click the buttons. Downside: map is super small.
+                cam.orthographicSize = orthographicSize;
+        // The UI is scaled too, else we cant click the buttons. Downside: map is super small.
 
         if (HudManagerStartPatch.zoomOutButton != null)
         {
             HudManagerStartPatch.zoomOutButton.Sprite = zoomOutStatus
-                ? UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.PlusButton.png", 60f)
-                : UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 150f);
-            HudManagerStartPatch.zoomOutButton.PositionOffset =
-                zoomOutStatus ? new Vector3(0f, 3f, 0) : new Vector3(0.4f, 2.8f, 0);
+                ? new ResourceSprite("TheOtherRoles.Resources.ZoomIn.png", 21f)
+                : new ResourceSprite("TheOtherRoles.Resources.ZoomOut.png", 85f);
+            HudManagerStartPatch.zoomOutButton.PositionOffset = zoomOutStatus ? new Vector3(-0.82f, 11.5f, 0) : new(0.4f, 2.35f, 0f);
         }
 
-        ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height,
-            Screen.fullScreen); // This will move button positions to the correct position.
+        // This will move button positions to the correct position.
+        ResolutionManager.ResolutionChanged.Invoke((float)Screen.width / Screen.height, Screen.width, Screen.height, Screen.fullScreen);
     }
 
     private static long GetBuiltInTicks()

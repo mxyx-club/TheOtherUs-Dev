@@ -421,8 +421,22 @@ internal static class HudManagerStartPatch
         targetDisplay.gameObject.SetActive(true);
     }
 
-    public static void createRoleSummaryButton(HudManager __instance)
+    public static void Postfix(HudManager __instance)
     {
+        initialized = false;
+
+        try
+        {
+            createButtonsPostfix(__instance);
+        }
+        catch { }
+    }
+
+    public static void createButtonsPostfix(HudManager __instance)
+    {
+        // get map id, or raise error to wait...
+        var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
+
         roleSummaryButton = new CustomButton(
         () =>
         {
@@ -445,29 +459,32 @@ internal static class HudManagerStartPatch
             return true;
         },
         () => { },
-        UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.HelpButton.png", 150f),
+        new ResourceSprite("TheOtherRoles.Resources.HelpButton.png", 85f),
         new Vector3(0.4f, 3f, 0),
         __instance,
         null
         );
-    }
 
-    public static void Postfix(HudManager __instance)
-    {
-        initialized = false;
-
-        try
+        zoomOutButton = new CustomButton(
+            () => { toggleZoom(); },
+            () =>
+            {
+                if (!PlayerControl.LocalPlayer.IsDead() || CachedPlayer.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.getBool()) return false;
+                var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
+                var numberOfLeftTasks = playerTotal - playerCompleted;
+                return numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool();
+            },
+            () => { return true; },
+            () => { },
+            UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.ZoomOut.png", 85f), // Invisible button!
+            new Vector3(0.4f, 2.35f, 0f),
+            __instance,
+            KeyCode.KeypadPlus
+        )
         {
-            createButtonsPostfix(__instance);
-        }
-        catch { }
-    }
+            Timer = 0f
+        };
 
-    public static void createButtonsPostfix(HudManager __instance)
-    {
-        // get map id, or raise error to wait...
-        var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
-        createRoleSummaryButton(__instance);
         // Engineer Repair
         engineerRepairButton = new CustomButton(
             () =>
@@ -1595,7 +1612,8 @@ internal static class HudManagerStartPatch
             modKillInput.keyCode,
             false,
             0f,
-            () => { vampireKillButton.Timer = vampireKillButton.MaxTimer; }
+            () => { vampireKillButton.Timer = vampireKillButton.MaxTimer; },
+            buttonText: "VampireText".Translate()
         );
 
         garlicButton = new CustomButton(
@@ -1770,7 +1788,7 @@ internal static class HudManagerStartPatch
             Portalmaker.usePortalButtonSprite,
             new Vector3(1f, 0f, 0),
             __instance,
-            KeyCode.H,
+            null,
             true,
             buttonText: getString("usePortalText")
         );
@@ -1825,7 +1843,7 @@ internal static class HudManagerStartPatch
             Portalmaker.usePortalButtonSprite,
             new Vector3(1f, 1f, 0),
             __instance,
-            KeyCode.J,
+            null,
             true
         );
 
@@ -3452,7 +3470,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                showTargetNameOnButton(null, arsonistButton, getString("WitchText"));
+                showTargetNameOnButton(null, witchSpellButton, getString("WitchText"));
                 witchSpellButton.Timer = witchSpellButton.MaxTimer;
                 witchSpellButton.isEffectActive = false;
                 Witch.spellCastingTarget = null;
@@ -3726,10 +3744,9 @@ internal static class HudManagerStartPatch
                 ninjaButton.Sprite = Ninja.ninjaMarked != null
                     ? Ninja.killButtonSprite
                     : Ninja.markButtonSprite;
-                return (Ninja.currentTarget != null || Ninja.ninjaMarked != null &&
-                                                        !TransportationToolPatches.isUsingTransportation(
-                                                            Ninja.ninjaMarked)) && CachedPlayer.LocalPlayer
-                    .PlayerControl.CanMove;
+                return (Ninja.currentTarget != null || Ninja.ninjaMarked != null
+                        && !Ninja.ninjaMarked.isUsingTransportation())
+                        && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () =>
             {
@@ -4058,7 +4075,7 @@ internal static class HudManagerStartPatch
             Yoyo.blinkDuration,
             () =>
             {
-                if (TransportationToolPatches.isUsingTransportation(Yoyo.yoyo))
+                if (Yoyo.yoyo.isUsingTransportation())
                 {
                     yoyoButton.Timer = 0.5f;
                     yoyoButton.DeputyTimer = 0.5f;
@@ -4132,28 +4149,6 @@ internal static class HudManagerStartPatch
            GameOptionsManager.Instance.currentNormalGameOptions.MapId == 3,
            "AdminMapText".Translate()
        );
-
-
-
-        zoomOutButton = new CustomButton(
-            () => { toggleZoom(); },
-            () =>
-            {
-                if (CachedPlayer.LocalPlayer.PlayerControl == null || !CachedPlayer.LocalPlayer.Data.IsDead || CachedPlayer.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.getBool()) return false;
-                var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
-                var numberOfLeftTasks = playerTotal - playerCompleted;
-                return numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool();
-            },
-            () => { return true; },
-            () => { },
-            UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.MinusButton.png", 180f), // Invisible button!
-            new Vector3(0.4f, 2.8f, 0),
-            __instance,
-            KeyCode.KeypadPlus
-        )
-        {
-            Timer = 0f
-        };
 
         hunterLighterButton = new CustomButton(
             () =>

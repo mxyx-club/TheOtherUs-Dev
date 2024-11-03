@@ -13,11 +13,6 @@ public static class TransportationToolPatches
      * Zipline can also break camo, fix that one too.
      */
 
-    public static bool isUsingTransportation(PlayerControl pc)
-    {
-        return pc.inMovingPlat || pc.onLadder;
-    }
-
     // Zipline:
     [HarmonyPrefix]
     [HarmonyPatch(typeof(ZiplineBehaviour), nameof(ZiplineBehaviour.Use), typeof(PlayerControl), typeof(bool))]
@@ -34,8 +29,7 @@ public static class TransportationToolPatches
         __instance.StartCoroutine(Effects.Lerp(fromTop ? __instance.downTravelTime : __instance.upTravelTime,
             new Action<float>(p =>
             {
-                HandZiplinePoolable hand;
-                __instance.playerIdHands.TryGetValue(player.PlayerId, out hand);
+                __instance.playerIdHands.TryGetValue(player.PlayerId, out var hand);
                 if (hand != null)
                 {
                     if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive())

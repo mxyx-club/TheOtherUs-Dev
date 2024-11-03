@@ -17,6 +17,7 @@ public class ModInputManager
     public static ModInput modifierAbilityInput;
     public static ModInput modKillInput;
     public static ModInput showOptionPageInput;
+    public static ModInput helpInput;
     public static ModInput toggleChat;
     public static ModInput metaControlInput;
     public static ModInput endGameInput;
@@ -133,6 +134,7 @@ public class ModInputManager
         modifierAbilityInput = new ModInput("modifierAbility", KeyCode.Z);
         modKillInput = new ModInput("kill", KeyCode.Q);
         showOptionPageInput = new ModInput("showOptionPage", KeyCode.F1);
+        helpInput = new ModInput("help", KeyCode.H);
         toggleChat = new ModInput("toggleChat", KeyCode.F2);
         screenResolution = new ModInput("screenResolution", KeyCode.F11);
         metaControlInput = new ModInput("metaControl", KeyCode.LeftControl);

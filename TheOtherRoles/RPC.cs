@@ -137,7 +137,7 @@ public enum RoleId
 public enum CustomRPC
 {
     // Main Controls
-    ResetVaribles = 60,
+    ResetVaribles = 80,
     ShareOptions,
     WorkaroundSetRoles,
     SetRole,
@@ -150,7 +150,7 @@ public enum CustomRPC
     DynamicMapOption,
     SetGameStarting,
     StopStart,
-    ShareGameMode = 75,
+    ShareGameMode = 95,
 
     // Role functionality
     EngineerFixLights = 100,
@@ -1773,6 +1773,7 @@ public static class RPCProcedure
         PlayerControl target = playerById(targetId);
         if (target == null) return;
         PartTimer.target = target;
+        PartTimer.deathTurn = PartTimer.DeathDefaultTurn;
     }
 
     public static void prophetExamine(byte targetId)
@@ -2024,6 +2025,7 @@ public static class RPCProcedure
         if (player == Doomsayer.doomsayer) Doomsayer.clearAndReload();
         if (player == Akujo.akujo) Akujo.clearAndReload();
         if (player == PartTimer.partTimer) PartTimer.clearAndReload();
+        if (player == Specoality.specoality) Specoality.clearAndReload();
 
         if (Pavlovsdogs.pavlovsdogs.Any(x => x.PlayerId == player.PlayerId))
             Pavlovsdogs.pavlovsdogs.RemoveAll(x => x.PlayerId == player.PlayerId);
@@ -2060,7 +2062,6 @@ public static class RPCProcedure
             if (player == Poucher.poucher && Poucher.spawnModifier) Poucher.clearAndReload();
             if (player == ButtonBarry.buttonBarry) ButtonBarry.clearAndReload();
             if (player == Disperser.disperser) Disperser.clearAndReload();
-            if (player == Specoality.specoality) Specoality.clearAndReload();
             if (player == Indomitable.indomitable) Indomitable.clearAndReload();
             if (player == Tunneler.tunneler) Tunneler.clearAndReload();
             if (player == Slueth.slueth) Slueth.clearAndReload();
@@ -2533,7 +2534,7 @@ public static class RPCProcedure
         Trickster.lightsOutTimer = Trickster.lightsOutDuration;
         // If the local player is impostor indicate lights out
         if (hasImpVision(GameData.Instance.GetPlayerById(CachedPlayer.LocalPlayer.PlayerId)))
-            new CustomMessage("Lights are out", Trickster.lightsOutDuration);
+            _ = new CustomMessage("TricksterLightsOut", Trickster.lightsOutDuration);
     }
 
     public static void placeCamera(byte[] buff)
@@ -2708,23 +2709,6 @@ public static class RPCProcedure
             }
             else
             {
-                seedGuessChat(guesser, guessedTarget, guessedRoleId);
-                return;
-            }
-        }
-
-        if (Specoality.specoality != null && Specoality.specoality == guesser && Specoality.linearfunction > 0)
-        {
-            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
-            if (!Specoality.specoality.Data.IsDead && guessedTargetId == dyingTargetId)
-            {
-                if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-            else
-            {
-                if (CachedPlayer.LocalPlayer.PlayerControl == Specoality.specoality) showFlash(Color.red, 0.75f, "");
-                Specoality.canNoGuess = dyingTarget;
-                Specoality.linearfunction--;
                 seedGuessChat(guesser, guessedTarget, guessedRoleId);
                 return;
             }
@@ -3255,7 +3239,7 @@ internal class RPCHandlerPatch
         if (!RpcNames!.ContainsKey(packetId))
             return true;
 
-        if (DebugMode && callId != 75) Info($"接收 PlayerControl CustomRpc RpcId{callId} Rpc {RpcNames?[(CustomRPC)callId] ?? nameof(packetId)} Message Size {reader.Length}");
+        if (DebugMode && callId != 95) Info($"接收 PlayerControl CustomRpc RpcId{callId} Rpc {RpcNames?[(CustomRPC)callId] ?? nameof(packetId)} Message Size {reader.Length}");
         switch (packetId)
         {
             // Main Controls

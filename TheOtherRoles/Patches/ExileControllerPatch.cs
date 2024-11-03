@@ -100,8 +100,6 @@ internal class ExileControllerBeginPatch
 
         if (Doomsayer.doomsayer != null && AmongUsClient.Instance.AmHost && !Doomsayer.canGuess) Doomsayer.canGuess = true;
 
-        if (Specoality.specoality != null && Specoality.canNoGuess != null) Specoality.canNoGuess = null;
-
         if (Butcher.butcher != null)
         {
             Butcher.dissected = null;

@@ -88,7 +88,7 @@ public static class ChatCommands
                 // 强制紧急会议或结束会议
                 else if (chat.StartsWith("/meeting") || chat.StartsWith("/mt"))
                 {
-                    if (IsMeeting) MeetingHud.Instance.RpcClose();
+                    if (InMeeting) MeetingHud.Instance.RpcClose();
                     else CachedPlayer.LocalPlayer.PlayerControl.NoCheckStartMeeting(null, true);
                     handled = true;
                 }
