@@ -97,7 +97,7 @@ public class ModUpdater(IntPtr ptr) : MonoBehaviour(ptr)
         var asset = release.Assets.Find(FilterPluginAsset);
         var www = new UnityWebRequest();
         www.SetMethod(UnityWebRequest.UnityWebRequestMethod.Get);
-        www.SetUrl(asset.DownloadUrl);
+        www.SetUrl(asset.DownloadUrl.GithubUrl());
         www.downloadHandler = new DownloadHandlerBuffer();
         var operation = www.SendWebRequest();
 

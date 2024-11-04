@@ -370,16 +370,15 @@ internal class MeetingHudPatch
 
             return true;
         }
-        private static Dictionary<byte, int> CalculateVotes(MeetingHud __instance)
+        private static Dictionary<byte, float> CalculateVotes(MeetingHud __instance)
         {
-            var dictionary = new Dictionary<byte, int>();
+            var dictionary = new Dictionary<byte, float>();
 
             foreach (var playerVoteArea in __instance.playerStates)
             {
                 if (playerVoteArea.VotedFor is 252 or 255 or 254) continue;
                 var player = playerById(playerVoteArea.TargetPlayerId);
-                if (player == null || player.Data == null || player.Data.IsDead ||
-                    player.Data.Disconnected) continue;
+                if (player == null || player.Data == null || player.Data.IsDead || player.Data.Disconnected) continue;
 
                 if (InfoSleuth.infoSleuth != null && playerVoteArea.TargetPlayerId == InfoSleuth.infoSleuth.PlayerId)
                 {
@@ -390,12 +389,15 @@ internal class MeetingHudPatch
                     RPCProcedure.infoSleuthTarget(playerVoteArea.VotedFor);
                 }
 
-                var additionalVotes = 1;
+                float additionalVotes = 1;
                 if (Prosecutor.prosecutor != null && Prosecutor.prosecutor.PlayerId == playerVoteArea.TargetPlayerId)
                     additionalVotes = Prosecutor.ProsecuteThisMeeting ? 15 : 1;
 
                 if (Mayor.mayor != null && Mayor.mayor.PlayerId == playerVoteArea.TargetPlayerId)
                     additionalVotes = Mayor.Revealed ? Mayor.Vote : 1;
+
+                if (Tiebreaker.tiebreaker != null && Tiebreaker.tiebreaker.PlayerId == playerVoteArea.TargetPlayerId)
+                    additionalVotes = 1.5f;
 
                 if (Prosecutor.prosecutor != null && Prosecutor.ProsecuteThisMeeting && Prosecutor.prosecutor.PlayerId != playerVoteArea.TargetPlayerId)
                     additionalVotes = 0;
@@ -443,28 +445,6 @@ internal class MeetingHudPatch
             //var max = self.MaxPair(out var tie);
             var exiled = CachedPlayer.LocalPlayer.Data;
             bool tie = false;
-            bool tiebreakerHandled = false;
-            // TieBreaker 
-            var potentialExiled = new List<GameData.PlayerInfo>();
-            var skipIsTie = false;
-            if (self.Count > 0 && !Prosecutor.ProsecuteThisMeeting) // 阻止破平者在检察官会议中生效
-            {
-                Tiebreaker.isTiebreak = false;
-                var maxVoteValue = self.Values.Max();
-                PlayerVoteArea tb = null;
-                if (Tiebreaker.tiebreaker != null)
-                    tb = __instance.playerStates.ToArray().FirstOrDefault(x => x.TargetPlayerId == Tiebreaker.tiebreaker.PlayerId);
-
-                var isTiebreakerSkip = tb == null || tb.VotedFor == 253 || (tb != null && tb.AmDead);
-
-                foreach (var pair in self.Where(pair => pair.Value == maxVoteValue && !isTiebreakerSkip))
-                {
-                    if (pair.Key != 253)
-                        potentialExiled.Add(GameData.Instance.AllPlayers.ToArray().FirstOrDefault(x => x.PlayerId == pair.Key));
-                    else
-                        skipIsTie = true;
-                }
-            }
 
             VoterState[] states;
             List<VoterState> statesList = new();
@@ -487,8 +467,8 @@ internal class MeetingHudPatch
                     VoterId = playerVoteArea.TargetPlayerId,
                     VotedForId = playerVoteArea.VotedFor
                 });
-
-                if (Tiebreaker.tiebreaker == null || playerVoteArea.TargetPlayerId != Tiebreaker.tiebreaker.PlayerId)
+                /*
+                if (Tiebreaker.tiebreaker == null || Balancer.currentAbilityUser != null || playerVoteArea.TargetPlayerId != Tiebreaker.tiebreaker.PlayerId)
                     continue;
 
                 var tiebreakerVote = playerVoteArea.VotedFor;
@@ -506,28 +486,25 @@ internal class MeetingHudPatch
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.SetTiebreak, SendOption.Reliable);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.setTiebreak();
+                RPCProcedure.setTiebreak();*/
             }
 
             states = statesList.ToArray();
-            if (!tiebreakerHandled)
+            var VotingData = CalculateVotes(__instance);
+            byte exileId = byte.MaxValue;
+            float max1 = 0;
+            foreach (var data in VotingData)
             {
-                var VotingData = CalculateVotes(__instance);
-                byte exileId = byte.MaxValue;
-                int max1 = 0;
-                foreach (var data in VotingData)
+                if (data.Value > max1)
                 {
-                    if (data.Value > max1)
-                    {
-                        exileId = data.Key;
-                        max1 = data.Value;
-                        tie = false;
-                    }
-                    else if (data.Value == max1)
-                    {
-                        exileId = byte.MaxValue;
-                        tie = true;
-                    }
+                    exileId = data.Key;
+                    max1 = data.Value;
+                    tie = false;
+                }
+                else if (data.Value == max1)
+                {
+                    exileId = byte.MaxValue;
+                    tie = true;
                 }
 
                 exiled = GameData.Instance.AllPlayers.FirstOrDefault(info => !tie && info.PlayerId == exileId);

@@ -227,7 +227,6 @@ public enum CustomRPC
     Bloody,
     SetFirstKill,
     SetMeetingChatOverlay,
-    SetTiebreak,
     SetInvisibleGen,
     SetSwoop,
     SetJackalSwoop,
@@ -2917,11 +2916,6 @@ public static class RPCProcedure
         }
     }
 
-    public static void setTiebreak()
-    {
-        Tiebreaker.isTiebreak = true;
-    }
-
     public static void thiefStealsRole(byte playerId)
     {
         var target = playerById(playerId);
@@ -3589,10 +3583,6 @@ internal class RPCHandlerPatch
                 var targetPlayerId = reader.ReadByte();
                 var localPlayerId = reader.ReadByte();
                 RPCProcedure.setChatNotificationOverlay(localPlayerId, targetPlayerId);
-                break;
-
-            case CustomRPC.SetTiebreak:
-                RPCProcedure.setTiebreak();
                 break;
 
             case CustomRPC.ShowBodyGuardFlash:

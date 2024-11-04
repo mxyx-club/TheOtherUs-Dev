@@ -2036,7 +2036,7 @@ public class ReportDeadBodyPatch
     }
 }
 
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
 internal class PlayerControlCmdReportDeadBodyPatch
 {
     public static bool Prefix(PlayerControl __instance)

@@ -122,8 +122,8 @@ ugackMiner53 - Idea and core code for the Prop Hunt game mode</size>";
 
             Announcement creditsAnnouncement = new()
             {
-                Id = "Credits",
-                Language = 0,
+                Id = "ModCredits",
+                Language = 13,
                 Number = 500,
                 Title = "The Other Us Edited\nCredits & Resources",
                 ShortTitle = "TOU Credits",

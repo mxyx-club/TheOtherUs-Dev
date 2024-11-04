@@ -311,7 +311,6 @@ internal class ExileControllerWrapUpPatch
         else if (exiled != null && Jester.jester != null && Jester.jester.PlayerId == exiled.PlayerId)
             Jester.triggerJesterWin = true;
 
-
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();
 
@@ -517,11 +516,6 @@ internal class ExileControllerMessagePatch
                     if (Jester.jester != null && player.PlayerId == Jester.jester.PlayerId)
                         __result = "";
                 if (Prosecutor.ProsecuteThisMeeting) __result += " (被起诉)";
-                else if (Tiebreaker.isTiebreak)
-                {
-                    __result += " (破平)";
-                    Tiebreaker.isTiebreak = false;
-                }
             }
         }
         catch

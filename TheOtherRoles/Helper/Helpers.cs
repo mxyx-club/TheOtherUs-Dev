@@ -346,6 +346,11 @@ public static class Helpers
     {
         if (InMeeting) return;
 
+        foreach (var role in RoleBaseManager.AllActiveRoles.Values)
+        {
+            role.OnReportDeadBody(reporter, target);
+        }
+
         handleVampireBiteOnBodyReport();
         handleBomberExplodeOnBodyReport();
         handleTrapperTrapOnBodyReport();
