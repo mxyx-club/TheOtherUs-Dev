@@ -42,16 +42,16 @@ public static class Guesser
 
 
     public const int MaxOneScreenRole = 40;
-    private static Dictionary<RoleTeam, List<Transform>> RoleButtons;
-    private static Dictionary<RoleTeam, SpriteRenderer> RoleSelectButtons;
-    public static RoleTeam currentTeamType;
+    private static Dictionary<RoleType, List<Transform>> RoleButtons;
+    private static Dictionary<RoleType, SpriteRenderer> RoleSelectButtons;
+    public static RoleType currentTeamType;
     private static List<SpriteRenderer> PageButtons;
     public static GameObject guesserUI;
     public static PassiveButton guesserUIExitButton;
     public static int Page;
     public static byte guesserCurrentTarget;
 
-    private static void guesserSelectRole(RoleTeam Role, bool SetPage = true)
+    private static void guesserSelectRole(RoleType Role, bool SetPage = true)
     {
         currentTeamType = Role;
         if (SetPage) Page = 1;
@@ -137,18 +137,18 @@ public static class Guesser
             Transform TeambuttonMask = Object.Instantiate(maskTemplate, TeambuttonParent);
             TextMeshPro Teamlabel = Object.Instantiate(textTemplate, Teambutton);
             //Teambutton.GetComponent<SpriteRenderer>().sprite = ShipStatus.Instance.CosmeticsCache.GetNameplate("nameplate_NoPlate").Image;
-            RoleSelectButtons.Add((RoleTeam)index, Teambutton.GetComponent<SpriteRenderer>());
+            RoleSelectButtons.Add((RoleType)index, Teambutton.GetComponent<SpriteRenderer>());
             TeambuttonParent.localPosition = new(-2.75f + (index * 1.75f), 2.225f, -200);
             TeambuttonParent.localScale = new(0.55f, 0.55f, 1f);
-            Teamlabel.color = getTeamColor((RoleTeam)index);
+            Teamlabel.color = getTeamColor((RoleType)index);
             //Info($"{Teamlabel.color} {(RoleTeam)index}");
-            Teamlabel.text = getString(((RoleTeam)index is RoleTeam.Crewmate ? "Crewmate" : ((RoleTeam)index).ToString()) + "RolesText");
+            Teamlabel.text = getString(((RoleType)index is RoleType.Crewmate ? "Crewmate" : ((RoleType)index).ToString()) + "RolesText");
             Teamlabel.alignment = TextAlignmentOptions.Center;
             Teamlabel.transform.localPosition = new Vector3(0, 0, Teamlabel.transform.localPosition.z);
             Teamlabel.transform.localScale *= 1.6f;
             Teamlabel.autoSizeTextContainer = true;
 
-            static void CreateTeamButton(Transform Teambutton, RoleTeam type)
+            static void CreateTeamButton(Transform Teambutton, RoleType type)
             {
                 Teambutton.GetComponent<PassiveButton>().OnClick.AddListener((UnityEngine.Events.UnityAction)(() =>
                 {
@@ -156,7 +156,7 @@ public static class Guesser
                     ReloadPage();
                 }));
             }
-            if (!PlayerControl.LocalPlayer.Data.IsDead) CreateTeamButton(Teambutton, (RoleTeam)index);
+            if (!PlayerControl.LocalPlayer.Data.IsDead) CreateTeamButton(Teambutton, (RoleType)index);
         }
 
         static void ReloadPage()
@@ -231,7 +231,7 @@ public static class Guesser
         {
             if (roleInfo == null) continue; // Not guessable roles
 
-            if (RoleClass.RoleIsEnable.TryGetValue(roleInfo.roleId, out int isEnabled) && isEnabled == 0)
+            if (RoleIsEnable.TryGetValue(roleInfo.roleId, out int isEnabled) && isEnabled == 0)
             {
                 continue;
             }
@@ -240,13 +240,13 @@ public static class Guesser
 
             if (CachedPlayer.LocalId == Doomsayer.doomsayer?.PlayerId)
             {
-                if (!Doomsayer.canGuessImpostor && roleInfo.roleTeam == RoleTeam.Impostor)
+                if (!Doomsayer.canGuessImpostor && roleInfo.roleTeam == RoleType.Impostor)
                     continue;
-                if (!Doomsayer.canGuessNeutral && roleInfo.roleTeam == RoleTeam.Neutral)
+                if (!Doomsayer.canGuessNeutral && roleInfo.roleTeam == RoleType.Neutral)
                     continue;
             }
 
-            if (roleInfo.roleTeam == RoleTeam.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
+            if (roleInfo.roleTeam == RoleType.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
                 continue;
 
             // remove all roles that cannot spawn due to the settings from the ui.
@@ -285,7 +285,7 @@ public static class Guesser
 
         void CreateRole(RoleInfo roleInfo = null)
         {
-            RoleTeam team = roleInfo?.roleTeam ?? RoleTeam.Crewmate;
+            RoleType team = roleInfo?.roleTeam ?? RoleType.Crewmate;
             //Color color = roleInfo?.color ?? Color.white;
             //RoleId role = roleInfo?.roleId ?? RoleId.Crewmate;
 
@@ -429,7 +429,7 @@ public static class Guesser
             i[(int)team]++;
             ind++;
         }
-        guesserSelectRole(RoleTeam.Crewmate);
+        guesserSelectRole(RoleType.Crewmate);
         ReloadPage();
     }
 }

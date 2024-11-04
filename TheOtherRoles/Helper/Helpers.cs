@@ -41,7 +41,7 @@ public enum SabatageTypes
     None
 }
 
-public enum RoleTeam
+public enum RoleType
 {
     Crewmate,
     Impostor,
@@ -288,7 +288,7 @@ public static class Helpers
     public static bool isNeutral(PlayerControl player)
     {
         var roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
-        return roleInfo != null && roleInfo.roleTeam == RoleTeam.Neutral;
+        return roleInfo != null && roleInfo.roleTeam == RoleType.Neutral;
     }
 
     public static bool isKillerNeutral(PlayerControl player)
@@ -680,7 +680,7 @@ public static class Helpers
         var allRoleInfo = new List<RoleInfo>();
         foreach (var role in RoleInfo.allRoleInfos)
         {
-            if (role.roleTeam == RoleTeam.Modifier) continue;
+            if (role.roleTeam == RoleType.Modifier) continue;
             allRoleInfo.Add(role);
         }
         return allRoleInfo;
@@ -841,15 +841,15 @@ public static class Helpers
         }
     }
 
-    public static Color getTeamColor(RoleTeam team)
+    public static Color getTeamColor(RoleType team)
     {
         return team switch
         {
-            RoleTeam.Crewmate => Color.white,
-            RoleTeam.Impostor => Palette.ImpostorRed,
-            RoleTeam.Neutral => Color.gray,
-            RoleTeam.Modifier => Color.yellow,
-            RoleTeam.Special => Palette.Purple,
+            RoleType.Crewmate => Color.white,
+            RoleType.Impostor => Palette.ImpostorRed,
+            RoleType.Neutral => Color.gray,
+            RoleType.Modifier => Color.yellow,
+            RoleType.Special => Palette.Purple,
             _ => Palette.White
         };
     }

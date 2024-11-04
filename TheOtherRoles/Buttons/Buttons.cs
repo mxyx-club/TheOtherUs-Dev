@@ -274,7 +274,7 @@ internal static class HudManagerStartPatch
         lightsOutButton.Timer = lightsOutButton.MaxTimer;
         zoomOutButton.MaxTimer = 0f;
         //changeChatButton.MaxTimer = 0f;
-
+        RoleBaseManager.AllActiveRoles.Values.Do(x => x?.ResetCustomButton());
     }
 
     public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText)
@@ -436,6 +436,8 @@ internal static class HudManagerStartPatch
     {
         // get map id, or raise error to wait...
         var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
+
+        RoleBaseManager.AllActiveRoles.Values.Do(x => x?.ButtonCreate(HudManager.Instance));
 
         roleSummaryButton = new CustomButton(
         () =>

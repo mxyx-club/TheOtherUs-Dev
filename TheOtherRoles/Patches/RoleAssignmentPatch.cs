@@ -255,30 +255,30 @@ internal class RoleManagerSelectRolesPatch
                 || (data.maxKillerNeutralRoles > 0 && ensuredKillerNeutralRoles.Count > 0)
             )))
         {
-            var rolesToAssign = new Dictionary<RoleType, List<byte>>();
+            var rolesToAssign = new Dictionary<AssignType, List<byte>>();
             if (data.crewmates.Count > 0 && data.maxCrewmateRoles > 0 && ensuredCrewmateRoles.Count > 0)
-                rolesToAssign.Add(RoleType.Crewmate, ensuredCrewmateRoles);
+                rolesToAssign.Add(AssignType.Crewmate, ensuredCrewmateRoles);
             if (data.crewmates.Count > 0 && data.maxNeutralRoles > 0 && ensuredNeutralRoles.Count > 0)
-                rolesToAssign.Add(RoleType.Neutral, ensuredNeutralRoles);
+                rolesToAssign.Add(AssignType.Neutral, ensuredNeutralRoles);
             if (data.crewmates.Count > 0 && data.maxKillerNeutralRoles > 0 && ensuredKillerNeutralRoles.Count > 0)
-                rolesToAssign.Add(RoleType.KillerNeutral, ensuredKillerNeutralRoles);
+                rolesToAssign.Add(AssignType.KillerNeutral, ensuredKillerNeutralRoles);
             if (data.impostors.Count > 0 && data.maxImpostorRoles > 0 && ensuredImpostorRoles.Count > 0)
-                rolesToAssign.Add(RoleType.Impostor, ensuredImpostorRoles);
+                rolesToAssign.Add(AssignType.Impostor, ensuredImpostorRoles);
 
             // Randomly select a pool of roles to assign a role from next (Crewmate role, Neutral role or Impostor role) 
             // then select one of the roles from the selected pool to a player 
             // and remove the role (and any potentially blocked role pairings) from the pool(s)
             var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count));
-            var players = roleType is RoleType.Crewmate or RoleType.Neutral or RoleType.KillerNeutral ? data.crewmates : data.impostors;
+            var players = roleType is AssignType.Crewmate or AssignType.Neutral or AssignType.KillerNeutral ? data.crewmates : data.impostors;
 
             var index = rnd.Next(0, rolesToAssign[roleType].Count);
             var roleId = rolesToAssign[roleType][index];
             setRoleToRandomPlayer(roleId, players);
             rolesToAssign[roleType].RemoveAt(index);
 
-            if (RoleClass.blockedRolePairings.ContainsKey(roleId))
+            if (blockedRolePairings.ContainsKey(roleId))
             {
-                foreach (var blockedRoleId in RoleClass.blockedRolePairings[roleId])
+                foreach (var blockedRoleId in blockedRolePairings[roleId])
                 {
                     // Set chance for the blocked roles to 0 for chances less than 100%
                     if (data.impSettings.ContainsKey(blockedRoleId)) data.impSettings[blockedRoleId] = 0;
@@ -294,17 +294,17 @@ internal class RoleManagerSelectRolesPatch
             // Adjust the role limit
             switch (roleType)
             {
-                case RoleType.Crewmate:
+                case AssignType.Crewmate:
                     data.maxCrewmateRoles--;
                     crewValues -= 10;
                     break;
-                case RoleType.Neutral:
+                case AssignType.Neutral:
                     data.maxNeutralRoles--;
                     break;
-                case RoleType.KillerNeutral:
+                case AssignType.KillerNeutral:
                     data.maxKillerNeutralRoles--;
                     break;
-                case RoleType.Impostor:
+                case AssignType.Impostor:
                     data.maxImpostorRoles--;
                     impValues -= 10;
                     break;
@@ -394,28 +394,28 @@ internal class RoleManagerSelectRolesPatch
                 || (data.maxNeutralRoles > 0 && neutralTickets.Count > 0)
                 || (data.maxKillerNeutralRoles > 0 && killerNeutralTickets.Count > 0))))
         {
-            var rolesToAssign = new Dictionary<RoleType, List<byte>>();
+            var rolesToAssign = new Dictionary<AssignType, List<byte>>();
             if (data.crewmates.Count > 0 && data.maxCrewmateRoles > 0 && crewmateTickets.Count > 0)
-                rolesToAssign.Add(RoleType.Crewmate, crewmateTickets);
+                rolesToAssign.Add(AssignType.Crewmate, crewmateTickets);
             if (data.crewmates.Count > 0 && data.maxNeutralRoles > 0 && neutralTickets.Count > 0)
-                rolesToAssign.Add(RoleType.Neutral, neutralTickets);
+                rolesToAssign.Add(AssignType.Neutral, neutralTickets);
             if (data.crewmates.Count > 0 && data.maxKillerNeutralRoles > 0 && killerNeutralTickets.Count > 0)
-                rolesToAssign.Add(RoleType.KillerNeutral, killerNeutralTickets);
+                rolesToAssign.Add(AssignType.KillerNeutral, killerNeutralTickets);
             if (data.impostors.Count > 0 && data.maxImpostorRoles > 0 && impostorTickets.Count > 0)
-                rolesToAssign.Add(RoleType.Impostor, impostorTickets);
+                rolesToAssign.Add(AssignType.Impostor, impostorTickets);
 
             // Randomly select a pool of role tickets to assign a role from next (Crewmate role, Neutral role or Impostor role) 
             // then select one of the roles from the selected pool to a player 
             // and remove all tickets of this role (and any potentially blocked role pairings) from the pool(s)
             var roleType = rolesToAssign.Keys.ElementAt(rnd.Next(0, rolesToAssign.Keys.Count));
-            var players = roleType is RoleType.Crewmate or RoleType.Neutral or RoleType.KillerNeutral ? data.crewmates : data.impostors;
+            var players = roleType is AssignType.Crewmate or AssignType.Neutral or AssignType.KillerNeutral ? data.crewmates : data.impostors;
             var index = rnd.Next(0, rolesToAssign[roleType].Count);
             var roleId = rolesToAssign[roleType][index];
             setRoleToRandomPlayer(roleId, players);
             rolesToAssign[roleType].RemoveAll(x => x == roleId);
 
-            if (RoleClass.blockedRolePairings.ContainsKey(roleId))
-                foreach (var blockedRoleId in RoleClass.blockedRolePairings[roleId])
+            if (blockedRolePairings.ContainsKey(roleId))
+                foreach (var blockedRoleId in blockedRolePairings[roleId])
                 {
                     // Remove tickets of blocked roles from all pools
                     crewmateTickets.RemoveAll(x => x == blockedRoleId);
@@ -427,16 +427,16 @@ internal class RoleManagerSelectRolesPatch
             // Adjust the role limit
             switch (roleType)
             {
-                case RoleType.Crewmate:
+                case AssignType.Crewmate:
                     data.maxCrewmateRoles--;
                     break;
-                case RoleType.Neutral:
+                case AssignType.Neutral:
                     data.maxNeutralRoles--;
                     break;
-                case RoleType.KillerNeutral:
+                case AssignType.KillerNeutral:
                     data.maxKillerNeutralRoles--;
                     break;
-                case RoleType.Impostor:
+                case AssignType.Impostor:
                     data.maxImpostorRoles--;
                     break;
             }
@@ -1093,11 +1093,11 @@ internal class RoleManagerSelectRolesPatch
         public int maxImpostorRoles { get; set; }
     }
 
-    private enum RoleType
+    public enum AssignType
     {
-        Crewmate = 0,
-        Neutral = 1,
-        KillerNeutral = 2,
-        Impostor = 3
+        Crewmate,
+        Neutral,
+        KillerNeutral,
+        Impostor
     }
 }

@@ -60,24 +60,24 @@ public static class LobbyRoleInfo
         for (int i = 0; i < Teams.Count; i++)
         {
             string team = "";
-            RoleTeam teamid = RoleTeam.Crewmate;
+            RoleType teamid = RoleType.Crewmate;
             switch (Teams[i])
             {
                 case "Impostors":
                     team = cs(Palette.ImpostorRed, getString("ImpostorRolesText"));
-                    teamid = RoleTeam.Impostor;
+                    teamid = RoleType.Impostor;
                     break;
                 case "Neutrals":
                     team = cs(new Color32(76, 84, 78, 255), getString("NeutralRolesText"));
-                    teamid = RoleTeam.Neutral;
+                    teamid = RoleType.Neutral;
                     break;
                 case "Crewmates":
                     team = cs(Palette.CrewmateBlue, getString("CrewmateRolesText"));
-                    teamid = RoleTeam.Crewmate;
+                    teamid = RoleType.Crewmate;
                     break;
                 case "Modifiers":
                     team = cs(Color.yellow, getString("ModifierRolesText"));
-                    teamid = RoleTeam.Modifier;
+                    teamid = RoleType.Modifier;
                     break;
             }
 
@@ -118,7 +118,7 @@ public static class LobbyRoleInfo
         }
     }
 
-    public static void roleInfosOnclick(string team, RoleTeam teamId)
+    public static void roleInfosOnclick(string team, RoleType teamId)
     {
         SpriteRenderer container = new GameObject("RoleListMenuContainer").AddComponent<SpriteRenderer>();
         container.sprite = new ResourceSprite("LobbyRoleInfo.RoleListScreen.png", 110f);
@@ -142,10 +142,10 @@ public static class LobbyRoleInfo
         bool gameStarted = AmongUsClient.Instance.GameState == InnerNet.InnerNetClient.GameStates.Started;
         foreach (RoleInfo roleInfo in RoleInfo.allRoleInfos)
         {
-            if (roleInfo.roleTeam == RoleTeam.Modifier && teamId != RoleTeam.Modifier) continue;
-            else if (roleInfo.roleTeam == RoleTeam.Neutral && teamId != RoleTeam.Neutral) continue;
-            else if (roleInfo.roleTeam == RoleTeam.Impostor && teamId != RoleTeam.Impostor) continue;
-            else if (roleInfo.roleTeam == RoleTeam.Crewmate && teamId != RoleTeam.Crewmate) continue;
+            if (roleInfo.roleTeam == RoleType.Modifier && teamId != RoleType.Modifier) continue;
+            else if (roleInfo.roleTeam == RoleType.Neutral && teamId != RoleType.Neutral) continue;
+            else if (roleInfo.roleTeam == RoleType.Impostor && teamId != RoleType.Impostor) continue;
+            else if (roleInfo.roleTeam == RoleType.Crewmate && teamId != RoleType.Crewmate) continue;
 
             Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
             buttonTransform.name = cs(roleInfo.color, roleInfo.Name) + " Button";

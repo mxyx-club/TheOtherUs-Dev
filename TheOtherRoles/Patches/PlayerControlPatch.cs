@@ -2021,6 +2021,21 @@ internal class PlayerPhysicsWalkPlayerToPatch
     }
 }
 
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
+
+public class ReportDeadBodyPatch
+{
+    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target)
+    {
+
+        foreach (var role in RoleBaseManager.AllActiveRoles.Values)
+        {
+            role.OnReportDeadBody(__instance, target);
+        }
+        return true;
+    }
+}
+
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
 internal class PlayerControlCmdReportDeadBodyPatch
 {
@@ -2342,7 +2357,7 @@ public static class MurderPlayerPatch
             {
                 color = Color.white;
                 if (target.Data.Role.IsImpostor) color = Color.red;
-                else if (RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault().roleTeam == RoleTeam.Neutral) color = Color.blue;
+                else if (RoleInfo.getRoleInfoForPlayer(target, false).FirstOrDefault().roleTeam == RoleType.Neutral) color = Color.blue;
             }
 
             showFlash(color, 1.75f);

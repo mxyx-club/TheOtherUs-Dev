@@ -113,6 +113,11 @@ internal class IntroCutsceneOnDestroyPatch
 
         if (AmongUsClient.Instance.AmHost)
         {
+            _ = new LateTask(() =>
+            {
+                RoleBaseManager.AllActiveRoles.Values.Do(x => x?.OnGameStart());
+            }, 0.1f, "OnGameStartTask");
+
             var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
             var writerS = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                 (byte)CustomRPC.DynamicMapOption, SendOption.Reliable);
@@ -296,9 +301,9 @@ internal class IntroPatch
     public static void setupIntroTeam(IntroCutscene __instance, ref List<PlayerControl> yourTeam)
     {
         var infos = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl);
-        var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
+        var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
         if (roleInfo == null) return;
-        if (roleInfo.roleTeam == RoleTeam.Neutral)
+        if (roleInfo.roleTeam == RoleType.Neutral)
         {
             var neutralColor = new Color32(76, 84, 78, 255);
             __instance.BackgroundBar.material.color = roleInfo.color;
@@ -352,8 +357,8 @@ internal class IntroPatch
         {
             // Don't override the intro of the vanilla roles
             var infos = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl);
-            var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
-            var modifierInfo = infos.FirstOrDefault(info => info.roleTeam == RoleTeam.Modifier);
+            var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
+            var modifierInfo = infos.FirstOrDefault(info => info.roleTeam == RoleType.Modifier);
 
             __instance.RoleBlurbText.text = "";
             if (roleInfo != null)

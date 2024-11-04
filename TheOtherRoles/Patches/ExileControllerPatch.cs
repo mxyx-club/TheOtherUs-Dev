@@ -25,6 +25,14 @@ internal class ExileControllerBeginPatch
     {
         lastExiled = exiled;
 
+        if (exiled != null)
+        {
+            foreach (var roleClass in RoleBaseManager.AllActiveRoles.Values)
+            {
+                roleClass.OnExileBegin(exiled);
+            }
+        }
+
         if (Balancer.currentAbilityUser != null && Balancer.IsDoubleExile && !IsSec)
         {
             IsSec = true;
@@ -281,6 +289,14 @@ internal class ExileControllerWrapUpPatch
 
     private static void WrapUpPostfix(GameData.PlayerInfo exiled)
     {
+        if (exiled != null)
+        {
+            foreach (var roleClass in RoleBaseManager.AllActiveRoles.Values)
+            {
+                roleClass.OnExileWrapUp(exiled);
+            }
+        }
+
         // Prosecutor win condition
         if (exiled != null && Executioner.executioner != null && Executioner.target != null &&
             Executioner.target.PlayerId == exiled.PlayerId && !Executioner.executioner.Data.IsDead)

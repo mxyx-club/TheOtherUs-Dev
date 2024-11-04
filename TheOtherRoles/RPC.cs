@@ -22,13 +22,14 @@ using UnityEngine;
 using static TheOtherRoles.Buttons.HudManagerStartPatch;
 using static TheOtherRoles.GameHistory;
 using static TheOtherRoles.Options.ModOption;
-using static TheOtherRoles.Roles.RoleClass;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles;
 
 public enum RoleId
 {
+    Default,
+
     Impostor,
     Morphling,
     Bomber,
@@ -902,7 +903,7 @@ public static class RPCProcedure
         var amnisiac = Amnisiac.amnisiac;
         if (target == null || amnisiac == null) return;
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
+        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
         switch (roleInfo!.roleId)
         {
             case RoleId.Crewmate:
@@ -1407,7 +1408,7 @@ public static class RPCProcedure
         var target = playerById(targetId);
         if (target == null || Mimic.mimic == null) return;
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
+        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
         switch (roleInfo!.roleId)
         {
             case RoleId.BodyGuard:
