@@ -966,7 +966,7 @@ public class CustomOptionHolder
         gamblerSuccessRate = Create(10333, Types.Impostor, "gamblerSuccessRate", rates, gamblerSpawnRate);
 
         grenadierSpawnRate = Create(10340, Types.Impostor, cs(Grenadier.color, "Grenadier"), rates, null, true);
-        grenadierCooldown = Create(10341, Types.Impostor, "grenadierCooldown", 25f, 0f, 45f, 0.5f, grenadierSpawnRate);
+        grenadierCooldown = Create(10341, Types.Impostor, "grenadierCooldown", 25f, 0f, 45f, 2.5f, grenadierSpawnRate);
         grenadierDuration = Create(10342, Types.Impostor, "grenadierDuration", 9f, 4f, 10f, 0.5f, grenadierSpawnRate);
         grenadierFlashRadius = Create(10343, Types.Impostor, "grenadierFlashRadius", 1.25f, 0.25f, 5f, 0.125f, grenadierSpawnRate);
         grenadierTeamIndicators = Create(10344, Types.Impostor, "grenadierTeamIndicators",
