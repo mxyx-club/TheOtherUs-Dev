@@ -118,7 +118,8 @@ internal class ExileControllerBeginPatch
         if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null)
         {
             // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
-            foreach (var target in Eraser.futureErased)
+            var rasePlayerList = new List<PlayerControl>(Eraser.futureErased);
+            foreach (var target in rasePlayerList)
             {
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ErasePlayerRoles, SendOption.Reliable);

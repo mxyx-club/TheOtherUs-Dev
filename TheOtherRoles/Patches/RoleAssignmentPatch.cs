@@ -746,10 +746,6 @@ internal class RoleManagerSelectRolesPatch
         var crewPlayer = new List<PlayerControl>(playerList);
         crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || isNeutral(x));
 
-        var noImpPlayer = new List<PlayerControl>(playerList);
-        noImpPlayer.RemoveAll(x => x.Data.Role.IsImpostor);
-
-
         if (modifiers.Contains(RoleId.Assassin))
         {
             var assassinCount = 0;
@@ -807,10 +803,15 @@ internal class RoleManagerSelectRolesPatch
 
         if (modifiers.Contains(RoleId.Cursed))
         {
-            playerId = setModifierToRandomPlayer((byte)RoleId.Cursed, crewPlayer);
+            List<PlayerControl> Cplayers = Cursed.hideModifier
+                ? new List<PlayerControl>(crewPlayer)
+                : playerList.Where(x => x.isImpostor() || isNeutral(x)).ToList();
+
+            playerId = setModifierToRandomPlayer((byte)RoleId.Cursed, Cplayers);
+
             if (!Cursed.hideModifier) crewPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
-            modifiers.RemoveAll(x => x == RoleId.Cursed);
+            modifiers.Remove(RoleId.Cursed);
         }
 
         if (modifiers.Contains(RoleId.Tunneler))
@@ -873,8 +874,10 @@ internal class RoleManagerSelectRolesPatch
 
         if (modifiers.Contains(RoleId.Aftermath))
         {
-            playerId = setModifierToRandomPlayer((byte)RoleId.Aftermath, noImpPlayer);
-            noImpPlayer.RemoveAll(x => x.PlayerId == playerId);
+            var APlayers = new List<PlayerControl>(playerList);
+            APlayers.RemoveAll(x => x.isImpostor());
+
+            playerId = setModifierToRandomPlayer((byte)RoleId.Aftermath, APlayers);
             crewPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
             modifiers.RemoveAll(x => x == RoleId.Aftermath);
@@ -908,7 +911,8 @@ internal class RoleManagerSelectRolesPatch
             buttonPlayer.RemoveAll(x => x == Mayor.mayor);
 
             playerId = setModifierToRandomPlayer((byte)RoleId.ButtonBarry, buttonPlayer);
-            buttonPlayer.RemoveAll(x => x.PlayerId == playerId);
+            crewPlayer.RemoveAll(x => x.PlayerId == playerId);
+            impPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
             modifiers.RemoveAll(x => x == RoleId.ButtonBarry);
         }
