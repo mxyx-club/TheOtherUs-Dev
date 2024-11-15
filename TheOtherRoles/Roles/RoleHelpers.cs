@@ -1,11 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoMod.Utils;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Utilities;
-using UnityEngine.Playables;
-using Random = System.Random;
 
 namespace TheOtherRoles.Roles;
 

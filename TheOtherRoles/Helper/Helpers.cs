@@ -1166,7 +1166,7 @@ public static class Helpers
             if (!playerInfo.Disconnected && (!playerInfo.Object.Data.IsDead || includeDead))
             {
                 Vector2 vector2 = new Vector2(playerInfo.Object.GetTruePosition().x - truePosition.x, playerInfo.Object.GetTruePosition().y - truePosition.y);
-                float magnitude = ((Vector2)vector2).magnitude;
+                float magnitude = vector2.magnitude;
                 if (magnitude <= lightRadius)
                 {
                     PlayerControl playerControl = playerInfo.Object;

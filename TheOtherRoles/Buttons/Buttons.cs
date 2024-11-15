@@ -4,7 +4,6 @@ using System.Linq;
 using Hazel;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
-using TheOtherRoles.Options;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using TMPro;

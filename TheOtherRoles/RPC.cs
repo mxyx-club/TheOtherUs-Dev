@@ -16,7 +16,6 @@ using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Objects.Map;
 using TheOtherRoles.Patches;
-using TheOtherRoles.Roles;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
@@ -1674,6 +1673,7 @@ public static class RPCProcedure
             Swapper.playerId1 = playerId1;
             Swapper.playerId2 = playerId2;
         }
+        Swapper.charges--;
     }
 
     public static void grenadierFlash(bool clear = false)
@@ -2329,6 +2329,18 @@ public static class RPCProcedure
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
             if (PlayerControl.LocalPlayer == Akujo.akujo)
                 FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(akujo.Data, akujo.Data);
+            if (MeetingHud.Instance)
+            {
+                foreach (var p in MeetingHud.Instance.playerStates)
+                {
+                    if (p.TargetPlayerId == Akujo.akujo.PlayerId || Akujo.honmei?.PlayerId == p.TargetPlayerId)
+                    {
+                        p.SetDead(p.DidReport, true);
+                        p.Overlay.gameObject.SetActive(true);
+                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, p.TargetPlayerId);
+                    }
+                }
+            }
         }
     }
 

@@ -292,7 +292,7 @@ internal class HudManagerUpdatePatch
         if (localIsArsonist || localIsDead)
         {
             var suffix = cs(Arsonist.color, " ♨");
-            foreach(var target in Arsonist.dousedPlayers)
+            foreach (var target in Arsonist.dousedPlayers)
             {
                 target.cosmetics.nameText.text += suffix;
             }
