@@ -1,5 +1,4 @@
-﻿using System;
-
+﻿/*using System;
 
 namespace TheOtherRoles.Patches.CursedTasks;
 
@@ -28,7 +27,7 @@ internal class CursedMedScan
 
             __instance.completeString =
                "Player Identity: " + PlayerControl.LocalPlayer.Data.ColorName + " Player " + PlayerData.id + "\nIdentification Number: " + PlayerData.id + "\nPlayer Name: " + PlayerControl.LocalPlayer.cosmetics.nameText.text + "\nHeight: 3 feet, 6 inches" + "\nWeight: 92 pounds" + "\nColor: " + $"{PlayerControl.LocalPlayer.Data.ColorName} " + "\nBlood Type: " + MedScanMinigame.BloodTypes[PlayerData.bloodType];
-            __instance.ScanDuration = 90f;
+            __instance.ScanDuration = 20f;
         }
     }
 
@@ -43,4 +42,4 @@ internal class CursedMedScan
             PlayerData = default;
         }
     }
-}
+}*/

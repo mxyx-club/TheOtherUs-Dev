@@ -28,6 +28,7 @@ public class Grenadier
 
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
         FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
+        DestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.active = true;
 
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(duration, new Action<float>(p =>
         {

@@ -110,5 +110,5 @@ jobs:
           files: |
             TheOtherUs.dll
             ./TheOtherUs.zip
-          draft: true
+          draft: false
           prerelease: false

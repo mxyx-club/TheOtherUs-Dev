@@ -16,19 +16,21 @@ using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Objects.Map;
 using TheOtherRoles.Patches;
+using TheOtherRoles.Roles;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
 using static TheOtherRoles.Buttons.HudManagerStartPatch;
 using static TheOtherRoles.GameHistory;
 using static TheOtherRoles.Options.ModOption;
-using static TheOtherRoles.Roles.RoleClass;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles;
 
 public enum RoleId
 {
+    Default,
+
     Impostor,
     Morphling,
     Bomber,
@@ -74,7 +76,6 @@ public enum RoleId
     Akujo,
     Thief,
 
-    Crew,
     Crewmate,
     Vigilante,
     Mayor,
@@ -206,13 +207,11 @@ public enum CustomRPC
     AmnisiacTakeRole,
     MimicMimicRole,
     UsePortal,
-    TurnToCrewmate,
     PlaceJackInTheBox,
     LightsOut,
     PlaceCamera,
     SealVent,
     PartTimerSet,
-    ArsonistWin,
     GuesserShoot,
     LawyerSetTarget,
     ExecutionerSetTarget,
@@ -226,7 +225,6 @@ public enum CustomRPC
     Bloody,
     SetFirstKill,
     SetMeetingChatOverlay,
-    SetTiebreak,
     SetInvisibleGen,
     SetSwoop,
     SetJackalSwoop,
@@ -375,9 +373,6 @@ public static class RPCProcedure
                 {
                     case RoleId.Jester:
                         Jester.jester = player;
-                        break;
-                    case RoleId.Crew:
-                        Crew.crew = player;
                         break;
                     case RoleId.Werewolf:
                         Werewolf.werewolf = player;
@@ -742,18 +737,6 @@ public static class RPCProcedure
             CachedPlayer.LocalPlayer.PlayerControl.moveable = true;
     }
 
-    public static void turnToCrewmate(byte targetId)
-    {
-        var player = playerById(targetId);
-        if (player == null) return;
-        player.Data.Role.TeamType = RoleTeamTypes.Crewmate;
-        FastDestroyableSingleton<RoleManager>.Instance.SetRole(player, RoleTypes.Crewmate);
-        erasePlayerRoles(player.PlayerId);
-        if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId)
-            CachedPlayer.LocalPlayer.PlayerControl.moveable = true;
-        setRole((byte)RoleId.Crew, targetId);
-        //   player.Data.Role.IsImpostor = false;
-    }
 
     public static void setGameStarting()
     {
@@ -902,7 +885,7 @@ public static class RPCProcedure
         var amnisiac = Amnisiac.amnisiac;
         if (target == null || amnisiac == null) return;
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
+        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
         switch (roleInfo!.roleId)
         {
             case RoleId.Crewmate:
@@ -1170,7 +1153,7 @@ public static class RPCProcedure
                 Warlock.warlock = amnisiac;
                 Amnisiac.clearAndReload();
                 break;
-                
+
             case RoleId.Grenadier:
                 Helpers.turnToImpostor(Amnisiac.amnisiac);
                 if (Amnisiac.resetRole) Grenadier.clearAndReload();
@@ -1407,7 +1390,7 @@ public static class RPCProcedure
         var target = playerById(targetId);
         if (target == null || Mimic.mimic == null) return;
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleTeam.Modifier);
+        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
         switch (roleInfo!.roleId)
         {
             case RoleId.BodyGuard:
@@ -1733,8 +1716,8 @@ public static class RPCProcedure
 
     public static void camouflagerCamouflage(byte setTimer)
     {
-        if (isActiveCamoComms() && setTimer != 2) return;
-        if (isCamoComms()) Camouflager.camoComms = true;
+        if (isActiveCamoComms && setTimer != 2) return;
+        if (isCamoComms) Camouflager.camoComms = true;
         if (Camouflager.camouflager == null && !Camouflager.camoComms) return;
         if (setTimer == 1) Camouflager.camouflageTimer = Camouflager.duration;
         if (MushroomSabotageActive()) return; // Dont overwrite the fungle "camo"
@@ -1984,7 +1967,7 @@ public static class RPCProcedure
         if (player == Camouflager.camouflager) Camouflager.clearAndReload();
         if (player == Poucher.poucher && !Poucher.spawnModifier) Poucher.clearAndReload();
         if (player == Vampire.vampire) Vampire.clearAndReload();
-        if (player == Eraser.eraser) Eraser.eraser = null;
+        if (player == Eraser.eraser) Eraser.clearAndReload();
         if (player == Trickster.trickster) Trickster.clearAndReload();
         if (player == Cleaner.cleaner) Cleaner.clearAndReload();
         if (player == Undertaker.undertaker) Undertaker.clearAndReload();
@@ -2254,7 +2237,7 @@ public static class RPCProcedure
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
 
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() && !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() && !isCamoComms)
                 target.setDefaultLook();
             Ninja.isInvisble = false;
             return;
@@ -2340,8 +2323,12 @@ public static class RPCProcedure
         var akujo = playerById(akujoId);
         if (akujo != null)
         {
-            akujo.MurderPlayer(akujo, MurderResultFlags.Succeeded);
+            akujo.Exiled();
             overrideDeathReasonAndKiller(akujo, DeadPlayer.CustomDeathReason.Loneliness);
+
+            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
+            if (PlayerControl.LocalPlayer == Akujo.akujo)
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(akujo.Data, akujo.Data);
         }
     }
 
@@ -2404,7 +2391,7 @@ public static class RPCProcedure
             target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms)
                 target.setDefaultLook();
             Swooper.isInvisable = false;
             return;
@@ -2430,7 +2417,7 @@ public static class RPCProcedure
             target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms)
                 target.setDefaultLook();
             Jackal.isInvisable = false;
             return;
@@ -2615,18 +2602,6 @@ public static class RPCProcedure
         ventsToSeal.Add(vent);
     }
 
-    public static void arsonistWin()
-    {
-        Arsonist.triggerArsonistWin = true;
-        foreach (PlayerControl p in CachedPlayer.AllPlayers)
-            //if (p != Arsonist.arsonist && !p.Data.IsDead)
-            if (p != Arsonist.arsonist && Arsonist.dousedPlayers.Any(x => x == p && !p.Data.IsDead))
-            {
-                p.Exiled();
-                overrideDeathReasonAndKiller(p, DeadPlayer.CustomDeathReason.Arson, Arsonist.arsonist);
-            }
-    }
-
     public static void lawyerSetTarget(byte playerId)
     {
         Lawyer.target = playerById(playerId);
@@ -2771,8 +2746,7 @@ public static class RPCProcedure
         {
             if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget)
             {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data,
-                    dyingTarget.Data);
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
                 if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
             }
             else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner)
@@ -2914,11 +2888,6 @@ public static class RPCProcedure
         {
             Message("Chat Notification Overlay is Detected");
         }
-    }
-
-    public static void setTiebreak()
-    {
-        Tiebreaker.isTiebreak = true;
     }
 
     public static void thiefStealsRole(byte playerId)
@@ -3531,10 +3500,6 @@ internal class RPCHandlerPatch
                 RPCProcedure.sealVent(reader.ReadPackedInt32());
                 break;
 
-            case CustomRPC.ArsonistWin:
-                RPCProcedure.arsonistWin();
-                break;
-
             case CustomRPC.GuesserShoot:
                 var killerId = reader.ReadByte();
                 var dyingTarget = reader.ReadByte();
@@ -3590,10 +3555,6 @@ internal class RPCHandlerPatch
                 RPCProcedure.setChatNotificationOverlay(localPlayerId, targetPlayerId);
                 break;
 
-            case CustomRPC.SetTiebreak:
-                RPCProcedure.setTiebreak();
-                break;
-
             case CustomRPC.ShowBodyGuardFlash:
                 RPCProcedure.showBodyGuardFlash();
                 break;
@@ -3632,10 +3593,6 @@ internal class RPCHandlerPatch
 
             case CustomRPC.TurnToImpostor:
                 RPCProcedure.turnToImpostor(reader.ReadByte());
-                break;
-
-            case CustomRPC.TurnToCrewmate:
-                RPCProcedure.turnToCrewmate(reader.ReadByte());
                 break;
 
             case CustomRPC.ThiefStealsRole:

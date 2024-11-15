@@ -39,7 +39,6 @@ public class MainMenuPatch
         passiveButtonGitHub.OnClick = new ButtonClickedEvent();
         passiveButtonGitHub.OnClick.AddListener((Action)(() => Application.OpenURL("https://github.com/mxyx-club/TheOtherUs/")));
 
-#if !SUNDAY
         if (IsCN())
         {
             var buttonDiscord = Object.Instantiate(template, null);
@@ -67,7 +66,6 @@ public class MainMenuPatch
                 buttonSpriteDiscord.color = textDiscord.color = discordColor;
             });
         }
-#endif
 
         // TOR credits button
         if (template == null) return;
@@ -124,8 +122,8 @@ ugackMiner53 - Idea and core code for the Prop Hunt game mode</size>";
 
             Announcement creditsAnnouncement = new()
             {
-                Id = "Credits",
-                Language = 0,
+                Id = "ModCredits",
+                Language = 13,
                 Number = 500,
                 Title = "The Other Us Edited\nCredits & Resources",
                 ShortTitle = "TOU Credits",

@@ -15,56 +15,43 @@ internal static class LogHelper
         logSource = Source;
     }
 
-    /// <summary>
-    ///     一般信息
-    /// </summary>
-    /// <param name="Message"></param>
-    public static void Info(string Message)
-    {
-        logSource.LogInfo(Message);
-    }
+    public static void Info(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Info);
+    public static void Message(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Message);
+    public static void Warn(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Warning);
+    public static void Error(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Error);
+    public static void Debug(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Debug);
+    public static void Fatal(object text, string Tag = "") => SendLog(text.ToString(), Tag, LogLevel.Fatal);
 
-    /// <summary>
-    ///     报错
-    /// </summary>
-    /// <param name="Message"></param>
-    public static void Error(string Message)
+    public static void SendLog(string text, string tag = "", LogLevel logLevel = LogLevel.Info)
     {
-        logSource.LogError(Message);
-    }
+        string time = DateTime.Now.ToString("HH:mm:ss");
+        if (!string.IsNullOrWhiteSpace(tag)) text = $"[{time}][{tag}] {text}";
+        else text = $"[{time}] {text}";
 
-    /// <summary>
-    ///     测试
-    /// </summary>
-    /// <param name="Message"></param>
-    public static void Debug(string Message)
-    {
-        logSource.LogDebug(Message);
-    }
-
-    public static void Fatal(string Message)
-    {
-        logSource.LogFatal(Message);
-    }
-
-    /// <summary>
-    ///     警告
-    /// </summary>
-    /// <param name="Message"></param>
-    public static void Warn(string Message)
-    {
-        logSource.LogWarning(Message);
-    }
-
-
-    public static void Message(string Message)
-    {
-        logSource.LogMessage(Message);
-    }
-
-    public static void Exception(Exception exception)
-    {
-        Error(exception.ToString());
+        switch (logLevel)
+        {
+            case LogLevel.Message:
+                logSource.LogMessage(text);
+                break;
+            case LogLevel.Error:
+                logSource.LogError(text);
+                break;
+            case LogLevel.Warning:
+                logSource.LogWarning(text);
+                break;
+            case LogLevel.Fatal:
+                logSource.LogFatal(text);
+                break;
+            case LogLevel.Info:
+                logSource.LogInfo(text);
+                break;
+            case LogLevel.Debug:
+                logSource.LogDebug(text);
+                break;
+            default:
+                logSource.LogInfo(text);
+                break;
+        }
     }
 
     public static void FastLog(LogLevel errorLevel, object @object)

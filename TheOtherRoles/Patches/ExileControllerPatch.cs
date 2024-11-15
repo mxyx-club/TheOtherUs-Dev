@@ -110,7 +110,8 @@ internal class ExileControllerBeginPatch
         if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null)
         {
             // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
-            foreach (var target in Eraser.futureErased)
+            var rasePlayerList = new List<PlayerControl>(Eraser.futureErased);
+            foreach (var target in rasePlayerList)
             {
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ErasePlayerRoles, SendOption.Reliable);
@@ -294,7 +295,6 @@ internal class ExileControllerWrapUpPatch
         // Jester win condition
         else if (exiled != null && Jester.jester != null && Jester.jester.PlayerId == exiled.PlayerId)
             Jester.triggerJesterWin = true;
-
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();
@@ -501,11 +501,6 @@ internal class ExileControllerMessagePatch
                     if (Jester.jester != null && player.PlayerId == Jester.jester.PlayerId)
                         __result = "";
                 if (Prosecutor.ProsecuteThisMeeting) __result += " (被起诉)";
-                else if (Tiebreaker.isTiebreak)
-                {
-                    __result += " (破平)";
-                    Tiebreaker.isTiebreak = false;
-                }
             }
         }
         catch

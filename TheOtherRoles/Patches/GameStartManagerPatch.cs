@@ -151,7 +151,7 @@ public class GameStartManagerPatch
                     copiedStartButton.SetActive(true);
                     var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
                     startButtonText.text = getString("stopGameStartText");
-                    startButtonText.fontSize *= 0.8f;
+                    startButtonText.fontSize *= 0.62f;
                     startButtonText.fontSizeMax = startButtonText.fontSize;
                     startButtonText.gameObject.transform.localPosition = Vector3.zero;
                     PassiveButton startButtonPassiveButton = copiedStartButton.GetComponent<PassiveButton>();

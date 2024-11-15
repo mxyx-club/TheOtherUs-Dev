@@ -4,7 +4,7 @@ using TheOtherRoles.Utilities;
 // 参考 => https://github.com/Koke1024/Town-Of-Moss/blob/main/TownOfMoss/Patches/MeltDownBoost.cs
 // 来源 => https://github.com/SuperNewRoles/SuperNewRoles/blob/master/SuperNewRoles/MapOption/MapOption.cs
 
-namespace TheOtherRoles.Objects.Map;
+namespace TheOtherRoles.Patches;
 
 public static class ElectricPatch
 {
@@ -71,6 +71,8 @@ public static class LifeSuppBooster
         }
     }
 }
+
+
 [HarmonyPatch(typeof(ReactorSystemType), nameof(ReactorSystemType.Deteriorate))]
 public static class MeltdownBooster
 {
@@ -109,16 +111,12 @@ public static class HeliMeltdownBooster
         if (CustomOptionHolder.IsReactorDurationSetting.getBool())
         {
             if (!__instance.IsActive)
-            {
                 return;
-            }
 
             if (MapUtilities.CachedShipStatus != null)
             {
                 if (__instance.Countdown >= CustomOptionHolder.AirshipReactorTimeLimit.getFloat())
-                {
                     __instance.Countdown = CustomOptionHolder.AirshipReactorTimeLimit.getFloat();
-                }
             }
         }
     }

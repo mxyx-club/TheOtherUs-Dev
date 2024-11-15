@@ -15,6 +15,7 @@ public static class Arsonist
     public static bool triggerArsonistWin;
 
     public static PlayerControl currentTarget;
+    public static PlayerControl currentTarget2;
     public static PlayerControl douseTarget;
     public static List<PlayerControl> dousedPlayers = new();
 

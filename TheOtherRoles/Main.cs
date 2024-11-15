@@ -22,7 +22,7 @@ public class TheOtherRolesPlugin : BasePlugin
     public const string ModName = MyPluginInfo.PLUGIN_NAME;
     public const string VersionString = MyPluginInfo.PLUGIN_VERSION;
 #if RELEASE
-    public static uint betaDays; // amount of days for the build to be usable (0 for infinite!)
+    public static uint betaDays;
 #else
     public static uint betaDays = 30;
 #endif
@@ -101,12 +101,6 @@ public class TheOtherRolesPlugin : BasePlugin
         CrowdedPlayer.Start();
         Harmony.PatchAll();
 
-        ModOption.reloadPluginOptions();
-        CosmeticsManager.Load();
-        CustomOptionHolder.Load();
-        AssetLoader.LoadAudioAssets();
-        if (ToggleCursor.Value) enableCursor(true);
-
         if (BepInExUpdater.UpdateRequired)
         {
             AddComponent<BepInExUpdater>();
@@ -114,10 +108,16 @@ public class TheOtherRolesPlugin : BasePlugin
         }
         AddComponent<ModUpdater>();
 
+        ModOption.reloadPluginOptions();
+        CosmeticsManager.Load();
+        CustomOptionHolder.Load();
+        AssetLoader.LoadAudioAssets();
+        ModInputManager.Load();
+        if (ToggleCursor.Value) enableCursor(true);
+
         SubmergedCompatibility.Initialize();
         MainMenuPatch.addSceneChangeCallbacks();
         AddToKillDistanceSetting.addKillDistance();
-        ModInputManager.Load();
         Info($"\n---------------\n Loading TheOtherUs completed!\n TheOtherUs-Edited v{VersionString}\n---------------");
     }
 }
