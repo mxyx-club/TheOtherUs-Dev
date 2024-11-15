@@ -580,7 +580,7 @@ public class CustomOptionHolder
     public static CustomOption ShowVentsOnMap;
     public static CustomOption ShowVentsOnMeetingMap;
 
-    public static CustomOption enableMapOptions;
+    //public static CustomOption enableMapOptions;
     public static CustomOption randomGameStartPosition;
     public static CustomOption randomGameStartToVents;
     public static CustomOption allowModGuess;
@@ -775,11 +775,11 @@ public class CustomOptionHolder
         blockGameEnd = Create(29, Types.General, cs(Color.yellow, "blockGameEnd"), true);
         deadImpsBlockSabotage = Create(32, Types.General, cs(Palette.ImpostorRed, "deadImpsBlockSabotage"), false);
         randomLigherPlayer = Create(34, Types.General, "randomLigherPlayer", true);
-        disableSabotage = Create(35, Types.General, cs(Palette.ImpostorRed, "disableSabotage"), false, enableMapOptions);
+        disableSabotage = Create(35, Types.General, cs(Palette.ImpostorRed, "disableSabotage"), false, null);
         allowModGuess = Create(31, Types.General, "allowModGuess", false);
         //ghostSpeed = Create(33, Types.General, "ghostSpeed", 1f, 0.75f, 5f, 0.125f);
 
-        WireTaskIsRandomOption = Create(221, Types.General, "WireTaskIsRandomOption", false, enableMapOptions, true);
+        WireTaskIsRandomOption = Create(221, Types.General, "WireTaskIsRandomOption", false, null, true);
         WireTaskNumOption = Create(222, Types.General, "WireTaskNumOption", 3f, 1f, 8f, 1f, WireTaskIsRandomOption);
         transparentTasks = Create(40, Types.General, "transparentTasks", false);
         disableMedbayWalk = Create(41, Types.General, "disableMedbayWalk", false);
@@ -789,7 +789,7 @@ public class CustomOptionHolder
         enableCursedTasks = Create(45, Types.General, cs(Palette.Purple, "enableCursedTasks"), false);
 
         //Map options
-        enableMapOptions = Create(200, Types.General, "enableMapOptions", false, null, true);
+        //enableMapOptions = Create(200, Types.General, "enableMapOptions", false, null, true);
 
         IsReactorDurationSetting = Create(201, Types.General, "IsReactorDurationSetting", false, null, true);
         SkeldReactorTimeLimit = Create(202, Types.General, "SkeldReactorTimeLimit", 30f, 0f, 30f, 2.5f, IsReactorDurationSetting);
@@ -800,41 +800,41 @@ public class CustomOptionHolder
         AirshipReactorTimeLimit = Create(207, Types.General, "AirshipReactorTimeLimit", 75f, 0f, 90f, 2.5f, IsReactorDurationSetting);
         FungleReactorTimeLimit = Create(208, Types.General, "FungleReactorTimeLimit", 45f, 0f, 60f, 2.5f, IsReactorDurationSetting);
 
-        randomGameStartPosition = Create(50, Types.General, "randomGameStartPosition", false, enableMapOptions, true);
+        randomGameStartPosition = Create(50, Types.General, "randomGameStartPosition", false, null, true);
         randomGameStartToVents = Create(51, Types.General, "randomGameStartToVents", true, randomGameStartPosition);
 
-        ShowVentsOnMap = Create(211, Types.General, "ShowVentsOnMapText", false, enableMapOptions, true);
+        ShowVentsOnMap = Create(211, Types.General, "ShowVentsOnMapText", false, null, true);
         ShowVentsOnMeetingMap = Create(212, Types.General, "ShowVentsOnMeetingMap", true, ShowVentsOnMap);
 
-        enableMiraModify = Create(70, Types.General, cs(Color.yellow, "Mira"), false, enableMapOptions, true);
+        enableMiraModify = Create(70, Types.General, cs(Color.yellow, "Mira"), false, null, true);
         miraVitals = Create(71, Types.General, "miraVitals", false, enableMiraModify);
 
-        enableBetterPolus = Create(80, Types.General, cs(Color.yellow, "Polus"), false, enableMapOptions);
+        enableBetterPolus = Create(80, Types.General, cs(Color.yellow, "Polus"), false, null);
         movePolusVents = Create(81, Types.General, "movePolusVents", false, enableBetterPolus);
         addPolusVents = Create(82, Types.General, "addPolusVents", false, enableBetterPolus);
         movePolusVitals = Create(83, Types.General, "movePolusVitals", false, enableBetterPolus);
         swapNavWifi = Create(84, Types.General, "swapNavWifi", false, enableBetterPolus);
         moveColdTemp = Create(85, Types.General, "moveColdTemp", false, enableBetterPolus);
 
-        enableAirShipModify = Create(90, Types.General, cs(Color.yellow, "AirShip"), false, enableMapOptions);
+        enableAirShipModify = Create(90, Types.General, cs(Color.yellow, "AirShip"), false, null);
         airshipOptimize = Create(91, Types.General, "airshipOptimize", false, enableAirShipModify);
         addAirShipVents = Create(92, Types.General, "addAirShipVents", false, enableAirShipModify);
         airshipLadder = Create(93, Types.General, "airshipLadder", false, enableAirShipModify);
 
-        enableFungleModify = Create(100, Types.General, cs(Color.yellow, "Fungle"), false, enableMapOptions);
+        enableFungleModify = Create(100, Types.General, cs(Color.yellow, "Fungle"), false, null);
         fungleElectrical = Create(101, Types.General, "fungleElectrical", false, enableFungleModify);
 
-        enableCamoComms = Create(120, Types.General, cs(Palette.ImpostorRed, "enableCamoComms"), false, enableMapOptions, true);
+        enableCamoComms = Create(120, Types.General, cs(Palette.ImpostorRed, "enableCamoComms"), false, null, true);
         //fungleDisableCamoComms = Create(211, Types.General, "fungleDisableCamoComms", true, enableCamoComms);
-        restrictDevices = Create(121, Types.General, "restrictDevices", ["optionOff", "restrictDevices2", "restrictDevices3"], enableMapOptions);
+        restrictDevices = Create(121, Types.General, "restrictDevices", ["optionOff", "restrictDevices2", "restrictDevices3"], null);
         //restrictAdmin = Create(122, Types.General, "restrictAdmin", 30f, 0f, 600f, 5f, restrictDevices);
         restrictCameras = Create(123, Types.General, "restrictCameras", 30f, 0f, 600f, 5f, restrictDevices);
         restrictVents = Create(124, Types.General, "restrictVents", 30f, 0f, 600f, 5f, restrictDevices);
-        disableCamsRound1 = Create(125, Types.General, "disableCamsRound1", false, enableMapOptions);
-        camsNightVision = Create(126, Types.General, "camsNightVision", false, enableMapOptions);
+        disableCamsRound1 = Create(125, Types.General, "disableCamsRound1", false, null);
+        camsNightVision = Create(126, Types.General, "camsNightVision", false, null);
         camsNoNightVisionIfImpVision = Create(127, Types.General, "camsNoNightVisionIfImpVision", false, camsNightVision);
 
-        dynamicMap = Create(130, Types.General, "dynamicMap", false, enableMapOptions, true);
+        dynamicMap = Create(130, Types.General, "dynamicMap", false, null, true);
         dynamicMapEnableSkeld = Create(131, Types.General, "Skeld", rates, dynamicMap);
         dynamicMapEnableMira = Create(132, Types.General, "Mira", rates, dynamicMap);
         dynamicMapEnablePolus = Create(133, Types.General, "Polus", rates, dynamicMap);

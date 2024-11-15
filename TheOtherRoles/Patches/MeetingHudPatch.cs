@@ -929,11 +929,6 @@ internal class MeetingHudPatch
             // Remove first kill shield
             firstKillPlayer = null;
 
-            foreach (var role in RoleBaseManager.AllActiveRoles.Values)
-            {
-                role.OnMeetingStart(__instance);
-            }
-
             //Nothing here for now. What to do when local player who is blackmailed starts meeting
             if (Blackmailer.blackmailed != null
                 && Blackmailer.blackmailed.Data.PlayerId == CachedPlayer.LocalPlayer.PlayerId

@@ -113,11 +113,6 @@ internal class IntroCutsceneOnDestroyPatch
 
         if (AmongUsClient.Instance.AmHost)
         {
-            _ = new LateTask(() =>
-            {
-                RoleBaseManager.AllActiveRoles.Values.Do(x => x?.OnGameStart());
-            }, 0.1f, "OnGameStartTask");
-
             var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
             var writerS = AmongUsClient.Instance.StartRpcImmediately(PlayerControl.LocalPlayer.NetId,
                 (byte)CustomRPC.DynamicMapOption, SendOption.Reliable);

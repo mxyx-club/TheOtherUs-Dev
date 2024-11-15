@@ -81,7 +81,7 @@ public static class PlayerControlFixedUpdatePatch
             var isMorphedMorphling = target == Morphling.morphling && Morphling.morphTarget != null && Morphling.morphTimer > 0f;
             var hasVisibleShield = false;
             var color = Medic.shieldedColor;
-            if (!isCamoComms() && Camouflager.camouflageTimer <= 0f && !MushroomSabotageActive() &&
+            if (!isCamoComms && Camouflager.camouflageTimer <= 0f && !MushroomSabotageActive() &&
                 Medic.shielded != null && ((target == Medic.shielded && !isMorphedMorphling) ||
                                            (isMorphedMorphling && Morphling.morphTarget == Medic.shielded)))
             {
@@ -106,7 +106,7 @@ public static class PlayerControlFixedUpdatePatch
                 color = new Color32(205, 150, 100, byte.MaxValue);
             }
 
-            if (!isCamoComms() && Camouflager.camouflageTimer <= 0f && !MushroomSabotageActive() &&
+            if (!isCamoComms && Camouflager.camouflageTimer <= 0f && !MushroomSabotageActive() &&
                 ModOption.firstKillPlayer != null && ModOption.shieldFirstKill &&
                 ((target == ModOption.firstKillPlayer && !isMorphedMorphling) ||
                  (isMorphedMorphling && Morphling.morphTarget == ModOption.firstKillPlayer)))
@@ -696,7 +696,7 @@ public static class PlayerControlFixedUpdatePatch
         collider.offset = Mini.defaultColliderOffset * Vector2.down;
 
         // Set adapted player size to Mini and Morphling
-        if (Mini.mini == null || isCamoComms() || Camouflager.camouflageTimer > 0f ||
+        if (Mini.mini == null || isCamoComms || Camouflager.camouflageTimer > 0f ||
         MushroomSabotageActive() || (Mini.mini == Morphling.morphling && Morphling.morphTimer > 0)) return;
 
         var growingProgress = Mini.growingProgress();
@@ -736,24 +736,17 @@ public static class PlayerControlFixedUpdatePatch
     {
 
         var local = CachedPlayer.LocalPlayer.PlayerControl;
-        var colorBlindTextMeetingInitialLocalPos = new Vector3(0.3384f, -0.16666f, -0.01f);
-        var colorBlindTextMeetingInitialLocalScale = new Vector3(0.9f, 1f, 1f);
+        //var colorBlindTextMeetingInitialLocalPos = new Vector3(0.3384f, -0.16666f, -0.01f);
+        //var colorBlindTextMeetingInitialLocalScale = new Vector3(0.9f, 1f, 1f);
         foreach (PlayerControl p in CachedPlayer.AllPlayers)
         {
             // Colorblind Text in Meeting
             var playerVoteArea = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == p.PlayerId);
             if (playerVoteArea != null && playerVoteArea.ColorBlindName.gameObject.active)
             {
-                playerVoteArea.ColorBlindName.transform.localPosition =
-                    colorBlindTextMeetingInitialLocalPos + new Vector3(0f, 0.4f, 0f);
-                playerVoteArea.ColorBlindName.transform.localScale = colorBlindTextMeetingInitialLocalScale * 0.8f;
+                playerVoteArea.ColorBlindName.transform.localPosition = new Vector3(-0.93f, -0.2f, -0.1f);
+                //playerVoteArea.ColorBlindName.transform.localScale = colorBlindTextMeetingInitialLocalScale * 0.8f;
             }
-            /*
-            // Colorblind Text During the round
-            if (p.cosmetics.colorBlindText != null && p.cosmetics.showColorBlindText &&
-                p.cosmetics.colorBlindText.gameObject.active)
-                p.cosmetics.colorBlindText.transform.localPosition = new Vector3(0, -1f, 0f);
-            */
             // This moves both the name AND the colorblindtext behind objects (if the player is behind the object), like the rock on polus
             p.cosmetics.nameText.transform.parent.SetLocalZ(-0.0001f);
 
@@ -918,6 +911,9 @@ public static class PlayerControlFixedUpdatePatch
 
         Arsonist.currentTarget = setTarget(untargetablePlayers: untargetables);
         if (Arsonist.currentTarget != null) setPlayerOutline(Arsonist.currentTarget, Arsonist.color);
+
+        Arsonist.currentTarget2 = setTarget(false, true);
+        if (Arsonist.currentTarget2 != null) setPlayerOutline(Arsonist.currentTarget2, Arsonist.color);
     }
 
     private static void snitchUpdate()
@@ -1412,7 +1408,7 @@ public static class PlayerControlFixedUpdatePatch
         var mushRoomSaboIsActive = MushroomSabotageActive();
         if (!mushroomSaboWasActive) mushroomSaboWasActive = mushRoomSaboIsActive;
 
-        if (isCamoComms() && !isActiveCamoComms())
+        if (isCamoComms && !isActiveCamoComms)
         {
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.CamouflagerCamouflage, SendOption.Reliable);
@@ -1427,8 +1423,8 @@ public static class PlayerControlFixedUpdatePatch
         Morphling.morphTimer = Mathf.Max(0f, Morphling.morphTimer - Time.fixedDeltaTime);
 
         if (mushRoomSaboIsActive) return;
-        if (isCamoComms()) return;
-        if (wasActiveCamoComms() && Camouflager.camouflageTimer <= 0f) camoReset();
+        if (isCamoComms) return;
+        if (wasActiveCamoComms && Camouflager.camouflageTimer <= 0f) camoReset();
 
         // Camouflage reset and set Morphling look if necessary
         if (oldCamouflageTimer > 0f && Camouflager.camouflageTimer <= 0f)
@@ -2006,7 +2002,7 @@ internal class PlayerPhysicsWalkPlayerToPatch
 
     public static void Prefix(PlayerPhysics __instance)
     {
-        var correctOffset = !isCamoComms() && Camouflager.camouflageTimer <= 0f &&
+        var correctOffset = !isCamoComms && Camouflager.camouflageTimer <= 0f &&
                             !MushroomSabotageActive() && (__instance.myPlayer == Mini.mini ||
                                                                   (Morphling.morphling != null &&
                                                                    __instance.myPlayer == Morphling.morphling &&
@@ -2021,22 +2017,7 @@ internal class PlayerPhysicsWalkPlayerToPatch
     }
 }
 
-[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.ReportDeadBody))]
-
-public class ReportDeadBodyPatch
-{
-    public static bool Prefix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target)
-    {
-
-        foreach (var role in RoleBaseManager.AllActiveRoles.Values)
-        {
-            role.OnReportDeadBody(__instance, target);
-        }
-        return true;
-    }
-}
-
-    [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.CmdReportDeadBody))]
 internal class PlayerControlCmdReportDeadBodyPatch
 {
     public static bool Prefix(PlayerControl __instance)

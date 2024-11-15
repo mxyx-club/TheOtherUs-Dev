@@ -4,6 +4,7 @@ using System.Linq;
 using Hazel;
 using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
+using TheOtherRoles.Options;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using TMPro;
@@ -66,6 +67,7 @@ internal static class HudManagerStartPatch
     public static CustomButton securityGuardButton;
     public static CustomButton securityGuardCamButton;
     public static CustomButton arsonistButton;
+    public static CustomButton arsonistKillButton;
     public static CustomButton vultureEatButton;
     public static CustomButton mediumButton;
     public static CustomButton pursuerButton;
@@ -274,7 +276,6 @@ internal static class HudManagerStartPatch
         lightsOutButton.Timer = lightsOutButton.MaxTimer;
         zoomOutButton.MaxTimer = 0f;
         //changeChatButton.MaxTimer = 0f;
-        RoleBaseManager.AllActiveRoles.Values.Do(x => x?.ResetCustomButton());
     }
 
     public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText)
@@ -436,8 +437,6 @@ internal static class HudManagerStartPatch
     {
         // get map id, or raise error to wait...
         var mapId = GameOptionsManager.Instance.currentNormalGameOptions.MapId;
-
-        RoleBaseManager.AllActiveRoles.Values.Do(x => x?.ButtonCreate(HudManager.Instance));
 
         roleSummaryButton = new CustomButton(
         () =>
@@ -1153,7 +1152,7 @@ internal static class HudManagerStartPatch
             () =>
             {
                 if (Morphling.sampledTarget == null) showTargetNameOnButton(Morphling.currentTarget, morphlingButton, getString("SampleText"));
-                return (Morphling.currentTarget || Morphling.sampledTarget) && !isActiveCamoComms() &&
+                return (Morphling.currentTarget || Morphling.sampledTarget) && !isActiveCamoComms &&
                        CachedPlayer.LocalPlayer.PlayerControl.CanMove && !MushroomSabotageActive();
             },
             () =>
@@ -1202,7 +1201,7 @@ internal static class HudManagerStartPatch
                        Camouflager.camouflager == CachedPlayer.LocalPlayer.PlayerControl &&
                        !CachedPlayer.LocalPlayer.Data.IsDead;
             },
-            () => { return !isActiveCamoComms() && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
+            () => { return !isActiveCamoComms && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
             () =>
             {
                 camouflagerButton.Timer = camouflagerButton.MaxTimer;
@@ -3021,22 +3020,10 @@ internal static class HudManagerStartPatch
         arsonistButton = new CustomButton(
             () =>
             {
-                var dousedEveryoneAlive = Arsonist.dousedEveryoneAlive();
-                if (dousedEveryoneAlive)
-                {
-                    var winWriter = AmongUsClient.Instance.StartRpcImmediately(
-                        CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ArsonistWin, SendOption.Reliable);
-                    AmongUsClient.Instance.FinishRpcImmediately(winWriter);
-                    RPCProcedure.arsonistWin();
-                    arsonistButton.HasEffect = false;
-                }
-                else if (Arsonist.currentTarget != null)
-                {
-                    if (checkAndDoVetKill(Arsonist.currentTarget)) return;
-                    Arsonist.douseTarget = Arsonist.currentTarget;
-                    arsonistButton.HasEffect = true;
-                    SoundEffectsManager.play("arsonistDouse");
-                }
+                if (checkAndDoVetKill(Arsonist.currentTarget)) return;
+                Arsonist.douseTarget = Arsonist.currentTarget;
+                arsonistButton.HasEffect = true;
+                SoundEffectsManager.play("arsonistDouse");
             },
             () =>
             {
@@ -3048,7 +3035,6 @@ internal static class HudManagerStartPatch
                 var dousedEveryoneAlive = Arsonist.dousedEveryoneAlive();
                 if (!dousedEveryoneAlive)
                     showTargetNameOnButton(Arsonist.currentTarget, arsonistButton, getString("DouseText"));
-                if (dousedEveryoneAlive) arsonistButton.actionButton.graphic.sprite = Arsonist.igniteSprite;
 
                 if (arsonistButton.isEffectActive && Arsonist.douseTarget != Arsonist.currentTarget)
                 {
@@ -3057,8 +3043,7 @@ internal static class HudManagerStartPatch
                     arsonistButton.isEffectActive = false;
                 }
 
-                return CachedPlayer.LocalPlayer.PlayerControl.CanMove &&
-                       (dousedEveryoneAlive || Arsonist.currentTarget != null);
+                return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Arsonist.currentTarget != null;
             },
             () =>
             {
@@ -3067,7 +3052,7 @@ internal static class HudManagerStartPatch
                 Arsonist.douseTarget = null;
             },
             Arsonist.douseSprite,
-            ButtonPositions.lowerRowRight,
+            ButtonPositions.upperRowRight,
             __instance,
             abilityInput.keyCode,
             true,
@@ -3076,8 +3061,8 @@ internal static class HudManagerStartPatch
             {
                 if (Arsonist.douseTarget != null) Arsonist.dousedPlayers.Add(Arsonist.douseTarget);
 
-                arsonistButton.Timer = Arsonist.dousedEveryoneAlive() ? 0 : arsonistButton.MaxTimer;
-
+                arsonistButton.Timer = arsonistButton.MaxTimer;
+                arsonistKillButton.Timer = arsonistButton.MaxTimer;
                 foreach (var p in Arsonist.dousedPlayers)
                     if (ModOption.playerIcons.ContainsKey(p.PlayerId))
                         ModOption.playerIcons[p.PlayerId].setSemiTransparent(false);
@@ -3092,6 +3077,45 @@ internal static class HudManagerStartPatch
 
                 Arsonist.douseTarget = null;
             }
+        );
+
+        // Arsonist button
+        arsonistKillButton = new CustomButton(
+            () =>
+            {
+                foreach (PlayerControl p in Arsonist.dousedPlayers.Where(p => p.IsAlive()))
+                {
+                    checkMurderAttemptAndKill(Arsonist.arsonist, p, false, false, false);
+                    GameHistory.overrideDeathReasonAndKiller(p, DeadPlayer.CustomDeathReason.Arson, Arsonist.arsonist);
+                }
+                Message("点火");
+                arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
+                arsonistButton.Timer = arsonistButton.MaxTimer;
+            },
+            () =>
+            {
+                return Arsonist.arsonist != null && Arsonist.arsonist == CachedPlayer.LocalPlayer.PlayerControl &&
+                       CachedPlayer.LocalPlayer.IsAlive && Arsonist.dousedPlayers != null && Arsonist.dousedPlayers.Count > 0;
+            },
+            () =>
+            {
+                showTargetNameOnButton(Arsonist.currentTarget2, arsonistKillButton, getString("IgniteText"));
+                return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Arsonist.currentTarget2 != null && Arsonist.dousedPlayers.Any(p => p == Arsonist.currentTarget2);
+            },
+            () =>
+            {
+                /*var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
+                var count = alivePlayersList.Count(pc => isNeutral(pc) && pc.isKiller());
+
+                if (count < 1) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
+                else */
+                arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
+            },
+            Arsonist.igniteSprite,
+            ButtonPositions.upperRowCenter,
+            __instance,
+            modKillInput.keyCode,
+            buttonText: getString("IgniteText")
         );
 
         // Vulture Eat

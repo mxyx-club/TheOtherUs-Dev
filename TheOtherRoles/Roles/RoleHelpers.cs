@@ -34,30 +34,8 @@ public static class RoleHelpers
                Doomsayer.CanShoot;
     }
 
-
-    public static RoleId GetRole(this PlayerControl player)
-    {
-        if (player == null) return RoleId.Default;
-
-        if (RoleBaseManager.AllActiveRoles.TryGetValue(player.PlayerId, out RoleBase role))
-        {
-            return role.RoleId;
-        }
-
-        return RoleId.Default;
-    }
-
-    public static readonly RoleId[] AllRoles = EnumHelper.GetAllValues<RoleId>().Where(role => role > RoleId.Default).ToArray();
-    public static readonly RoleId[] AllStandardRoles = AllRoles.ToList().ToArray();
-    public static Dictionary<RoleId, RoleInfos> AllRolesInfo = new(AllStandardRoles.Length);
-    public static RoleInfos GetRoleInfo(this RoleId role) => AllRolesInfo.ContainsKey(role) ? AllRolesInfo[role] : null;
-    public static bool IsRole(this PlayerControl player, RoleId role)
-    {
-        var playerRole = RoleBaseManager.GetRole(player.PlayerId);
-        return playerRole != null && playerRole.RoleId == role;
-    }
-
     public static Dictionary<byte, byte[]> blockedRolePairings = new();
+
     public static void blockRole()
     {
         blockedRolePairings.Clear();

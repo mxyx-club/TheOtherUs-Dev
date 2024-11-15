@@ -372,7 +372,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
         if (p == Jackal.jackal && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
 
-        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
+        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId) && p != Specoality.specoality && p != Doomsayer.doomsayer) roleName += "GuessserGMInfo".Translate();
 
         if (!suppressGhostInfo && p != null)
         {
@@ -403,8 +403,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                     roleName = cs(Witch.color, "☆ ") + roleName;
                 if (BountyHunter.bounty == p)
                     roleName = cs(BountyHunter.color, "(被悬赏) ") + roleName;
-                if (Arsonist.dousedPlayers.Contains(p))
-                    roleName = cs(Arsonist.color, "♨ ") + roleName;
+                //if (Arsonist.dousedPlayers.Contains(p))
+                //    roleName = cs(Arsonist.color, "♨ ") + roleName;
                 if (p == Arsonist.arsonist)
                     roleName += cs(Arsonist.color,
                         $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");

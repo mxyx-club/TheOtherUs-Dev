@@ -36,7 +36,7 @@ public class TaskQueue
             }
             catch (Exception e)
             {
-                Exception(e);
+                Error(e);
                 Error($"加载失败 TaskQueue Id:{Id}");
             }
         });
