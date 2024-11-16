@@ -28,14 +28,6 @@ internal class CreateOptionsPickerPatch
                 __instance.GameModeText.text = getString("isGuesserGm");
                 ModOption.gameMode = CustomGamemodes.Guesser;
                 break;
-            case CustomGamemodes.HideNSeek:
-                __instance.GameModeText.text = getString("isHideNSeekGM");
-                ModOption.gameMode = CustomGamemodes.HideNSeek;
-                break;
-            case CustomGamemodes.PropHunt:
-                __instance.GameModeText.text = getString("isPropHuntGM");
-                ModOption.gameMode = CustomGamemodes.PropHunt;
-                break;
         }
 
         return false;
@@ -48,8 +40,6 @@ internal class CreateOptionsPickerPatch
         __instance.GameModeText.text = ModOption.gameMode switch
         {
             CustomGamemodes.Guesser => getString("isGuesserGm"),
-            CustomGamemodes.HideNSeek => getString("isHideNSeekGM"),
-            CustomGamemodes.PropHunt => getString("isPropHuntGM"),
             _ => __instance.GameModeText.text
         };
     }
@@ -66,7 +56,7 @@ internal class GameModeMenuPatch
         __instance.controllerSelectable.Clear();
         var num2 = 0;
         __instance.ButtonPool.poolSize = 5;
-        for (var i = 0; i <= 5; i++)
+        for (var i = 0; i <= 3; i++)
         {
             var entry = (GameModes)i;
             if (entry == GameModes.None) continue;
@@ -81,9 +71,7 @@ internal class GameModeMenuPatch
             }
             else
             {
-                chatLanguageButton.Text.text = i == 3 ? getString("isGuesserGm") : getString("isHideNSeekGM");
-                if (i == 5)
-                    chatLanguageButton.Text.text = getString("isPropHuntGM");
+                chatLanguageButton.Text.text = i == 3 ? getString("isGuesserGm") : "null";
             }
 
             chatLanguageButton.Button.OnClick.RemoveAllListeners();
@@ -91,9 +79,7 @@ internal class GameModeMenuPatch
 
             var isCurrentMode = i <= 2 && ModOption.gameMode == CustomGamemodes.Classic
                 ? (long)entry == gameMode
-                : (i == 3 && ModOption.gameMode == CustomGamemodes.Guesser) ||
-                  (i == 4 && ModOption.gameMode == CustomGamemodes.HideNSeek) ||
-                  (i == 5 && ModOption.gameMode == CustomGamemodes.PropHunt);
+                : (i == 3 && ModOption.gameMode == CustomGamemodes.Guesser);
             chatLanguageButton.SetSelected(isCurrentMode);
             __instance.controllerSelectable.Add(chatLanguageButton.Button);
             if (isCurrentMode) __instance.defaultButtonSelected = chatLanguageButton.Button;

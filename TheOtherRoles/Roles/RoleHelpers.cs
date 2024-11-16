@@ -267,8 +267,6 @@ public static class RoleHelpers
 
         // Gamemodes
         HandleGuesser.clearAndReload();
-        HideNSeek.clearAndReload();
-        PropHunt.clearAndReload();
 
         blockRole();
         ResetRoleSelection();

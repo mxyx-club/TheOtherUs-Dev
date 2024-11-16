@@ -173,35 +173,9 @@ ugackMiner53 - Idea and core code for the Prop Hunt game mode</size>";
                 template.OnClick();
             }));
 
-            var HideNSeekButton = Object.Instantiate(gameButton, gameButton.parent);
-            HideNSeekButton.transform.localPosition += new Vector3(1.7f, -0.5f);
-            var HideNSeekButtonText = HideNSeekButton.GetComponentInChildren<TextMeshPro>();
-            var HideNSeekButtonPassiveButton = HideNSeekButton.GetComponentInChildren<PassiveButton>();
-
-            HideNSeekButtonPassiveButton.OnClick = new ButtonClickedEvent();
-            HideNSeekButtonPassiveButton.OnClick.AddListener((Action)(() =>
-            {
-                ModOption.gameMode = CustomGamemodes.HideNSeek;
-                template.OnClick();
-            }));
-
-            var PropHuntButton = Object.Instantiate(gameButton, gameButton.parent);
-            PropHuntButton.transform.localPosition += new Vector3(3.4f, -0.5f);
-            var PropHuntButtonText = PropHuntButton.GetComponentInChildren<TextMeshPro>();
-            var PropHuntButtonPassiveButton = PropHuntButton.GetComponentInChildren<PassiveButton>();
-
-            PropHuntButtonPassiveButton.OnClick = new ButtonClickedEvent();
-            PropHuntButtonPassiveButton.OnClick.AddListener((Action)(() =>
-            {
-                ModOption.gameMode = CustomGamemodes.PropHunt;
-                template.OnClick();
-            }));
-
             template.StartCoroutine(Effects.Lerp(0.1f, new Action<float>(p =>
             {
                 guesserButtonText.SetText(getString("isGuesserGm"));
-                HideNSeekButtonText.SetText(getString("isHideNSeekGM"));
-                PropHuntButtonText.SetText(getString("isPropHuntGM"));
             })));
         }));
     }

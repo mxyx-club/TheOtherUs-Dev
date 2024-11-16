@@ -577,9 +577,6 @@ public class CustomOptionHolder
     public static CustomOption impostorSeeRoles;
     public static CustomOption transparentTasks;
 
-    public static CustomOption ShowVentsOnMap;
-    public static CustomOption ShowVentsOnMeetingMap;
-
     //public static CustomOption enableMapOptions;
     public static CustomOption randomGameStartPosition;
     public static CustomOption randomGameStartToVents;
@@ -665,69 +662,6 @@ public class CustomOptionHolder
     public static CustomOption guesserGamemodeEvilCanKillSpy;
     public static CustomOption guesserGamemodeCantGuessSnitchIfTaksDone;
 
-    // Hide N Seek Gamemode
-    public static CustomOption hideNSeekHunterCount;
-    public static CustomOption hideNSeekKillCooldown;
-    public static CustomOption hideNSeekHunterVision;
-    public static CustomOption hideNSeekHuntedVision;
-    public static CustomOption hideNSeekTimer;
-    public static CustomOption hideNSeekCommonTasks;
-    public static CustomOption hideNSeekShortTasks;
-    public static CustomOption hideNSeekLongTasks;
-    public static CustomOption hideNSeekTaskWin;
-    public static CustomOption hideNSeekTaskPunish;
-    public static CustomOption hideNSeekCanSabotage;
-    public static CustomOption hideNSeekMap;
-    public static CustomOption hideNSeekHunterWaiting;
-    public static CustomOption hideHuntSpeed;
-    public static CustomOption hideCrewSpeed;
-
-    public static CustomOption hunterLightCooldown;
-    public static CustomOption hunterLightDuration;
-    public static CustomOption hunterLightVision;
-    public static CustomOption hunterLightPunish;
-    public static CustomOption hunterAdminCooldown;
-    public static CustomOption hunterAdminDuration;
-    public static CustomOption hunterAdminPunish;
-    public static CustomOption hunterArrowCooldown;
-    public static CustomOption hunterArrowDuration;
-    public static CustomOption hunterArrowPunish;
-
-    public static CustomOption huntedShieldCooldown;
-    public static CustomOption huntedShieldDuration;
-    public static CustomOption huntedShieldRewindTime;
-    public static CustomOption huntedShieldNumber;
-
-    // Prop Hunt Settings
-    public static CustomOption propHuntMap;
-    public static CustomOption propHuntTimer;
-    public static CustomOption propHuntEnableUnstuck;
-    public static CustomOption propHuntUnstuckCooldown;
-    public static CustomOption propHuntUnstuckDuration;
-    public static CustomOption propHuntNumberOfHunters;
-    public static CustomOption hunterInitialBlackoutTime;
-    public static CustomOption hunterMissCooldown;
-    public static CustomOption hunterHitCooldown;
-    public static CustomOption hunterMaxMissesBeforeDeath;
-    public static CustomOption propBecomesHunterWhenFound;
-    public static CustomOption propHunterVision;
-    public static CustomOption propVision;
-    public static CustomOption propHuntSpeed;
-    public static CustomOption propPropSpeed;
-    public static CustomOption propHuntRevealCooldown;
-    public static CustomOption propHuntRevealDuration;
-    public static CustomOption propHuntRevealPunish;
-    public static CustomOption propHuntInvisCooldown;
-    public static CustomOption propHuntInvisDuration;
-    public static CustomOption propHuntSpeedboostCooldown;
-    public static CustomOption propHuntSpeedboostDuration;
-    public static CustomOption propHuntSpeedboostSpeed;
-    public static CustomOption propHuntSpeedboostEnabled;
-    public static CustomOption propHuntInvisEnabled;
-    public static CustomOption propHuntAdminCooldown;
-    public static CustomOption propHuntFindCooldown;
-    public static CustomOption propHuntFindDuration;
-
     public static string cs(Color c, string s)
     {
         return $"<color=#{ToByte(c.r):X2}{ToByte(c.g):X2}{ToByte(c.b):X2}{ToByte(c.a):X2}>{s}</color>";
@@ -737,11 +671,6 @@ public class CustomOptionHolder
     {
         f = Mathf.Clamp01(f);
         return (byte)(f * 255);
-    }
-
-    public static bool isMapSelectionOption(CustomOption option)
-    {
-        return option == propHuntMap && option == hideNSeekMap;
     }
 
     public static void Load()
@@ -802,9 +731,6 @@ public class CustomOptionHolder
 
         randomGameStartPosition = Create(50, Types.General, "randomGameStartPosition", false, null, true);
         randomGameStartToVents = Create(51, Types.General, "randomGameStartToVents", true, randomGameStartPosition);
-
-        ShowVentsOnMap = Create(211, Types.General, "ShowVentsOnMapText", false, null, true);
-        ShowVentsOnMeetingMap = Create(212, Types.General, "ShowVentsOnMeetingMap", true, ShowVentsOnMap);
 
         enableMiraModify = Create(70, Types.General, cs(Color.yellow, "Mira"), false, null, true);
         miraVitals = Create(71, Types.General, "miraVitals", false, enableMiraModify);
@@ -1405,84 +1331,5 @@ public class CustomOptionHolder
         guesserGamemodeKillsThroughShield = Create(2008, Types.Guesser, "guesserGamemodeKillsThroughShield", true);
         guesserGamemodeEvilCanKillSpy = Create(2009, Types.Guesser, "guesserGamemodeEvilCanKillSpy", true);
         guesserGamemodeCantGuessSnitchIfTaksDone = Create(2010, Types.Guesser, "guesserGamemodeCantGuessSnitchIfTaksDone", true);
-
-        //-------------------------- Hide N Seek 3000 - 3999 -------------------------- //
-
-        hideNSeekMap = Create(3020, Types.HideNSeekMain, cs(Color.yellow, "CustomMap"),
-            ["Skeld", "Mira", "Polus", "Airship", "Fungle", "Submerged", "LevelImpostor"], null, true, () =>
-            {
-                var map = hideNSeekMap.selection;
-                if (map >= 3) map++;
-                GameOptionsManager.Instance.currentNormalGameOptions.MapId = (byte)map;
-            });
-        hideNSeekHunterCount = Create(3000, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekHunterCount"), 1f, 1f, 15f, 1f);
-        hideNSeekKillCooldown = Create(3021, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekKillCooldown"), 10f, 2.5f, 60f, 2.5f);
-        hideNSeekHunterVision = Create(3001, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekHunterVision"), 0.5f, 0.25f, 2f, 0.25f);
-        hideNSeekHuntedVision = Create(3002, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekHuntedVision"), 2f, 0.25f, 5f, 0.25f);
-        hideNSeekCommonTasks = Create(3023, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekCommonTasks"), 1f, 0f, 4f, 1f);
-        hideNSeekShortTasks = Create(3024, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekShortTasks"), 3f, 1f, 23f, 1f);
-        hideNSeekLongTasks = Create(3025, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekLongTasks"), 3f, 0f, 15f, 1f);
-        hideNSeekTimer = Create(3003, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekTimer"), 5f, 1f, 30f, 0.5f);
-        hideNSeekTaskWin = Create(3004, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekTaskWin"), false);
-        hideNSeekTaskPunish = Create(3017, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekTaskPunish"), 10f, 0f, 30f, 1f);
-        hideNSeekCanSabotage = Create(3019, Types.HideNSeekMain, cs(Color.yellow, "hideNSeekCanSabotage"), false);
-        hideHuntSpeed = Create(3027, Types.HideNSeekMain, cs(Color.yellow, "hideHuntSpeed"), 1f, 0.5f, 2f, 0.125f);
-        hideCrewSpeed = Create(3028, Types.HideNSeekMain, cs(Color.yellow, "hideCrewSpeed"), 1f, 0.5f, 2f, 0.125f);
-
-        hideNSeekHunterWaiting = Create(3022, Types.HideNSeekMain, cs(Color.red, "hideNSeekHunterWaiting"), 15f, 2.5f, 60f, 2.5f, null, true);
-        hunterLightCooldown = Create(3005, Types.HideNSeekRoles, cs(Color.red, "hunterLightCooldown"), 30f, 5f, 60f, 1f);
-        hunterLightDuration = Create(3006, Types.HideNSeekRoles, cs(Color.red, "hunterLightDuration"), 10f, 1f, 60f, 1f);
-        hunterLightVision = Create(3007, Types.HideNSeekRoles, cs(Color.red, "hunterLightVision"), 2f, 1f, 5f, 0.25f);
-        hunterLightPunish = Create(3008, Types.HideNSeekRoles, cs(Color.red, "hunterLightPunish"), 5f, 0f, 30f, 1f);
-        hunterAdminCooldown = Create(3009, Types.HideNSeekRoles, cs(Color.red, "hunterAdminCooldown"), 30f, 5f, 60f, 1f);
-        hunterAdminDuration = Create(3010, Types.HideNSeekRoles, cs(Color.red, "hunterAdminDuration"), 5f, 1f, 60f, 1f);
-        hunterAdminPunish = Create(3011, Types.HideNSeekRoles, cs(Color.red, "hunterAdminPunish"), 5f, 0f, 30f, 1f);
-        hunterArrowCooldown = Create(3012, Types.HideNSeekRoles, cs(Color.red, "hunterArrowCooldown"), 30f, 5f, 60f, 1f);
-        hunterArrowDuration = Create(3013, Types.HideNSeekRoles, cs(Color.red, "hunterArrowDuration"), 5f, 0f, 60f, 1f);
-        hunterArrowPunish = Create(3014, Types.HideNSeekRoles, cs(Color.red, "hunterArrowPunish"), 5f, 0f, 30f, 1f);
-
-        huntedShieldCooldown = Create(3015, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldCooldown"), 30f, 5f, 60f, 1f, null, true);
-        huntedShieldDuration = Create(3016, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldDuration"), 5f, 1f, 60f, 1f);
-        huntedShieldRewindTime = Create(3018, Types.HideNSeekRoles, cs(Color.gray, "huntedShieldRewindTime"), 3f, 1f, 10f, 1f);
-        huntedShieldNumber = Create(3026, Types.HideNSeekRoles, cs(Color.grey, "huntedShieldNumber"), 3f, 1f, 15f, 1f);
-
-        //-------------------------- Prop Hunt General Options 4000 - 4999 -------------------------- //
-
-        propHuntMap = Create(4020, Types.PropHunt, cs(Color.yellow, "CustomMap"),
-            ["Skeld", "Mira", "Polus", "Airship", "Fungle", "Submerged", "LevelImpostor"], null, true, () =>
-            {
-                var map = propHuntMap.selection;
-                if (map >= 3) map++;
-                GameOptionsManager.Instance.currentNormalGameOptions.MapId = (byte)map;
-            });
-        propHuntTimer = Create(4021, Types.PropHunt, cs(Color.yellow, "propHuntTimer"), 5f, 1f, 30f, 0.5f);
-        propHunterVision = Create(4006, Types.PropHunt, cs(Color.yellow, "propHunterVision"), 0.5f, 0.25f, 2f, 0.25f);
-        propVision = Create(4007, Types.PropHunt, cs(Color.yellow, "propVision"), 2f, 0.25f, 5f, 0.25f);
-        propHuntSpeed = Create(4025, Types.PropHunt, cs(Color.yellow, "propHuntSpeed"), 1f, 0.5f, 2f, 0.125f);
-        propPropSpeed = Create(4026, Types.PropHunt, cs(Color.yellow, "propPropSpeed"), 1f, 0.5f, 2f, 0.125f);
-
-        propHuntEnableUnstuck = Create(4027, Types.PropHunt, cs(Color.yellow, "propHuntEnableUnstuck"), ["optionOff", "Hunter", "Prop", "optionOn"], null, true);
-        propHuntUnstuckCooldown = Create(4011, Types.PropHunt, cs(Color.yellow, "propHuntUnstuckCooldown"), 30f, 2.5f, 60f, 2.5f, propHuntEnableUnstuck);
-        propHuntUnstuckDuration = Create(4012, Types.PropHunt, cs(Color.yellow, "propHuntUnstuckDuration"), 3f, 1f, 60f, 1f, propHuntEnableUnstuck);
-        // Hunter Options
-        propHuntNumberOfHunters = Create(4000, Types.PropHunt, cs(Color.red, "propHuntNumberOfHunters"), 1f, 1f, 15f, 1f, null, true);
-        hunterInitialBlackoutTime = Create(4001, Types.PropHunt, cs(Color.red, "hunterInitialBlackoutTime"), 10f, 5f, 20f, 1f);
-        hunterMissCooldown = Create(4004, Types.PropHunt, cs(Color.red, "hunterMissCooldown"), 10f, 2.5f, 60f, 2.5f);
-        hunterHitCooldown = Create(4005, Types.PropHunt, cs(Color.red, "hunterHitCooldown"), 10f, 2.5f, 60f, 2.5f);
-        propHuntRevealCooldown = Create(4008, Types.PropHunt, cs(Color.red, "propHuntRevealCooldown"), 30f, 10f, 90f, 2.5f);
-        propHuntRevealDuration = Create(4009, Types.PropHunt, cs(Color.red, "propHuntRevealDuration"), 5f, 1f, 60f, 1f);
-        propHuntRevealPunish = Create(4010, Types.PropHunt, cs(Color.red, "propHuntRevealPunish"), 10f, 0f, 1800f, 5f);
-        propHuntAdminCooldown = Create(4022, Types.PropHunt, cs(Color.red, "propHuntAdminCooldown"), 30f, 2.5f, 1800f, 2.5f);
-        propHuntFindCooldown = Create(4023, Types.PropHunt, cs(Color.red, "propHuntFindCooldown"), 60f, 2.5f, 1800f, 2.5f);
-        propHuntFindDuration = Create(4024, Types.PropHunt, cs(Color.red, "propHuntFindDuration"), 5f, 1f, 15f, 1f);
-        // Prop Options
-        propBecomesHunterWhenFound = Create(4003, Types.PropHunt, cs(Palette.CrewmateBlue, "propBecomesHunterWhenFound"), false, null, true);
-        propHuntInvisEnabled = Create(4013, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisEnabled"), true, null, true);
-        propHuntInvisCooldown = Create(4014, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisCooldown"), 40f, 10f, 120f, 2.5f, propHuntInvisEnabled);
-        propHuntInvisDuration = Create(4015, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntInvisDuration"), 5f, 2.5f, 30f, 2.5f, propHuntInvisEnabled);
-        propHuntSpeedboostEnabled = Create(4016, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntSpeedboostEnabled"), true, null, true);
-        propHuntSpeedboostCooldown = Create(4017, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntSpeedboostCooldown"), 45f, 2.5f, 120f, 2.5f, propHuntSpeedboostEnabled);
-        propHuntSpeedboostDuration = Create(4018, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntSpeedboostDuration"), 10f, 2.5f, 30f, 2.5f, propHuntSpeedboostEnabled);
-        propHuntSpeedboostSpeed = Create(4019, Types.PropHunt, cs(Palette.CrewmateBlue, "propHuntSpeedboostSpeed"), 2f, 1.25f, 5f, 0.25f, propHuntSpeedboostEnabled);
     }
 }

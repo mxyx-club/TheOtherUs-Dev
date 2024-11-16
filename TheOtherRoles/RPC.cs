@@ -256,19 +256,12 @@ public enum CustomRPC
 
     // Gamemode
     SetGuesserGm,
-    HuntedShield,
-    HuntedRewindTime,
-    SetProp,
     SetRevealed,
-    PropHuntStartTimer,
-    PropHuntSetInvis,
-    PropHuntSetSpeedboost,
     HostEndGame,
     HostKill,
     HostRevive,
 
     // Other functionality
-    ShareTimer,
     ShareGhostInfo,
 }
 
@@ -310,7 +303,6 @@ public static class RPCProcedure
         toggleZoom(true);
         GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
         SurveillanceMinigamePatch.nightVisionOverlays = null;
-        MapBehaviourPatch.clearAndReload();
     }
 
     public static void HandleShareOptions(byte numberOfOptions, MessageReader reader)
@@ -3015,101 +3007,6 @@ public static class RPCProcedure
         new GuesserGM(target);
     }
 
-    public static void shareTimer(float punish)
-    {
-        HideNSeek.timer -= punish;
-    }
-
-    public static void huntedShield(byte playerId)
-    {
-        if (!Hunted.timeshieldActive.Contains(playerId)) Hunted.timeshieldActive.Add(playerId);
-        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Hunted.shieldDuration,
-            new Action<float>(p =>
-            {
-                if (p == 1f) Hunted.timeshieldActive.Remove(playerId);
-            })));
-    }
-
-    public static void huntedRewindTime(byte playerId)
-    {
-        Hunted.timeshieldActive.Remove(playerId); // Shield is no longer active when rewinding
-        SoundEffectsManager.stop("timemasterShield"); // Shield sound stopped when rewinding
-        if (playerId == CachedPlayer.LocalPlayer.PlayerControl.PlayerId) resetHuntedRewindButton();
-        FastDestroyableSingleton<HudManager>.Instance.FullScreen.color = new Color(0f, 0.5f, 0.8f, 0.3f);
-        FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = true;
-        FastDestroyableSingleton<HudManager>.Instance.FullScreen.gameObject.SetActive(true);
-        FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(Hunted.shieldRewindTime,
-            new Action<float>(p =>
-            {
-                if (p == 1f) FastDestroyableSingleton<HudManager>.Instance.FullScreen.enabled = false;
-            })));
-
-        if (!CachedPlayer.LocalPlayer.Data.Role.IsImpostor) return; // only rewind hunter
-
-        TimeMaster.isRewinding = true;
-
-        if (MapBehaviour.Instance)
-            MapBehaviour.Instance.Close();
-        if (Minigame.Instance)
-            Minigame.Instance.ForceClose();
-        CachedPlayer.LocalPlayer.PlayerControl.moveable = false;
-    }
-
-    public static void propHuntStartTimer(bool blackout = false)
-    {
-        if (blackout)
-        {
-            PropHunt.blackOutTimer = PropHunt.initialBlackoutTime;
-            PropHunt.transformLayers();
-        }
-        else
-        {
-            PropHunt.timerRunning = true;
-            PropHunt.blackOutTimer = 0f;
-        }
-
-        PropHunt.startTime = DateTime.UtcNow;
-        foreach (var pc in PlayerControl.AllPlayerControls.ToArray().Where(x => x.Data.Role.IsImpostor))
-            pc.MyPhysics.SetBodyType(PlayerBodyTypes.Seeker);
-    }
-
-    public static void propHuntSetProp(byte playerId, string propName, float posX)
-    {
-        var player = playerById(playerId);
-        var prop = PropHunt.FindPropByNameAndPos(propName, posX);
-        if (prop == null) return;
-        try
-        {
-            player.GetComponent<SpriteRenderer>().sprite = prop.GetComponent<SpriteRenderer>().sprite;
-        }
-        catch
-        {
-            player.GetComponent<SpriteRenderer>().sprite =
-                prop.transform.GetComponentInChildren<SpriteRenderer>().sprite;
-        }
-
-        player.transform.localScale = prop.transform.lossyScale;
-        player.Visible = false;
-        PropHunt.currentObject[player.PlayerId] = new Tuple<string, float>(propName, posX);
-    }
-
-    public static void propHuntSetRevealed(byte playerId)
-    {
-        SoundEffectsManager.play("morphlingMorph");
-        PropHunt.isCurrentlyRevealed.Add(playerId, PropHunt.revealDuration);
-        PropHunt.timer -= PropHunt.revealPunish;
-    }
-
-    public static void propHuntSetInvis(byte playerId)
-    {
-        PropHunt.invisPlayers.Add(playerId, PropHunt.invisDuration);
-    }
-
-    public static void propHuntSetSpeedboost(byte playerId)
-    {
-        PropHunt.speedboostActive.Add(playerId, PropHunt.speedboostDuration);
-    }
-
     public static void receiveGhostInfo(byte senderId, MessageReader reader)
     {
         var sender = playerById(senderId);
@@ -3654,40 +3551,6 @@ internal class RPCHandlerPatch
                 var guesserGm = reader.ReadByte();
                 RPCProcedure.setGuesserGm(guesserGm);
                 break;
-            case CustomRPC.ShareTimer:
-                var punish = reader.ReadSingle();
-                RPCProcedure.shareTimer(punish);
-                break;
-            case CustomRPC.HuntedShield:
-                var huntedPlayer = reader.ReadByte();
-                RPCProcedure.huntedShield(huntedPlayer);
-                break;
-            case CustomRPC.HuntedRewindTime:
-                var rewindPlayer = reader.ReadByte();
-                RPCProcedure.huntedRewindTime(rewindPlayer);
-                break;
-            case CustomRPC.PropHuntStartTimer:
-                RPCProcedure.propHuntStartTimer(reader.ReadBoolean());
-                break;
-            case CustomRPC.SetProp:
-                var targetPlayer = reader.ReadByte();
-                var propName = reader.ReadString();
-                var posX = reader.ReadSingle();
-                RPCProcedure.propHuntSetProp(targetPlayer, propName, posX);
-                break;
-
-            case CustomRPC.SetRevealed:
-                RPCProcedure.propHuntSetRevealed(reader.ReadByte());
-                break;
-
-            case CustomRPC.PropHuntSetInvis:
-                RPCProcedure.propHuntSetInvis(reader.ReadByte());
-                break;
-
-            case CustomRPC.PropHuntSetSpeedboost:
-                RPCProcedure.propHuntSetSpeedboost(reader.ReadByte());
-                break;
-
             case CustomRPC.ShareGhostInfo:
                 RPCProcedure.receiveGhostInfo(reader.ReadByte(), reader);
                 break;

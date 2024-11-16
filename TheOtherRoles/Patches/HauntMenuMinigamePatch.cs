@@ -88,8 +88,7 @@ public static class HauntMenuMinigamePatch
     [HarmonyPatch(typeof(AbilityButton), nameof(AbilityButton.Update))]
     public static void showOrHideAbilityButtonPostfix(AbilityButton __instance)
     {
-        var isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek
-                         || PropHunt.isPropHuntGM || HideNSeek.isHideNSeekGM;
+        var isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
         if (CachedPlayer.LocalPlayer.Data.IsDead && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool() || isGameMode))
         {
             // player has haunt button.

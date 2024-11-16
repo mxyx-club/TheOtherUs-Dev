@@ -26,9 +26,7 @@ public static class ChatCommands
                 {
                     var gm = text[4..].ToLower();
                     var gameMode = CustomGamemodes.Classic;
-                    if (gm.StartsWith("prop") || gm.StartsWith("ph")) gameMode = CustomGamemodes.PropHunt;
                     if (gm.StartsWith("guess") || gm.StartsWith("gm")) gameMode = CustomGamemodes.Guesser;
-                    if (gm.StartsWith("hide") || gm.StartsWith("hn")) gameMode = CustomGamemodes.HideNSeek;
 
                     if (AmongUsClient.Instance.AmHost)
                     {
@@ -221,7 +219,7 @@ public static class ChatCommands
         }
 
         private static string GetWelcomeMessage => "WelcomeText".Translate();
-        private static string GetBetaMessage => string.Format("BetaMessage".Translate(), Main.BetaDaysLeft);
+        private static string GetBetaMessage => string.Format("BetaMessage".Translate(), " ∞ ");
     }
 
 

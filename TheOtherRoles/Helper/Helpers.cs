@@ -54,8 +54,6 @@ public enum CustomGamemodes
 {
     Classic,
     Guesser,
-    HideNSeek,
-    PropHunt
 }
 
 public enum LogLevel
@@ -770,50 +768,6 @@ public static class Helpers
         return text[0];
     }
 
-    public static async Task checkBeta()
-    {
-        if (Main.betaDays > 0)
-        {
-            var ticks = GetBuiltInTicks();
-            var compileTime = new DateTime(ticks, DateTimeKind.Utc);  // This may show as an error, but it is not, compilation will work!
-            Message($"Beta版构建于: {compileTime.ToString(CultureInfo.InvariantCulture)}");
-            DateTime? now;
-            // Get time from the internet, so no-one can cheat it (so easily).
-            try
-            {
-                var client = new System.Net.Http.HttpClient();
-                using var response = await client.GetAsync("http://www.bing.com/");
-                if (response.IsSuccessStatusCode)
-                    now = response.Headers.Date?.UtcDateTime;
-                else
-                {
-                    Message($"Could not get time from server: {response.StatusCode}");
-                    now = DateTime.UtcNow; //In case something goes wrong. 
-                }
-            }
-            catch (System.Net.Http.HttpRequestException)
-            {
-                now = DateTime.UtcNow;
-            }
-
-            // Calculate the remaining days and store as an integer
-            Main.BetaDaysLeft = (int)Math.Round(Main.betaDays - (now - compileTime)?.TotalDays ?? 0);
-
-            if ((now - compileTime)?.TotalDays > Main.betaDays)
-            {
-                Message($"该Beta版本已过期! ");
-                _ = BepInExUpdater.MessageBoxTimeout(BepInExUpdater.GetForegroundWindow(),
-                    "该Beta版本已经过期, 请进行手动更新.\nBETA is expired. You cannot play this version anymore", "The Other Us - Edited", 0, 0, 10000);
-                Application.Quit();
-                return;
-            }
-            else
-            {
-                Message($"该Beta版本将在 {Main.BetaDaysLeft} 天后过期!");
-            }
-        }
-    }
-
     public static Color getTeamColor(RoleType team)
     {
         return team switch
@@ -1188,7 +1142,7 @@ public static class Helpers
             return MurderAttemptResult.SuppressKill; // Allow non Impostor kills compared to vanilla code
         if (target == null || target.Data == null || target.Data.IsDead || target.Data.Disconnected)
             return MurderAttemptResult.SuppressKill; // Allow killing players in vents compared to vanilla code
-        if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek || PropHunt.isPropHuntGM)
+        if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek)
             return MurderAttemptResult.PerformKill;
 
         // Handle first kill attempt
@@ -1320,17 +1274,6 @@ public static class Helpers
             return MurderAttemptResult.SuppressKill;
         }
 
-        // Block hunted with time shield kill
-        else if (Hunted.timeshieldActive.Contains(target.PlayerId))
-        {
-            var writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId, (byte)CustomRPC.HuntedRewindTime,
-                SendOption.Reliable);
-            writer.Write(target.PlayerId);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.huntedRewindTime(target.PlayerId);
-
-            return MurderAttemptResult.SuppressKill;
-        }
 
         if (target.isUsingTransportation() && !blockRewind && killer == Vampire.vampire)
             return MurderAttemptResult.DelayVampireKill;

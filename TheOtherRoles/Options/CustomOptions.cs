@@ -30,9 +30,6 @@ public class CustomOption
         Crewmate,
         Modifier,
         Guesser,
-        HideNSeekMain,
-        HideNSeekRoles,
-        PropHunt
     }
 
     public static List<CustomOption> options = new();
@@ -360,12 +357,6 @@ internal class GameOptionsMenuStartPatch
                 break;
             case CustomGamemodes.Guesser:
                 createGuesserTabs(__instance);
-                break;
-            case CustomGamemodes.HideNSeek:
-                createHideNSeekTabs(__instance);
-                break;
-            case CustomGamemodes.PropHunt:
-                createPropHuntTabs(__instance);
                 break;
         }
 
@@ -770,8 +761,6 @@ internal class GameOptionsMenuStartPatch
         for (var i = 0; i < options.Count; i++)
         {
             var option = options[i];
-            if (option.type != CustomOptionType.HideNSeekMain &&
-                option.type != CustomOptionType.HideNSeekRoles) continue;
             if (option.optionBehaviour == null)
             {
                 var index = (int)option.type - 6;
@@ -859,7 +848,6 @@ internal class GameOptionsMenuStartPatch
         for (var i = 0; i < options.Count; i++)
         {
             var option = options[i];
-            if (option.type != CustomOptionType.PropHunt) continue;
             if (option.optionBehaviour == null)
             {
                 var index = 0;
@@ -997,14 +985,6 @@ public class StringOptionIncreasePatch
         var option = options.FirstOrDefault(option => option.optionBehaviour == __instance);
         if (option == null) return true;
         option.updateSelection(option.selection + 1);
-        if (CustomOptionHolder.isMapSelectionOption(option))
-        {
-            var currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-            currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)option.selection);
-            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-            GameManager.Instance.LogicOptions.SyncOptions();
-        }
-
         return false;
     }
 }
@@ -1017,14 +997,6 @@ public class StringOptionDecreasePatch
         var option = options.FirstOrDefault(option => option.optionBehaviour == __instance);
         if (option == null) return true;
         option.updateSelection(option.selection - 1);
-        if (CustomOptionHolder.isMapSelectionOption(option))
-        {
-            var currentGameOptions = GameOptionsManager.Instance.CurrentGameOptions;
-            currentGameOptions.SetByte(ByteOptionNames.MapId, (byte)option.selection);
-            GameOptionsManager.Instance.GameHostOptions = GameOptionsManager.Instance.CurrentGameOptions;
-            GameManager.Instance.LogicOptions.SyncOptions();
-        }
-
         return false;
     }
 }
@@ -1036,7 +1008,7 @@ public class StringOptionFixedUpdate
     {
         if (!IL2CPPChainloader.Instance.Plugins.TryGetValue("com.DigiWorm.LevelImposter", out var _)) return;
         var option = options.FirstOrDefault(option => option.optionBehaviour == __instance);
-        if (option == null || !CustomOptionHolder.isMapSelectionOption(option)) return;
+        if (option == null) return;
         if (GameOptionsManager.Instance.CurrentGameOptions.MapId == 6)
             if (option.optionBehaviour is not null and StringOption stringOption)
             {
@@ -1092,9 +1064,6 @@ internal class GameOptionsMenuUpdatePatch
         var offset = 2.75f;
         foreach (var option in options)
         {
-            if (GameObject.Find("TORSettings") && option.type != CustomOptionType.General &&
-                option.type != CustomOptionType.HideNSeekMain && option.type != CustomOptionType.PropHunt)
-                continue;
             if (GameObject.Find("ImpostorSettings") && option.type != CustomOptionType.Impostor)
                 continue;
             if (GameObject.Find("NeutralSettings") && option.type != CustomOptionType.Neutral)
@@ -1104,8 +1073,6 @@ internal class GameOptionsMenuUpdatePatch
             if (GameObject.Find("ModifierSettings") && option.type != CustomOptionType.Modifier)
                 continue;
             if (GameObject.Find("GuesserSettings") && option.type != CustomOptionType.Guesser)
-                continue;
-            if (GameObject.Find("HideNSeekSettings") && option.type != CustomOptionType.HideNSeekRoles)
                 continue;
             if (option?.optionBehaviour != null && option.optionBehaviour.gameObject != null)
             {
@@ -1171,15 +1138,6 @@ internal class GameOptionsDataPatch
             options = options.Where(x =>
                 !(x.type == CustomOptionType.Guesser));
         }
-        else if (ModOption.gameMode == CustomGamemodes.HideNSeek)
-        {
-            options = options.Where(x =>
-                x.type is CustomOptionType.HideNSeekMain or CustomOptionType.HideNSeekRoles);
-        }
-        else if (ModOption.gameMode == CustomGamemodes.PropHunt)
-        {
-            options = options.Where(x => x.type == CustomOptionType.PropHunt);
-        }
 
         foreach (var option in options)
             if (option.parent == null)
@@ -1203,10 +1161,6 @@ internal class GameOptionsDataPatch
 
         foreach (var option in options)
         {
-            if (ModOption.gameMode == CustomGamemodes.HideNSeek && option.type != CustomOptionType.HideNSeekMain &&
-                option.type != CustomOptionType.HideNSeekRoles) continue;
-            if (ModOption.gameMode == CustomGamemodes.PropHunt &&
-                option.type != CustomOptionType.PropHunt) continue;
             if (option.parent != null)
             {
                 var isIrrelevant = option.parent.getSelection() == 0 ||
@@ -1284,57 +1238,30 @@ internal class GameOptionsDataPatch
             ? cs(DateTime.Now.Second % 2 == 0 ? Color.white : Color.red, "useScrollWheel".Translate())
             : "";
 
-        if (ModOption.gameMode == CustomGamemodes.HideNSeek)
+        maxPage = 7;
+        switch (counter)
         {
-            if (Main.optionsPage > 1) Main.optionsPage = 0;
-            maxPage = 2;
-            switch (counter)
-            {
-                case 0:
-                    hudString += "hideNSeekPage1".Translate() + buildOptionsOfType(CustomOptionType.HideNSeekMain, false);
-                    break;
-                case 1:
-                    hudString += "hideNSeekPage2".Translate() + buildOptionsOfType(CustomOptionType.HideNSeekRoles, false);
-                    break;
-            }
-        }
-        else if (ModOption.gameMode == CustomGamemodes.PropHunt)
-        {
-            maxPage = 1;
-            switch (counter)
-            {
-                case 0:
-                    hudString += "PropHuntPage".Translate() + buildOptionsOfType(CustomOptionType.PropHunt, false);
-                    break;
-            }
-        }
-        else
-        {
-            maxPage = 7;
-            switch (counter)
-            {
-                case 0:
-                    hudString += (!hideExtras ? "" : "page1".Translate()) + vanillaSettings;
-                    break;
-                case 1:
-                    hudString += "page2".Translate() + buildOptionsOfType(CustomOptionType.General, false);
-                    break;
-                case 2:
-                    hudString += "page3".Translate() + buildRoleOptions();
-                    break;
-                case 3:
-                    hudString += "page4".Translate() + buildOptionsOfType(CustomOptionType.Impostor, false);
-                    break;
-                case 4:
-                    hudString += "page5".Translate() + buildOptionsOfType(CustomOptionType.Neutral, false);
-                    break;
-                case 5:
-                    hudString += "page6".Translate() + buildOptionsOfType(CustomOptionType.Crewmate, false);
-                    break;
-                case 6:
-                    hudString += "page7".Translate() + buildOptionsOfType(CustomOptionType.Modifier, false);
-                    break;
-            }
+            case 0:
+                hudString += (!hideExtras ? "" : "page1".Translate()) + vanillaSettings;
+                break;
+            case 1:
+                hudString += "page2".Translate() + buildOptionsOfType(CustomOptionType.General, false);
+                break;
+            case 2:
+                hudString += "page3".Translate() + buildRoleOptions();
+                break;
+            case 3:
+                hudString += "page4".Translate() + buildOptionsOfType(CustomOptionType.Impostor, false);
+                break;
+            case 4:
+                hudString += "page5".Translate() + buildOptionsOfType(CustomOptionType.Neutral, false);
+                break;
+            case 5:
+                hudString += "page6".Translate() + buildOptionsOfType(CustomOptionType.Crewmate, false);
+                break;
+            case 6:
+                hudString += "page7".Translate() + buildOptionsOfType(CustomOptionType.Modifier, false);
+                break;
         }
 
         if (!hideExtras || counter != 0) hudString += string.Format("pressTabForMore".Translate(), counter + 1, maxPage);

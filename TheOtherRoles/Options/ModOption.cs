@@ -32,8 +32,6 @@ internal class ModOption
     public static bool impostorSeeRoles;
     public static bool transparentTasks;
     public static bool hideOutOfSightNametags;
-    public static bool ShowVentsOnMap;
-    public static bool ShowVentsOnMeetingMap;
     public static bool randomLigherPlayer;
     public static bool disableMedscanWalking;
     public static bool isCanceled;
@@ -111,8 +109,6 @@ internal class ModOption
         restrictVitalsTime = restrictVitalsTimeMax = CustomOptionHolder.restrictVents.getFloat();
         disableCamsRoundOne = CustomOptionHolder.disableCamsRound1.getBool();
         randomGameStartPosition = CustomOptionHolder.randomGameStartPosition.getBool();
-        ShowVentsOnMap = CustomOptionHolder.ShowVentsOnMap.getBool();
-        ShowVentsOnMeetingMap = CustomOptionHolder.ShowVentsOnMeetingMap.getBool();
         randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.getBool();
         allowModGuess = CustomOptionHolder.allowModGuess.getBool();
         CursedTasks = CustomOptionHolder.enableCursedTasks.getBool();

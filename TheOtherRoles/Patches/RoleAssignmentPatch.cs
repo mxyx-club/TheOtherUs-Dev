@@ -26,15 +26,7 @@ internal class GameOptionsDataGetAdjustedNumImpostorsPatch
 {
     public static void Postfix(ref int __result)
     {
-        if (ModOption.gameMode is CustomGamemodes.HideNSeek or CustomGamemodes.PropHunt)
-        {
-            var impCount = ModOption.gameMode == CustomGamemodes.HideNSeek
-                ? Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat())
-                : CustomOptionHolder.propHuntNumberOfHunters.getQuantity();
-            __result = impCount;
-            ; // Set Imp Num
-        }
-        else if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal)
+        if (GameOptionsManager.Instance.CurrentGameOptions.GameMode == GameModes.Normal)
         {
             // Ignore Vanilla impostor limits in TOR Games.
             __result = Mathf.Clamp(GameOptionsManager.Instance.CurrentGameOptions.NumImpostors, 0, 15);
@@ -47,10 +39,6 @@ internal class GameOptionsDataValidatePatch
 {
     public static void Postfix(GameOptionsData __instance)
     {
-        if (ModOption.gameMode == CustomGamemodes.HideNSeek ||
-            GameOptionsManager.Instance.CurrentGameOptions.GameMode != GameModes.Normal) return;
-        if (ModOption.gameMode == CustomGamemodes.PropHunt)
-            __instance.NumImpostors = CustomOptionHolder.propHuntNumberOfHunters.getQuantity();
         __instance.NumImpostors = GameOptionsManager.Instance.CurrentGameOptions.NumImpostors;
     }
 }
@@ -73,8 +61,7 @@ internal class RoleManagerSelectRolesPatch
         AmongUsClient.Instance.FinishRpcImmediately(writer);
         RPCProcedure.resetVariables();
         // Don't assign Roles in Hide N Seek
-        if (ModOption.gameMode == CustomGamemodes.HideNSeek || ModOption.gameMode == CustomGamemodes.PropHunt ||
-            GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
+        if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
         assignRoles();
     }
 

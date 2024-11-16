@@ -378,7 +378,6 @@ internal class HudManagerUpdatePatch
         Ninja.invisibleTimer -= dt;
         Jackal.swoopTimer -= dt;
         Swooper.swoopTimer -= dt;
-        HideNSeek.timer -= dt;
         foreach (var key in Deputy.handcuffedKnows.Keys)
             Deputy.handcuffedKnows[key] -= dt;
     }
@@ -456,8 +455,6 @@ internal class HudManagerUpdatePatch
 
     private static void updateSabotageButton(HudManager __instance)
     {
-        if (MeetingHud.Instance || ModOption.gameMode == CustomGamemodes.HideNSeek ||
-            ModOption.gameMode == CustomGamemodes.PropHunt) __instance.SabotageButton.Hide();
         if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.getBool()) __instance.SabotageButton.Hide();
     }
 

@@ -1660,82 +1660,6 @@ public static class PlayerControlFixedUpdatePatch
         }
     }
 
-    private static void hunterUpdate()
-    {
-        if (!HideNSeek.isHideNSeekGM) return;
-        var minutes = (int)HideNSeek.timer / 60;
-        var seconds = (int)HideNSeek.timer % 60;
-        var suffix = $" {minutes:00}:{seconds:00}";
-
-        if (HideNSeek.timerText == null)
-        {
-            var roomTracker = FastDestroyableSingleton<HudManager>.Instance?.roomTracker;
-            if (roomTracker != null)
-            {
-                var gameObject = Object.Instantiate(roomTracker.gameObject);
-
-                gameObject.transform.SetParent(FastDestroyableSingleton<HudManager>.Instance.transform);
-                Object.DestroyImmediate(gameObject.GetComponent<RoomTracker>());
-                HideNSeek.timerText = gameObject.GetComponent<TMP_Text>();
-
-                // Use local position to place it in the player's view instead of the world location
-                gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
-                if (DataManager.Settings.Gameplay.StreamerMode)
-                    gameObject.transform.localPosition = new Vector3(0, 2f, gameObject.transform.localPosition.z);
-            }
-        }
-        else
-        {
-            if (HideNSeek.isWaitingTimer)
-            {
-                HideNSeek.timerText.text = "<color=#0000cc>" + suffix + "</color>";
-                HideNSeek.timerText.color = Color.blue;
-            }
-            else
-            {
-                HideNSeek.timerText.text = "<color=#FF0000FF>" + suffix + "</color>";
-                HideNSeek.timerText.color = Color.red;
-            }
-        }
-
-        if (HideNSeek.isHunted() && !Hunted.taskPunish && !HideNSeek.isWaitingTimer)
-        {
-            var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
-            var numberOfTasks = playerTotal - playerCompleted;
-            if (numberOfTasks == 0)
-            {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.ShareTimer, SendOption.Reliable);
-                writer.Write(HideNSeek.taskPunish);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.shareTimer(HideNSeek.taskPunish);
-
-                Hunted.taskPunish = true;
-            }
-        }
-
-        if (!HideNSeek.isHunter()) return;
-
-        var playerId = CachedPlayer.LocalPlayer.PlayerId;
-        foreach (var arrow in Hunter.localArrows) arrow.arrow.SetActive(false);
-        if (Hunter.arrowActive)
-        {
-            var arrowIndex = 0;
-            foreach (PlayerControl p in CachedPlayer.AllPlayers)
-                if (!p.Data.IsDead && !p.Data.Role.IsImpostor)
-                {
-                    if (arrowIndex >= Hunter.localArrows.Count) Hunter.localArrows.Add(new Arrow(Color.blue));
-                    if (arrowIndex < Hunter.localArrows.Count && Hunter.localArrows[arrowIndex] != null)
-                    {
-                        Hunter.localArrows[arrowIndex].arrow.SetActive(true);
-                        Hunter.localArrows[arrowIndex].Update(p.transform.position, Color.blue);
-                    }
-
-                    arrowIndex++;
-                }
-        }
-    }
-
     public static void akujoUpdate()
     {
         if (Akujo.akujo == null || Akujo.akujo.Data.IsDead || CachedPlayer.LocalPlayer.PlayerControl != Akujo.akujo) return;
@@ -1833,11 +1757,8 @@ public static class PlayerControlFixedUpdatePatch
             GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return;
 
         // Mini and Morphling shrink
-        if (!PropHunt.isPropHuntGM)
-        {
-            MiniSizeUpdate(__instance);
-            GiantSizeUpdate(__instance);
-        }
+        MiniSizeUpdate(__instance);
+        GiantSizeUpdate(__instance);
 
         // set position of colorblind text
         /*foreach (var pc in PlayerControl.AllPlayerControls)
@@ -1987,10 +1908,6 @@ public static class PlayerControlFixedUpdatePatch
             // Chameleon (invis stuff, timers)
             Chameleon.update();
             Bomb.update();
-
-            // -- GAME MODE --
-            hunterUpdate();
-            PropHunt.update();
         }
     }
 }
@@ -2022,7 +1939,6 @@ internal class PlayerControlCmdReportDeadBodyPatch
 {
     public static bool Prefix(PlayerControl __instance)
     {
-        if (HideNSeek.isHideNSeekGM || PropHunt.isPropHuntGM) return false;
         handleVampireBiteOnBodyReport();
         handleBomberExplodeOnBodyReport();
         handleTrapperTrapOnBodyReport();
@@ -2344,36 +2260,8 @@ public static class MurderPlayerPatch
             showFlash(color, 1.75f);
         }
 
-        // HideNSeek
-        if (HideNSeek.isHideNSeekGM)
-        {
-            var visibleCounter = 0;
-            var bottomLeft = IntroCutsceneOnDestroyPatch.bottomLeft + new Vector3(-0.25f, -0.25f, 0);
-            foreach (PlayerControl p in CachedPlayer.AllPlayers)
-            {
-                if (!ModOption.playerIcons.ContainsKey(p.PlayerId) || p.Data.Role.IsImpostor) continue;
-                if (p.Data.IsDead || p.Data.Disconnected)
-                {
-                    ModOption.playerIcons[p.PlayerId].gameObject.SetActive(false);
-                }
-                else
-                {
-                    ModOption.playerIcons[p.PlayerId].transform.localPosition =
-                        bottomLeft + (Vector3.right * visibleCounter * 0.35f);
-                    visibleCounter++;
-                }
-            }
-        }
         // Snitch
-        /*if (Snitch.snitch != null && CachedPlayer.LocalPlayer.PlayerId == Snitch.snitch.PlayerId &&
-            MapBehaviourPatch.herePoints.Keys.Any(x => x.PlayerId == target.PlayerId))
-        {
-            foreach (var a in MapBehaviourPatch.herePoints.Where(x => x.Key.PlayerId == target.PlayerId))
-            {
-                Object.Destroy(a.Value);
-                MapBehaviourPatch.herePoints.Remove(a.Key);
-            }
-        }*/
+
         // Akujo Lovers trigger suicide
         if ((Akujo.akujo != null && target == Akujo.akujo) || (Akujo.honmei != null && target == Akujo.honmei))
         {

@@ -499,12 +499,7 @@ public class OnGameEndPatch
             TempData.winners.Add(new WinningPlayerData(PartTimer.partTimer.Data));
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalPartTimerWin);
         }
-
-        AdditionalTempData.timer = (float)(DateTime.UtcNow -
-            (HideNSeek.isHideNSeekGM ? HideNSeek.startTime : PropHunt.startTime)).TotalMilliseconds / 1000;
-
         // Reset Settings
-        if (ModOption.gameMode == CustomGamemodes.HideNSeek) ShipStatusPatch.resetVanillaSettings();
         RPCProcedure.resetVariables();
     }
 }
@@ -706,7 +701,7 @@ public class EndGameManagerSetUpPatch
             textRenderer.text += $"<size=50%>\n{combinedText}</size>";
         }
 
-        if (HideNSeek.isHideNSeekGM || PropHunt.isPropHuntGM || GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.Normal)
+        if (GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.Normal)
         {
             if (Camera.main != null)
             {
@@ -717,12 +712,6 @@ public class EndGameManagerSetUpPatch
                 roleSummary.transform.localScale = new Vector3(1f, 1f, 1f);
 
                 var roleSummaryText = new StringBuilder();
-                if (HideNSeek.isHideNSeekGM || PropHunt.isPropHuntGM)
-                {
-                    var minutes = (int)AdditionalTempData.timer / 60;
-                    var seconds = (int)AdditionalTempData.timer % 60;
-                    roleSummaryText.AppendLine($"<color=#FAD934FF>剩余时间: {minutes:00}:{seconds:00}</color> \n");
-                }
 
                 roleSummaryText.AppendLine("游戏总结:");
                 foreach (var data in AdditionalTempData.playerRoles)
@@ -865,7 +854,7 @@ internal class CheckEndCriteriaPatch
 
     private static bool CheckAndEndGameForTaskWin(ShipStatus __instance)
     {
-        if (ModOption.PreventTaskEnd || (HideNSeek.isHideNSeekGM && !HideNSeek.taskWinPossible) || PropHunt.isPropHuntGM) return false;
+        if (ModOption.PreventTaskEnd) return false;
         if (GameData.Instance.TotalTasks > 0 && GameData.Instance.TotalTasks <= GameData.Instance.CompletedTasks)
         {
             //__instance.enabled = false;
@@ -1044,10 +1033,6 @@ internal class CheckEndCriteriaPatch
 
     private static bool CheckAndEndGameForImpostorWin(ShipStatus __instance, PlayerStatistics statistics)
     {
-        if (HideNSeek.isHideNSeekGM || PropHunt.isPropHuntGM)
-            if (0 != statistics.TotalAlive - statistics.TeamImpostorsAlive)
-                return false;
-
         if (statistics.TeamImpostorsAlive >= statistics.TotalAlive - statistics.TeamImpostorsAlive &&
             statistics.TeamJackalAlive == 0 &&
             statistics.TeamPavlovsAlive == 0 &&
@@ -1082,17 +1067,6 @@ internal class CheckEndCriteriaPatch
 
     private static bool CheckAndEndGameForCrewmateWin(ShipStatus __instance, PlayerStatistics statistics)
     {
-        if (HideNSeek.isHideNSeekGM && HideNSeek.timer <= 0 && !HideNSeek.isWaitingTimer)
-        {
-            //__instance.enabled = false;
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
-            return true;
-        }
-        if (PropHunt.isPropHuntGM && PropHunt.timer <= 0 && PropHunt.timerRunning)
-        {
-            GameManager.Instance.RpcEndGame(GameOverReason.HumansByVote, false);
-            return true;
-        }
         if (statistics.TeamImpostorsAlive == 0 &&
             statistics.TeamJackalAlive == 0 &&
             statistics.TeamPavlovsAlive == 0 &&

@@ -24,72 +24,41 @@ public class ShipStatusPatch
         if (!__instance.Systems.ContainsKey(SystemTypes.Electrical) ||
             GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek) return true;
 
-        // If Game Mode is PropHunt:
-        if (PropHunt.isPropHuntGM)
+        // If player is a role which has Impostor vision
+        if (hasImpVision(player))
         {
-            if (!PropHunt.timerRunning)
-            {
-                var progress = PropHunt.blackOutTimer > 0f && PropHunt.blackOutTimer < 1f
-                    ? 1 - PropHunt.blackOutTimer
-                    : 0f;
-                var minVision = __instance.MaxLightRadius *
-                                (PropHunt.propBecomesHunterWhenFound ? 0.25f : PropHunt.propVision);
-                __result = Mathf.Lerp(minVision, __instance.MaxLightRadius * PropHunt.propVision,
-                    progress); // For future start animation
-            }
-            else
-            {
-                __result = __instance.MaxLightRadius * (PlayerControl.LocalPlayer.Data.Role.IsImpostor
-                    ? PropHunt.hunterVision
-                    : PropHunt.propVision);
-            }
-
+            //__result = __instance.MaxLightRadius * GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
+            __result = GetNeutralLightRadius(__instance, true);
             return false;
         }
 
-        if (!HideNSeek.isHideNSeekGM || (HideNSeek.isHideNSeekGM && !Hunter.lightActive.Contains(player.PlayerId)))
-            // If player is a role which has Impostor vision
-            if (hasImpVision(player))
-            {
-                //__result = __instance.MaxLightRadius * GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod;
-                __result = GetNeutralLightRadius(__instance, true);
-                return false;
-            }
+        // If Game mode is Hide N Seek and hunter with ability active
 
-            // If Game mode is Hide N Seek and hunter with ability active
-            else if (HideNSeek.isHideNSeekGM && Hunter.isLightActive(player.PlayerId))
-            {
-                var unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius,
-                    GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MaxLightRadius * Hunter.lightVision,
-                    __instance.MaxLightRadius * Hunter.lightVision, unlerped);
-                return false;
-            }
+        // If there is a Trickster with their ability active
+        else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f)
+        {
+            var lerpValue = 1f;
+            if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f)
+                lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);
+            else if (Trickster.lightsOutTimer < 0.5) lerpValue = Mathf.Clamp01(Trickster.lightsOutTimer * 2);
 
-            // If there is a Trickster with their ability active
-            else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f)
-            {
-                var lerpValue = 1f;
-                if (Trickster.lightsOutDuration - Trickster.lightsOutTimer < 0.5f)
-                    lerpValue = Mathf.Clamp01((Trickster.lightsOutDuration - Trickster.lightsOutTimer) * 2);
-                else if (Trickster.lightsOutTimer < 0.5) lerpValue = Mathf.Clamp01(Trickster.lightsOutTimer * 2);
+            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod;
+        }
 
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius, 1 - lerpValue) * GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod;
-            }
+        // If player is Lawyer, apply Lawyer vision modifier
+        else if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == player.PlayerId)
+        {
+            var unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
+            __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * Lawyer.vision, unlerped);
+            return false;
+        }
 
-            // If player is Lawyer, apply Lawyer vision modifier
-            else if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == player.PlayerId)
-            {
-                var unlerped = Mathf.InverseLerp(__instance.MinLightRadius, __instance.MaxLightRadius, GetNeutralLightRadius(__instance, false));
-                __result = Mathf.Lerp(__instance.MinLightRadius, __instance.MaxLightRadius * Lawyer.vision, unlerped);
-                return false;
-            }
+        // Default light radius
+        else
+        {
+            __result = GetNeutralLightRadius(__instance, false);
+        }
 
-            // Default light radius
-            else
-            {
-                __result = GetNeutralLightRadius(__instance, false);
-            }
 
         // Additional code
         var switchSystem = __instance.Systems[SystemTypes.Electrical]?.TryCast<SwitchSystem>();
@@ -156,34 +125,6 @@ public class ShipStatusPatch
         originalNumShortTasksOption = GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks;
         originalNumLongTasksOption = GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks;
 
-        if (ModOption.gameMode != CustomGamemodes.HideNSeek)
-        {
-            var commonTaskCount = __instance.CommonTasks.Count;
-            var normalTaskCount = __instance.ShortTasks.Count;
-            var longTaskCount = __instance.LongTasks.Count;
-
-            if (ModOption.gameMode == CustomGamemodes.PropHunt)
-                commonTaskCount = normalTaskCount = longTaskCount = 0;
-
-
-            if (GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks > commonTaskCount)
-                GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks = commonTaskCount;
-            if (GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks > normalTaskCount)
-                GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks = normalTaskCount;
-            if (GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks > longTaskCount)
-                GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks = longTaskCount;
-        }
-        else
-        {
-            GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekCommonTasks.getFloat());
-            GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekShortTasks.getFloat());
-            GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekLongTasks.getFloat());
-        }
-
-        MapBehaviourPatch.VentNetworks.Clear();
         return true;
     }
 

@@ -34,9 +34,7 @@ public static class CredentialsPatch
             var position = __instance.GetComponent<AspectPosition>();
             var gameModeText = ModOption.gameMode switch
             {
-                CustomGamemodes.HideNSeek => getString("isHideNSeekGM"),
                 CustomGamemodes.Guesser => getString("isGuesserGm"),
-                CustomGamemodes.PropHunt => getString("isPropHuntGM"),
                 _ => ""
             };
             if (ModOption.DebugMode) gameModeText += "(Debug Mode)";

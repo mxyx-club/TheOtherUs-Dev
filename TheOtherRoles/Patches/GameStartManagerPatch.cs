@@ -303,19 +303,7 @@ public class GameStartManagerPatch
                         break;
                     }
                 }
-                if (continueStart && (ModOption.gameMode == CustomGamemodes.HideNSeek || ModOption.gameMode == CustomGamemodes.PropHunt) && GameOptionsManager.Instance.CurrentGameOptions.MapId != 6)
-                {
-                    byte mapId = 0;
-                    if (ModOption.gameMode == CustomGamemodes.HideNSeek) mapId = (byte)CustomOptionHolder.hideNSeekMap.getSelection();
-                    else if (ModOption.gameMode == CustomGamemodes.PropHunt) mapId = (byte)CustomOptionHolder.propHuntMap.getSelection();
-                    if (mapId >= 3) mapId++;
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                        (byte)CustomRPC.DynamicMapOption, SendOption.Reliable, -1);
-                    writer.Write(mapId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.dynamicMapOption(mapId);
-                }
-                else if (CustomOptionHolder.dynamicMap.getBool() && continueStart)
+                if (CustomOptionHolder.dynamicMap.getBool() && continueStart)
                 {
                     // 0 = Skeld
                     // 1 = Mira HQ

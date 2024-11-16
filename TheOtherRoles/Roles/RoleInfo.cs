@@ -123,11 +123,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
     public static RoleInfo chameleon = new("Chameleon", Color.yellow, RoleId.Chameleon, RoleType.Modifier);
     public static RoleInfo shifter = new("Shifter", Color.yellow, RoleId.Shifter, RoleType.Modifier);
 
-    //躲猫猫
-    public static RoleInfo hunter = new("Hunter", Palette.ImpostorRed, RoleId.Impostor, RoleType.Impostor);
-    public static RoleInfo hunted = new("Hunted", Color.white, RoleId.Crewmate, RoleType.Crewmate);
-    public static RoleInfo prop = new("Prop", Color.white, RoleId.Crewmate, RoleType.Crewmate);
-
     public static List<RoleInfo> allRoleInfos =
     [
         impostor,
@@ -349,14 +344,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (Survivor.survivor.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
 
         // Default roles (just impostor, just crewmate, or hunter / hunted for hide n seek, prop hunt prop ...
-        if (infos.Count == count)
-        {
-            if (p.Data.Role.IsImpostor)
-                infos.Add(ModOption.gameMode is CustomGamemodes.HideNSeek or CustomGamemodes.PropHunt ? hunter : impostor);
-            else
-                infos.Add(ModOption.gameMode == CustomGamemodes.HideNSeek ? hunted : ModOption.gameMode == CustomGamemodes.PropHunt ? prop : crewmate);
-        }
-
         return infos;
     }
 

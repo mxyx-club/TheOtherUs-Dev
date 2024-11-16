@@ -21,13 +21,8 @@ public class TheOtherRolesPlugin : BasePlugin
     public const string Id = "TheOtherUs.Options.v2"; // Config files name
     public const string ModName = MyPluginInfo.PLUGIN_NAME;
     public const string VersionString = MyPluginInfo.PLUGIN_VERSION;
-#if RELEASE
-    public static uint betaDays;
-#else
-    public static uint betaDays = 30;
-#endif
-    public static int BetaDaysLeft;
 
+    public static uint betaDays;
     public static Version Version = Version.Parse(VersionString);
 
     public static TheOtherRolesPlugin Instance;
@@ -84,7 +79,7 @@ public class TheOtherRolesPlugin : BasePlugin
         SetLogSource(Log);
         Instance = this;
 
-        _ = checkBeta(); // Exit if running an expired beta
+        //_ = checkBeta(); // Exit if running an expired beta
 
         ToggleCursor = Config.Bind("Custom", "Better Cursor", true);
         EnableSoundEffects = Config.Bind("Custom", "Enable Sound Effects", true);
@@ -100,14 +95,6 @@ public class TheOtherRolesPlugin : BasePlugin
         UpdateRegions();
         CrowdedPlayer.Start();
         Harmony.PatchAll();
-
-        if (BepInExUpdater.UpdateRequired)
-        {
-            AddComponent<BepInExUpdater>();
-            return;
-        }
-        AddComponent<ModUpdater>();
-
         ModOption.reloadPluginOptions();
         CosmeticsManager.Load();
         CustomOptionHolder.Load();
