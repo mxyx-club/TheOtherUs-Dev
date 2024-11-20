@@ -305,7 +305,7 @@ public static class RPCProcedure
         Trap.clearTraps();
         Silhouette.clearSilhouettes();
         ElectricPatch.Reset();
-        clearGameHistory();
+        GameHistory.Clear();
         setCustomButtonCooldowns();
         toggleZoom(true);
         GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
@@ -774,7 +774,7 @@ public static class RPCProcedure
     {
         if (Medium.futureDeadBodies != null)
         {
-            var deadBody = Medium.futureDeadBodies.Find(x => x.Item1.player.PlayerId == playerId)?.Item1;
+            var deadBody = Medium.futureDeadBodies.Find(x => x.Item1.Player.PlayerId == playerId)?.Item1;
             if (deadBody != null) deadBody.wasCleaned = true;
         }
 
@@ -1601,7 +1601,7 @@ public static class RPCProcedure
     {
         var target = playerById(targetId);
         target.Exiled();
-        overrideDeathReasonAndKiller(target, DeadPlayer.CustomDeathReason.HostCmdKill, GetHostPlayer);
+        OverrideDeathReasonAndKiller(target, CustomDeathReason.HostCmdKill, GetHostPlayer);
 
         DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
         foreach (var body in array)
@@ -1640,7 +1640,7 @@ public static class RPCProcedure
         if ((player.Data.Role.IsImpostor || isShiftNeutral(player)) && !oldShifter.Data.IsDead)
         {
             oldShifter.Exiled();
-            overrideDeathReasonAndKiller(oldShifter, DeadPlayer.CustomDeathReason.Shift, player);
+            OverrideDeathReasonAndKiller(oldShifter, CustomDeathReason.Shift, player);
             if (oldShifter == Lawyer.target && AmongUsClient.Instance.AmHost && Lawyer.lawyer != null)
             {
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
@@ -1826,7 +1826,7 @@ public static class RPCProcedure
         {
             //uncheckedMurderPlayer(Jackal.jackal.PlayerId, player.PlayerId, 1);
             Jackal.jackal.MurderPlayer(target, MurderResultFlags.Succeeded);
-            overrideDeathReasonAndKiller(target, DeadPlayer.CustomDeathReason.FakeSK, Jackal.jackal);
+            OverrideDeathReasonAndKiller(target, CustomDeathReason.FakeSK, Jackal.jackal);
             return;
         }
 
@@ -2324,7 +2324,7 @@ public static class RPCProcedure
         if (akujo != null)
         {
             akujo.Exiled();
-            overrideDeathReasonAndKiller(akujo, DeadPlayer.CustomDeathReason.Loneliness);
+            OverrideDeathReasonAndKiller(akujo, CustomDeathReason.Loneliness);
 
             if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
             if (PlayerControl.LocalPlayer == Akujo.akujo)
@@ -2628,9 +2628,9 @@ public static class RPCProcedure
     {
         var player = Lawyer.lawyer;
         var client = Lawyer.target;
-        Lawyer.clearAndReload(false);
 
         Pursuer.pursuer.Add(player);
+        Lawyer.clearAndReload(false);
 
         if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId && client != null)
         {
@@ -2713,13 +2713,13 @@ public static class RPCProcedure
 
             Lawyer.lawyer.Exiled();
             lawyerDiedAdditionally = true;
-            overrideDeathReasonAndKiller(Lawyer.lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide, guesser);
+            OverrideDeathReasonAndKiller(Lawyer.lawyer, CustomDeathReason.LawyerSuicide, guesser);
         }
 
         var partnerId = dyingLoverPartner != null ? dyingLoverPartner.PlayerId : dyingTargetId;
 
         dyingTarget.Exiled();
-        overrideDeathReasonAndKiller(dyingTarget, DeadPlayer.CustomDeathReason.Guess, guesser);
+        OverrideDeathReasonAndKiller(dyingTarget, CustomDeathReason.Guess, guesser);
         if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
         byte akujoPartnerId = dyingAkujoPartner != null ? dyingAkujoPartner.PlayerId : byte.MaxValue;
 
@@ -3152,8 +3152,8 @@ public static class RPCProcedure
                 vampireKillButton.Timer = reader.ReadByte();
                 break;
             case GhostInfoTypes.DeathReasonAndKiller:
-                overrideDeathReasonAndKiller(playerById(reader.ReadByte()),
-                    (DeadPlayer.CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
+                OverrideDeathReasonAndKiller(playerById(reader.ReadByte()),
+                    (CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
                 break;
         }
     }

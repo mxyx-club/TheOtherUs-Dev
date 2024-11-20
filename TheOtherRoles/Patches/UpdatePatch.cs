@@ -113,7 +113,17 @@ internal class HudManagerUpdatePatch
             }
         }
 
-        if (Mayor.mayor != null && Mayor.Revealed && !localPlayer.Data.IsDead)
+        if (Executioner.executioner != null && localPlayer == Executioner.executioner && Executioner.target != null)
+        {
+            setPlayerNameColor(Executioner.target, Executioner.color);
+        }
+
+        if (Lawyer.lawyer != null && localPlayer == Lawyer.lawyer && Lawyer.target != null)
+        {
+            setPlayerNameColor(Lawyer.target, RoleInfo.getRoleInfoForPlayer(Lawyer.target, false)?.FirstOrDefault()?.color ?? Color.white);
+        }
+
+        if (Mayor.mayor != null && Mayor.Revealed)
         {
             setPlayerNameColor(Mayor.mayor, Mayor.color);
         }

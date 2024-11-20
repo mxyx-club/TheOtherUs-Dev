@@ -114,9 +114,9 @@ public class VitalsPatch
 
                     // Hacker update
                     if (!vitalsPanel.IsDead) continue;
-                    var deadPlayer = deadPlayers?.Where(x => x.player.PlayerId == player?.PlayerId)?.FirstOrDefault();
+                    AllDeadPlayers.TryGetValue(player.PlayerId, out var deadPlayer);
                     if (deadPlayer == null || k >= hackerTexts.Count || hackerTexts[k] == null) continue;
-                    var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.timeOfDeath).TotalMilliseconds;
+                    var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.TimeOfDeath).TotalMilliseconds;
                     hackerTexts[k].gameObject.SetActive(true);
                     hackerTexts[k].text = Math.Round(timeSinceDeath / 1000) + "s";
                 }

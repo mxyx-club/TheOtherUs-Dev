@@ -104,9 +104,9 @@ public static class Medium
         else
         {
             var randomNumber = rnd.Next(4);
-            var typeOfColor = isLighterColor(Medium.target.killerIfExisting) ? "浅" : "深";
-            var timeSinceDeath = (float)(meetingStartTime - Medium.target.timeOfDeath).TotalMilliseconds;
-            var roleString = RoleInfo.GetRolesString(Medium.target.player, false, false, false);
+            var typeOfColor = isLighterColor(Medium.target.KillerIfExisting) ? "浅" : "深";
+            var timeSinceDeath = (float)(meetingStartTime - Medium.target.TimeOfDeath).TotalMilliseconds;
+            var roleString = RoleInfo.GetRolesString(Medium.target.Player, false, false, false);
             if (randomNumber == 0)
             {
                 msg = "我的职业是 " + roleString + " .";
@@ -121,7 +121,7 @@ public static class Medium
             }
             else
             {
-                msg = "我好像是被 " + RoleInfo.GetRolesString(Medium.target.killerIfExisting, false, false, false) + " 无情的杀害了.";
+                msg = "我好像是被 " + RoleInfo.GetRolesString(Medium.target.KillerIfExisting, false, false, false) + " 无情的杀害了.";
             }
         }
 
@@ -152,7 +152,7 @@ public static class Medium
             msg += $"\n你问我的时候,有{count} " + condition + (count == 1 ? "" : "") + " 还活着";
         }
 
-        return Medium.target.player.Data.PlayerName + " 的灵魂说:\n" + msg;
+        return Medium.target.Player.Data.PlayerName + " 的灵魂说:\n" + msg;
     }
 
     private enum SpecialMediumInfo

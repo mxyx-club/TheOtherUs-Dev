@@ -39,7 +39,7 @@ public static class Akujo
             {
                 Lovers.clearAndReload();
                 otherLover.MurderPlayer(otherLover, MurderResultFlags.Succeeded);
-                GameHistory.overrideDeathReasonAndKiller(otherLover, DeadPlayer.CustomDeathReason.LoveStolen);
+                GameHistory.OverrideDeathReasonAndKiller(otherLover, CustomDeathReason.LoveStolen);
             }
         }
     }
