@@ -1587,21 +1587,21 @@ public static class PlayerControlFixedUpdatePatch
             if (entry.Value <= 0)
             {
                 Bait.active.Remove(entry.Key);
-                if (entry.Key.killerIfExisting != null &&
-                    entry.Key.killerIfExisting.PlayerId == CachedPlayer.LocalPlayer.PlayerId)
+                if (entry.Key.KillerIfExisting != null &&
+                    entry.Key.KillerIfExisting.PlayerId == CachedPlayer.LocalPlayer.PlayerId)
                 {
 
                     handleVampireBiteOnBodyReport(); // Manually call Vampire handling, since the CmdReportDeadBody Prefix won't be called
 
                     handleBomberExplodeOnBodyReport(); // Manually call Vampire handling, since the CmdReportDeadBody Prefix won't be called
-                    RPCProcedure.uncheckedCmdReportDeadBody(entry.Key.killerIfExisting.PlayerId,
-                        entry.Key.player.PlayerId);
+                    RPCProcedure.uncheckedCmdReportDeadBody(entry.Key.KillerIfExisting.PlayerId,
+                        entry.Key.Player.PlayerId);
 
                     var writer = AmongUsClient.Instance.StartRpcImmediately(
                         CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedCmdReportDeadBody,
                         SendOption.Reliable);
-                    writer.Write(entry.Key.killerIfExisting.PlayerId);
-                    writer.Write(entry.Key.player.PlayerId);
+                    writer.Write(entry.Key.KillerIfExisting.PlayerId);
+                    writer.Write(entry.Key.Player.PlayerId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
                 }
             }
@@ -1961,12 +1961,12 @@ internal class BodyReportPatch
                              __instance.PlayerId == Slueth.slueth.PlayerId;
         if (isMedicReport || isDetectiveReport)
         {
-            var deadPlayer = deadPlayers?.Where(x => x.player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
-            if (deadPlayer != null && deadPlayer.killerIfExisting != null)
+            AllDeadPlayers.TryGetValue(target.PlayerId, out var deadPlayer);
+            if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
             {
-                var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.timeOfDeath).TotalMilliseconds;
+                var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.TimeOfDeath).TotalMilliseconds;
                 var msg = "";
-                var killer = deadPlayer.killerIfExisting;
+                var killer = deadPlayer.KillerIfExisting;
 
                 if (isMedicReport)
                 {
@@ -2049,8 +2049,9 @@ public static class MurderPlayerPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
         // Collect dead player info
-        var deadPlayer = new DeadPlayer(target, DateTime.UtcNow, DeadPlayer.CustomDeathReason.Kill, __instance);
-        deadPlayers.Add(deadPlayer);
+        OverrideDeathReasonAndKiller(__instance, CustomDeathReason.Kill, __instance);
+
+        AllDeadPlayers.TryGetValue(__instance.PlayerId, out var deadPlayer);
 
         // Reset killer to crewmate if resetToCrewmate
         if (resetToCrewmate) __instance.Data.Role.TeamType = RoleTeamTypes.Crewmate;
@@ -2070,7 +2071,7 @@ public static class MurderPlayerPatch
             if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie)
             {
                 otherLover.MurderPlayer(otherLover);
-                overrideDeathReasonAndKiller(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
+                OverrideDeathReasonAndKiller(otherLover, CustomDeathReason.LoverSuicide);
             }
         }
 
@@ -2269,7 +2270,7 @@ public static class MurderPlayerPatch
             if (akujoPartner != null && !akujoPartner.Data.IsDead)
             {
                 akujoPartner.MurderPlayer(akujoPartner, MurderResultFlags.Succeeded);
-                overrideDeathReasonAndKiller(akujoPartner, DeadPlayer.CustomDeathReason.LoverSuicide);
+                OverrideDeathReasonAndKiller(akujoPartner, CustomDeathReason.LoverSuicide);
             }
         }
 
@@ -2344,9 +2345,7 @@ public static class ExilePlayerPatch
     public static void Postfix(PlayerControl __instance)
     {
         // Collect dead player info
-        var deadPlayer = new DeadPlayer(__instance, DateTime.UtcNow, DeadPlayer.CustomDeathReason.Exile, null);
-        deadPlayers.Add(deadPlayer);
-
+        OverrideDeathReasonAndKiller(__instance, CustomDeathReason.Exile, null);
 
         // Remove fake tasks when player dies
         if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer || __instance == Pursuer.pursuer.Contains(__instance) ||
@@ -2361,7 +2360,7 @@ public static class ExilePlayerPatch
             if (otherLover != null && !otherLover.Data.IsDead && Lovers.bothDie)
             {
                 otherLover.Exiled();
-                overrideDeathReasonAndKiller(otherLover, DeadPlayer.CustomDeathReason.LoverSuicide);
+                OverrideDeathReasonAndKiller(otherLover, CustomDeathReason.LoverSuicide);
             }
         }
 
@@ -2397,20 +2396,22 @@ public static class ExilePlayerPatch
                 Lawyer.lawyer?.Exiled();
                 if (Pursuer.pursuer != null)
                 {
-                    foreach (var pursuer in Pursuer.pursuer) pursuer?.Exiled();
+                    foreach (var pursuer in Pursuer.pursuer.Where(x => x.PlayerId == Lawyer.lawyer.PlayerId)) pursuer?.Exiled();
                 }
 
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
                 writer.Write(CachedPlayer.LocalPlayer.PlayerId);
                 writer.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
                 writer.Write(lawyer.PlayerId);
-                writer.Write((byte)DeadPlayer.CustomDeathReason.LawyerSuicide);
+                writer.Write((byte)CustomDeathReason.LawyerSuicide);
                 writer.Write(lawyer.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                overrideDeathReasonAndKiller(lawyer, DeadPlayer.CustomDeathReason.LawyerSuicide,
-                    lawyer); // TODO: only executed on host?!
+                OverrideDeathReasonAndKiller(lawyer, CustomDeathReason.LawyerSuicide, lawyer);
+                // TODO: only executed on host?!
             }
         }
+
+        /* ???
         if (Executioner.executioner != null && __instance == Executioner.target)
         {
             if (AmongUsClient.Instance.AmHost && Executioner.targetWasGuessed)
@@ -2420,7 +2421,7 @@ public static class ExilePlayerPatch
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.executionerPromotesRole();
             }
-        }
+        }*/
 
         // Akujo Partner suicide
         if ((Akujo.akujo != null && Akujo.akujo == __instance) || (Akujo.honmei != null && Akujo.honmei == __instance))
@@ -2429,7 +2430,7 @@ public static class ExilePlayerPatch
             if (akujoPartner != null && !akujoPartner.Data.IsDead)
             {
                 akujoPartner.Exiled();
-                overrideDeathReasonAndKiller(akujoPartner, DeadPlayer.CustomDeathReason.LoverSuicide);
+                OverrideDeathReasonAndKiller(akujoPartner, CustomDeathReason.LoverSuicide);
             }
 
             if (MeetingHud.Instance && akujoPartner != null)

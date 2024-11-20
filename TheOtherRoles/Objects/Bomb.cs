@@ -99,10 +99,10 @@ public class Bomb
                 writer.Write(CachedPlayer.LocalPlayer.PlayerId);
                 writer.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
                 writer.Write(CachedPlayer.LocalPlayer.PlayerId);
-                writer.Write((byte)DeadPlayer.CustomDeathReason.Bomb);
+                writer.Write((byte)CustomDeathReason.Bomb);
                 writer.Write(Terrorist.terrorist.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                GameHistory.overrideDeathReasonAndKiller(CachedPlayer.LocalPlayer, DeadPlayer.CustomDeathReason.Bomb,
+                GameHistory.OverrideDeathReasonAndKiller(CachedPlayer.LocalPlayer, CustomDeathReason.Bomb,
                     Terrorist.terrorist);
             }
             SoundEffectsManager.playAtPosition("bombExplosion", position, range: Terrorist.hearRange);

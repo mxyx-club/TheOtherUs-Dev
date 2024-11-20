@@ -125,7 +125,7 @@ public class OnGameEndPatch
             var roles = RoleInfo.getRoleInfoForPlayer(playerControl);
             var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(playerControl.Data);
             var isGuesser = HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(playerControl.PlayerId);
-            int? killCount = GameHistory.deadPlayers.FindAll(x => x.killerIfExisting != null && x.killerIfExisting.PlayerId == playerControl.PlayerId).Count;
+            int? killCount = GameHistory.GetKillCount(playerControl);
             if (killCount == 0 &&
                 !(killRole.Contains(RoleInfo.getRoleInfoForPlayer(playerControl, false).FirstOrDefault())
                  || playerControl.Data.Role.IsImpostor)) killCount = null;

@@ -3043,7 +3043,7 @@ internal static class HudManagerStartPatch
                 foreach (PlayerControl p in Arsonist.dousedPlayers.Where(p => p.IsAlive()))
                 {
                     checkMurderAttemptAndKill(Arsonist.arsonist, p, false, false, false);
-                    GameHistory.overrideDeathReasonAndKiller(p, DeadPlayer.CustomDeathReason.Arson, Arsonist.arsonist);
+                    GameHistory.OverrideDeathReasonAndKiller(p, CustomDeathReason.Arson, Arsonist.arsonist);
                 }
                 Message("点火");
                 arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
@@ -3222,14 +3222,14 @@ internal static class HudManagerStartPatch
             () =>
             {
                 mediumButton.Timer = mediumButton.MaxTimer;
-                if (Medium.target == null || Medium.target.player == null) return;
-                var msg = Medium.getInfo(Medium.target.player, Medium.target.killerIfExisting);
+                if (Medium.target == null || Medium.target.Player == null) return;
+                var msg = Medium.getInfo(Medium.target.Player, Medium.target.KillerIfExisting);
                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, msg);
 
                 // Ghost Info
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
-                writer.Write(Medium.target.player.PlayerId);
+                writer.Write(Medium.target.Player.PlayerId);
                 writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
                 writer.Write(msg);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
