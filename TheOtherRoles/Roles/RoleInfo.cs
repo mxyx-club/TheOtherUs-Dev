@@ -359,7 +359,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
         if (p == Jackal.jackal && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
 
-        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId) && p != Specoality.specoality && p != Doomsayer.doomsayer) roleName += "GuessserGMInfo".Translate();
+        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
 
         if (!suppressGhostInfo && p != null)
         {
