@@ -3936,44 +3936,38 @@ internal static class HudManagerStartPatch
                 if (Thief.suicideFlag)
                 {
                     // Suicide
-                    var writer2 = AmongUsClient.Instance.StartRpcImmediately(
-                        CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer,
-                        SendOption.Reliable);
+                    var writer2 = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.UncheckedMurderPlayer);
                     writer2.Write(thief.PlayerId);
                     writer2.Write(thief.PlayerId);
                     writer2.Write(0);
+                    writer2.EndRPC();
                     RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, thief.PlayerId, 0);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer2);
                     Thief.thief.clearAllTasks();
                 }
 
                 // Steal role if survived.
                 if (!Thief.thief.Data.IsDead && result == MurderAttemptResult.PerformKill)
                 {
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                        (byte)CustomRPC.ThiefStealsRole, SendOption.Reliable);
+                    var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.ThiefStealsRole);
                     writer.Write(target.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    writer.EndRPC();
                     RPCProcedure.thiefStealsRole(target.PlayerId);
                 }
 
                 // Kill the victim (after becoming their role - so that no win is triggered for other teams)
                 if (result == MurderAttemptResult.PerformKill)
                 {
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(
-                        CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.UncheckedMurderPlayer,
-                        SendOption.Reliable);
+                    var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.UncheckedMurderPlayer);
                     writer.Write(thief.PlayerId);
                     writer.Write(target.PlayerId);
                     writer.Write(byte.MaxValue);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
+                    writer.EndRPC();
                     RPCProcedure.uncheckedMurderPlayer(thief.PlayerId, target.PlayerId, byte.MaxValue);
                 }
             },
             () =>
             {
-                return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief &&
-                       !CachedPlayer.LocalPlayer.Data.IsDead;
+                return Thief.thief != null && CachedPlayer.LocalPlayer.PlayerControl == Thief.thief && CachedPlayer.LocalPlayer.PlayerControl.IsAlive();
             },
             () => { return Thief.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove; },
             () => { thiefKillButton.Timer = thiefKillButton.MaxTimer; },

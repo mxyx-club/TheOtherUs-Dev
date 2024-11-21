@@ -2919,6 +2919,8 @@ public static class RPCProcedure
         {
             Pavlovsdogs.pavlovsdogs.Add(target);
             Pavlovsdogs.pavlovsowner = thief;
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.getBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+                setGuesserGm(thief.PlayerId);
         }
         if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))
         {
@@ -2969,9 +2971,26 @@ public static class RPCProcedure
                 GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
         }
 
-        if (target == Werewolf.werewolf) Werewolf.werewolf = thief;
-        if (target == Juggernaut.juggernaut) Juggernaut.juggernaut = thief;
-        if (target == Swooper.swooper) Swooper.swooper = thief;
+        if (target == Werewolf.werewolf)
+        {
+            Survivor.survivor.Add(target);
+            Werewolf.werewolf = thief;
+        }
+        if (target == Arsonist.arsonist)
+        {
+            Survivor.survivor.Add(target);
+            Arsonist.arsonist = thief;
+        }
+        if (target == Juggernaut.juggernaut)
+        {
+            Survivor.survivor.Add(target);
+            Juggernaut.juggernaut = thief;
+        }
+        if (target == Swooper.swooper)
+        {
+            Survivor.survivor.Add(target);
+            Swooper.swooper = thief;
+        }
 
         if (target == Deputy.deputy) Deputy.deputy = thief;
         if (target == Veteran.veteran) Veteran.veteran = thief;
@@ -2992,7 +3011,7 @@ public static class RPCProcedure
         var position = Vector3.zero;
         position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
         position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-        new Trap(position);
+        _ = new Trap(position);
     }
 
     public static void triggerTrap(byte playerId, byte trapId)
@@ -3004,7 +3023,7 @@ public static class RPCProcedure
     {
         var target = playerById(playerId);
         if (target == null) return;
-        new GuesserGM(target);
+        _ = new GuesserGM(target);
     }
 
     public static void receiveGhostInfo(byte senderId, MessageReader reader)

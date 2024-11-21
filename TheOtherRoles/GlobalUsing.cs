@@ -12,6 +12,7 @@ global using TheOtherRoles.Roles.Crewmate;
 global using TheOtherRoles.Roles.Impostor;
 global using TheOtherRoles.Roles.Modifier;
 global using TheOtherRoles.Roles.Neutral;
+global using static TheOtherRoles.Helper.FastRPCExtension;
 global using static TheOtherRoles.Helper.Helpers;
 global using static TheOtherRoles.Helper.LogHelper;
 global using static TheOtherRoles.Modules.ModTranslation;
