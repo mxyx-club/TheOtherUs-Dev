@@ -351,7 +351,7 @@ public static class Guesser
                     if (focusedTarget == Indomitable.indomitable)
                     {
                         //showFlash(new Color32(255, 197, 97, byte.MinValue));
-                        Coroutines.Start(showFlashCoroutine(Indomitable.color, 1f, 0.5f));
+                        Coroutines.Start(showFlashCoroutine(Color.yellow, 1f, 0.3f));
                         __instance.playerStates.ForEach(x => x.gameObject.SetActive(true));
                         Object.Destroy(container.gameObject);
 
@@ -381,7 +381,7 @@ public static class Guesser
                         {
                             if (guesserUI != null) guesserUIExitButton.OnClick.Invoke();
 
-                            Coroutines.Start(showFlashCoroutine(Color.red, 1f, 0.5f));
+                            Coroutines.Start(showFlashCoroutine(Color.red, 1f, 0.3f));
                             Specoality.linearfunction--;
                             SoundEffectsManager.play("fail");
                             //RPCProcedure.seedGuessChat(CachedPlayer.LocalPlayer.PlayerControl, dyingTarget, (byte)roleInfo.roleId);
