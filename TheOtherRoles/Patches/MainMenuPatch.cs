@@ -185,7 +185,7 @@ public static class VersionShower_Start
 {
     public static void Postfix(VersionShower __instance)
     {
-        __instance.text.text = $"Among Us v{Application.version} - <color=#ff351f>The Other Us Edited</color> <color=#FCCE03FF>v{Main.Version}{(Main.betaDays > 0 ? "-Beta" : "")}</color>";
+        __instance.text.text = $"Among Us v{Application.version} - <color=#ff351f>The Other Us Edited</color> <color=#FCCE03FF>v{Main.Version}{"-Lite"}</color>";
     }
 }
 /*

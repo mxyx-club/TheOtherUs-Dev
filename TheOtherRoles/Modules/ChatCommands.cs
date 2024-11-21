@@ -211,15 +211,12 @@ public static class ChatCommands
                     if (__instance.myPlayer.IsAlive())
                     {
                         FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance.myPlayer, GetWelcomeMessage);
-                        if (Main.betaDays > 0)
-                            FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(__instance.myPlayer, GetBetaMessage);
                     }
                 }, 1f, "Welcome Chat");
             }
         }
 
         private static string GetWelcomeMessage => "WelcomeText".Translate();
-        private static string GetBetaMessage => string.Format("BetaMessage".Translate(), " ∞ ");
     }
 
 

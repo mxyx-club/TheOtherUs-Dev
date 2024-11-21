@@ -8,7 +8,7 @@ namespace TheOtherRoles.Patches;
 [HarmonyPatch]
 public static class CredentialsPatch
 {
-    public static string fullCredentialsVersion = $"<size=130%>{getString("TouTitle")}</size> v{Main.Version + (Main.betaDays > 0 ? "-Beta" : "")}";
+    public static string fullCredentialsVersion = $"<size=130%>{getString("TouTitle")}</size> v{Main.Version + "-Lite"}";
 
     public static string fullCredentials = getString("fullCredentials");
 
@@ -75,7 +75,7 @@ public static class CredentialsPatch
             var credentialObject = new GameObject("credentialsTOR");
             var credentials = credentialObject.AddComponent<TextMeshPro>();
             credentials.SetText(
-                $"<size=90%>TheOtherUs-Edited v{Main.Version + (Main.betaDays > 0 ? "-Beta" : "")}</size>\n<size=30%>\n</size>{mainMenuCredentials}\n<size=30%>\n</size>{contributorsCredentials}");
+                $"<size=90%>TheOtherUs-Edited v{Main.Version + "-Lite"}</size>\n<size=30%>\n</size>{mainMenuCredentials}\n<size=30%>\n</size>{contributorsCredentials}");
             credentials.alignment = TextAlignmentOptions.Center;
             credentials.fontSize *= 0.05f;
 

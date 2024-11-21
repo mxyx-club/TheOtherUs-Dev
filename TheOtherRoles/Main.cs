@@ -22,7 +22,6 @@ public class TheOtherRolesPlugin : BasePlugin
     public const string ModName = MyPluginInfo.PLUGIN_NAME;
     public const string VersionString = MyPluginInfo.PLUGIN_VERSION;
 
-    public static uint betaDays;
     public static Version Version = Version.Parse(VersionString);
 
     public static TheOtherRolesPlugin Instance;
@@ -79,8 +78,6 @@ public class TheOtherRolesPlugin : BasePlugin
         SetLogSource(Log);
         Instance = this;
 
-        //_ = checkBeta(); // Exit if running an expired beta
-
         ToggleCursor = Config.Bind("Custom", "Better Cursor", true);
         EnableSoundEffects = Config.Bind("Custom", "Enable Sound Effects", true);
         ShowPopUpVersion = Config.Bind("Custom", "Show PopUp", "0");
@@ -105,7 +102,7 @@ public class TheOtherRolesPlugin : BasePlugin
         SubmergedCompatibility.Initialize();
         MainMenuPatch.addSceneChangeCallbacks();
         AddToKillDistanceSetting.addKillDistance();
-        Info($"\n---------------\n Loading TheOtherUs completed!\n TheOtherUs-Edited v{VersionString}\n---------------");
+        Info($"\n---------------\n Loading TheOtherUs completed!\n TheOtherUs-Edited v{VersionString}-Lite\n---------------");
     }
 }
 
