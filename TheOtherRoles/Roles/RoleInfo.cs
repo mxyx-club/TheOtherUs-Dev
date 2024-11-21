@@ -343,7 +343,11 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (Pursuer.pursuer.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pursuer);
         if (Survivor.survivor.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
 
-        // Default roles (just impostor, just crewmate, or hunter / hunted for hide n seek, prop hunt prop ...
+        if (infos.Count == count)
+        {
+            if (p.Data.Role.IsImpostor) infos.Add(impostor);
+            else infos.Add(crewmate);
+        }
         return infos;
     }
 
@@ -390,11 +394,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                     roleName = cs(Witch.color, "☆ ") + roleName;
                 if (BountyHunter.bounty == p)
                     roleName = cs(BountyHunter.color, "(被悬赏) ") + roleName;
-                //if (Arsonist.dousedPlayers.Contains(p))
-                //    roleName = cs(Arsonist.color, "♨ ") + roleName;
-                if (p == Arsonist.arsonist)
-                    roleName += cs(Arsonist.color,
-                        $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");
                 if (Akujo.keeps.Contains(p))
                     roleName = cs(Color.gray, "(备胎) ") + roleName;
                 if (p == Akujo.honmei)
