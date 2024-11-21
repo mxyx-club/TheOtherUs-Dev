@@ -3,7 +3,7 @@ using Hazel;
 using InnerNet;
 using UnityEngine;
 
-namespace TheOtherRoles.Helper.RPC;
+namespace TheOtherRoles.Helper;
 
 #nullable enable
 public class FastRpcWriter : IDisposable

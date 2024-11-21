@@ -628,6 +628,18 @@ public static class Helpers
         return false;
     }
 
+    public static TKey GetKeyByValue<TKey, TValue>(this Dictionary<TKey, TValue> dictionary, TValue value, TKey defaultvalue = default)
+    {
+        foreach (var pair in dictionary)
+        {
+            if (EqualityComparer<TValue>.Default.Equals(pair.Value, value))
+            {
+                return pair.Key;
+            }
+        }
+        return defaultvalue;
+    }
+
     public static bool Contains<T, TKey>(this IEnumerable<T> list, T item, Func<T, TKey> keySelector)
     {
         return list.Any(x => keySelector(x).Equals(keySelector(item)));
