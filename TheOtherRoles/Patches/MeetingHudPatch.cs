@@ -128,7 +128,6 @@ internal class MeetingHudPatch
             var copyI = i;
             swapperButtonList[i].OnClick.RemoveAllListeners();
             swapperButtonList[i].OnClick.AddListener((Action)(() => swapperOnClick(copyI, __instance)));
-            if (PlayerControl.LocalPlayer.PlayerId == Swapper.swapper.PlayerId) Swapper.charges++;
         }
     }
 
@@ -568,6 +567,7 @@ internal class MeetingHudPatch
                 var localPosition = swapped1.transform.localPosition;
                 __instance.StartCoroutine(Effects.Slide3D(swapped1.transform, localPosition, swapped2.transform.localPosition, 1.5f));
                 __instance.StartCoroutine(Effects.Slide3D(swapped2.transform, swapped2.transform.localPosition, localPosition, 1.5f));
+                Swapper.charges--;
             }
 
             __instance.TitleText.text = FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.MeetingVotingResults, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
