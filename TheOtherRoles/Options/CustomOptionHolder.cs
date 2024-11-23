@@ -113,6 +113,7 @@ public class CustomOptionHolder
     public static CustomOption arsonistSpawnRate;
     public static CustomOption arsonistCooldown;
     public static CustomOption arsonistDuration;
+    public static CustomOption arsonistIgniteCdRemoved;
 
     public static CustomOption jackalSpawnRate;
     public static CustomOption jackalKillCooldown;
@@ -952,6 +953,7 @@ public class CustomOptionHolder
         arsonistSpawnRate = Create(20120, Types.Neutral, cs(Arsonist.color, "Arsonist"), rates, null, true);
         arsonistCooldown = Create(20121, Types.Neutral, "arsonistCooldown", 12.5f, 5f, 60f, 2.5f, arsonistSpawnRate);
         arsonistDuration = Create(20122, Types.Neutral, "arsonistDuration", 0.25f, 0f, 10f, 0.125f, arsonistSpawnRate);
+        arsonistIgniteCdRemoved = Create(20123, Types.Neutral, "arsonistIgniteCdRemoved", false, arsonistSpawnRate);
 
         swooperSpawnRate = Create(20150, Types.Neutral, cs(Swooper.color, "Swooper"), rates, null, true);
         swooperKillCooldown = Create(20151, Types.Neutral, "swooperKillCooldown", 25f, 10f, 60f, 2.5f, swooperSpawnRate);

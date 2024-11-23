@@ -537,7 +537,7 @@ internal class VitalsMinigamePatch
                     // Hacker update
                     if (vitalsPanel.IsDead)
                     {
-                        AllDeadPlayers.TryGetValue(player.PlayerId, out var deadPlayer);
+                        var deadPlayer = DeadPlayers?.Where(x => x.Player?.PlayerId == player?.PlayerId)?.FirstOrDefault();
                         if (deadPlayer != null && k < hackerTexts.Count && hackerTexts[k] != null)
                         {
                             var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.TimeOfDeath).TotalMilliseconds;

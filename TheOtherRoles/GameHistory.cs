@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Hazel;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles;
@@ -35,56 +37,61 @@ public class DeadPlayer
     public DateTime TimeOfDeath { get; }
     public bool wasCleaned { get; set; }
 
-    public DeadPlayer(PlayerControl player, DateTime timeOfDeath, CustomDeathReason deathReason, PlayerControl killerIfExisting)
+    public DeadPlayer(PlayerControl Player, DateTime TimeOfDeath, CustomDeathReason DeathReason, PlayerControl KillerIfExisting)
     {
-        this.Player = player;
-        this.TimeOfDeath = timeOfDeath;
-        DeathReason = deathReason;
-        KillerIfExisting = killerIfExisting;
+        this.Player = Player;
+        this.TimeOfDeath = TimeOfDeath;
+        this.DeathReason = DeathReason;
+        this.KillerIfExisting = KillerIfExisting;
         wasCleaned = false;
     }
 }
 
-public static class GameHistory
+internal static class GameHistory
 {
-    private static readonly Dictionary<byte, DeadPlayer> allDeadPlayers = new();
-
     public static List<Tuple<Vector3, bool>> localPlayerPositions = new();
+    public static List<DeadPlayer> DeadPlayers = new();
 
     public static void Clear()
     {
         localPlayerPositions.Clear();
-        allDeadPlayers.Clear();
-    }
-
-    public static IReadOnlyDictionary<byte, DeadPlayer> AllDeadPlayers => allDeadPlayers;
-
-    public static DeadPlayer GetByPlayerId(byte playerId)
-    {
-        return allDeadPlayers.TryGetValue(playerId, out var deadPlayer) ? deadPlayer : null;
+        DeadPlayers.Clear();
     }
 
     public static void OverrideDeathReasonAndKiller(PlayerControl player, CustomDeathReason deathReason, PlayerControl killer = null)
     {
-        if (player == null) return;
-
+        var target = DeadPlayers.FirstOrDefault(x => x.Player.PlayerId == player.PlayerId);
         byte playerId = player.PlayerId;
-        if (allDeadPlayers.TryGetValue(playerId, out var existingDeadPlayer))
+        if (target != null)
         {
-            existingDeadPlayer.DeathReason = deathReason;
-            if (killer != null) existingDeadPlayer.KillerIfExisting = killer;
+            target.DeathReason = deathReason;
+            if (killer != null) target.KillerIfExisting = killer;
         }
-        else
+        else if (player != null)
         {
-            var newDeadPlayer = new DeadPlayer(player, DateTime.UtcNow, deathReason, killer);
-            allDeadPlayers[playerId] = newDeadPlayer;
+            // Create dead player if needed:
+            var dp = new DeadPlayer(player, DateTime.UtcNow, deathReason, killer);
+            DeadPlayers.Add(dp);
         }
+    }
+
+    public static void RpcOverrideDeathReasonAndKiller(PlayerControl player, CustomDeathReason deathReason, PlayerControl killer = null)
+    {
+        if (player == null) return;
+        var writer = StartRPC(player.NetId, CustomRPC.ShareGhostInfo);
+        writer.Write(player.PlayerId);
+        writer.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
+        writer.Write(player.PlayerId);
+        writer.Write((byte)deathReason);
+        writer.Write(killer.PlayerId);
+        writer.EndRPC();
+        OverrideDeathReasonAndKiller(player, deathReason, killer);
     }
 
     public static int GetKillCount(PlayerControl killer)
     {
         if (killer == null) return 0;
 
-        return allDeadPlayers.Values.Count(info => info.KillerIfExisting != null && info.KillerIfExisting.PlayerId == killer.PlayerId);
+        return DeadPlayers.Count(dp => dp.KillerIfExisting == killer && dp.Player != killer);
     }
 }

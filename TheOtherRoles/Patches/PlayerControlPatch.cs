@@ -1961,7 +1961,7 @@ internal class BodyReportPatch
                              __instance.PlayerId == Slueth.slueth.PlayerId;
         if (isMedicReport || isDetectiveReport)
         {
-            AllDeadPlayers.TryGetValue(target.PlayerId, out var deadPlayer);
+            var deadPlayer = DeadPlayers?.Where(x => x.Player?.PlayerId == target?.PlayerId)?.FirstOrDefault();
             if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
             {
                 var timeSinceDeath = (float)(DateTime.UtcNow - deadPlayer.TimeOfDeath).TotalMilliseconds;
@@ -2012,7 +2012,7 @@ internal class BodyReportPatch
                             CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGhostInfo,
                             SendOption.Reliable);
                         writer.Write(CachedPlayer.LocalPlayer.PlayerId);
-                        writer.Write((byte)RPCProcedure.GhostInfoTypes.DetectiveOrMedicInfo);
+                        writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
                         writer.Write(msg);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                     }
@@ -2049,9 +2049,10 @@ public static class MurderPlayerPatch
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
         // Collect dead player info
-        OverrideDeathReasonAndKiller(__instance, CustomDeathReason.Kill, __instance);
 
-        AllDeadPlayers.TryGetValue(__instance.PlayerId, out var deadPlayer);
+        var deadPlayer = new DeadPlayer(target, DateTime.UtcNow, CustomDeathReason.Kill, __instance);
+        if (__instance == target) deadPlayer = new DeadPlayer(target, DateTime.UtcNow, CustomDeathReason.Suicide, __instance);
+        DeadPlayers.Add(deadPlayer);
 
         // Reset killer to crewmate if resetToCrewmate
         if (resetToCrewmate) __instance.Data.Role.TeamType = RoleTeamTypes.Crewmate;
@@ -2345,7 +2346,8 @@ public static class ExilePlayerPatch
     public static void Postfix(PlayerControl __instance)
     {
         // Collect dead player info
-        OverrideDeathReasonAndKiller(__instance, CustomDeathReason.Exile, null);
+        var deadPlayer = new DeadPlayer(__instance, DateTime.UtcNow, CustomDeathReason.Exile, null);
+        DeadPlayers.Add(deadPlayer);
 
         // Remove fake tasks when player dies
         if (__instance.hasFakeTasks() || __instance == Lawyer.lawyer || __instance == Pursuer.pursuer.Contains(__instance) ||

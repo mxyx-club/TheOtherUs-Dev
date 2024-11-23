@@ -1301,6 +1301,9 @@
         "0": "Arsonist Douse Duration",
         "13": "涂油所需时间"
     },
+    "arsonistIgniteCdRemoved": {
+        "13": "仅剩最后一名杀手时移除点火冷却"
+    },
     "jackalKillCooldown": {
         "0": "Jackal/Sidekick Kill Cooldown",
         "13": "豺狼/跟班击杀冷却"
