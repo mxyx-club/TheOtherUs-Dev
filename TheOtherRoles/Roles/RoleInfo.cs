@@ -397,8 +397,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                 if (p == Arsonist.arsonist)
                     roleName += cs(Arsonist.color,
                         $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && x.PlayerControl.IsAlive() && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");
-                    roleName += cs(Arsonist.color,
-                        $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");
                 if (Akujo.keeps.Contains(p))
                     roleName = cs(Color.gray, "(备胎) ") + roleName;
                 if (p == Akujo.honmei)
@@ -446,11 +444,10 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                                 deathReasonString = $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.Guess:
-                                if (deadPlayer.KillerIfExisting.Data.PlayerName == p.Data.PlayerName)
+                                if (deadPlayer.KillerIfExisting.PlayerId == p.PlayerId)
                                     deathReasonString = " - 猜测错误";
                                 else
-                                    deathReasonString =
-                                        $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                                    deathReasonString = $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.Shift:
                                 deathReasonString =

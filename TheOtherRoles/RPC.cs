@@ -1659,6 +1659,8 @@ public static class RPCProcedure
 
     public static void swapperSwap(byte playerId1, byte playerId2)
     {
+        if (playerId1 == playerId2 || playerById(playerId1) == null || playerById(playerId2) == null) return;
+
         if (MeetingHud.Instance)
         {
             Swapper.playerId1 = playerId1;
