@@ -576,18 +576,22 @@ internal static class HudManagerStartPatch
                 {
                     byte targetId = 0;
 
-                    if (Sheriff.sheriffCanKillNeutral(target)) targetId = target.PlayerId;
+                    if (Sheriff.sheriffCanKillNeutral(target))
+                    {
+                        targetId = target.PlayerId;
+                        GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffKill, Sheriff.sheriff);
+                    }
                     else
                     {
                         switch (Sheriff.misfireKills)
                         {
                             case 0:
                                 targetId = CachedPlayer.LocalPlayer.PlayerId;
-                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
+                                GameHistory.RpcOverrideDeathReasonAndKiller(Sheriff.sheriff, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
                                 break;
                             case 1:
                                 targetId = target.PlayerId;
-                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
+                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisadventure, Sheriff.sheriff);
                                 break;
                             case 2:
                                 targetId = target.PlayerId;

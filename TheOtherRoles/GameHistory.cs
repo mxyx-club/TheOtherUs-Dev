@@ -75,10 +75,10 @@ internal static class GameHistory
         }
     }
 
-    public static void RpcOverrideDeathReasonAndKiller(PlayerControl player, CustomDeathReason deathReason, PlayerControl killer = null)
+    public static void RpcOverrideDeathReasonAndKiller(PlayerControl player, CustomDeathReason deathReason, PlayerControl killer)
     {
         if (player == null) return;
-        var writer = StartRPC(player.NetId, CustomRPC.ShareGhostInfo);
+        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.ShareGhostInfo);
         writer.Write(player.PlayerId);
         writer.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
         writer.Write(player.PlayerId);
