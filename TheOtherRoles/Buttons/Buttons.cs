@@ -576,41 +576,40 @@ internal static class HudManagerStartPatch
                 {
                     byte targetId = 0;
 
-                    if (Sheriff.sheriffCanKillNeutral(target))
-                        targetId = target.PlayerId;
+                    if (Sheriff.sheriffCanKillNeutral(target)) targetId = target.PlayerId;
                     else
                     {
                         switch (Sheriff.misfireKills)
                         {
                             case 0:
                                 targetId = CachedPlayer.LocalPlayer.PlayerId;
+                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
                                 break;
                             case 1:
                                 targetId = target.PlayerId;
+                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
                                 break;
                             case 2:
                                 targetId = target.PlayerId;
-                                var killWriter2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                                    (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
+                                var killWriter2 = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.UncheckedMurderPlayer);
                                 killWriter2.Write(Sheriff.sheriff.Data.PlayerId);
                                 killWriter2.Write(CachedPlayer.LocalPlayer.PlayerId);
                                 killWriter2.Write(byte.MaxValue);
-                                AmongUsClient.Instance.FinishRpcImmediately(killWriter2);
+                                killWriter2.EndRPC();
                                 RPCProcedure.uncheckedMurderPlayer(Sheriff.sheriff.Data.PlayerId, CachedPlayer.LocalPlayer.PlayerId, byte.MaxValue);
+                                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.SheriffMisadventure, Sheriff.sheriff);
+                                GameHistory.RpcOverrideDeathReasonAndKiller(Sheriff.sheriff, CustomDeathReason.SheriffMisfire, Sheriff.sheriff);
                                 break;
                         }
                     }
 
-                    var killWriter = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                        (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable
-                    );
+                    var killWriter = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.UncheckedMurderPlayer);
                     killWriter.Write(Sheriff.sheriff.Data.PlayerId);
                     killWriter.Write(targetId);
                     killWriter.Write(byte.MaxValue);
-                    AmongUsClient.Instance.FinishRpcImmediately(killWriter);
+                    killWriter.EndRPC();
                     RPCProcedure.uncheckedMurderPlayer(Sheriff.sheriff.Data.PlayerId, targetId, byte.MaxValue);
                 }
-
 
                 if (murderAttemptResult == MurderAttemptResult.BodyGuardKill) checkMurderAttemptAndKill(Sheriff.sheriff, target);
 
@@ -3015,7 +3014,7 @@ internal static class HudManagerStartPatch
         securityGuardChargesText.transform.localScale = Vector3.one * 0.5f;
         securityGuardChargesText.transform.localPosition += new Vector3(-0.05f, 0.7f, 0);
 
-        // Arsonist button
+        // Arsonist button (涂油)
         arsonistButton = new CustomButton(
             () =>
             {
@@ -3078,16 +3077,15 @@ internal static class HudManagerStartPatch
             }
         );
 
-        // Arsonist button
+        // Arsonist button (点火)
         arsonistKillButton = new CustomButton(
             () =>
             {
                 foreach (PlayerControl p in Arsonist.dousedPlayers.Where(p => p.IsAlive()))
                 {
-                    checkMurderAttemptAndKill(Arsonist.arsonist, p, false, false, false);
-                    GameHistory.OverrideDeathReasonAndKiller(p, CustomDeathReason.Arson, Arsonist.arsonist);
+                    MurderPlayer(Arsonist.arsonist, p, false);
+                    GameHistory.RpcOverrideDeathReasonAndKiller(p, CustomDeathReason.Arson, Arsonist.arsonist);
                 }
-                Message("点火");
                 arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
                 arsonistButton.Timer = arsonistButton.MaxTimer;
             },
@@ -3103,12 +3101,11 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                /*var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
+                var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
                 var count = alivePlayersList.Count(pc => isNeutral(pc) && pc.isKiller());
 
-                if (count < 1) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
-                else */
-                arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
+                if (count < 1 && Arsonist.igniteCooldownRemoved) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
+                else arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
             },
             Arsonist.igniteSprite,
             ButtonPositions.upperRowCenter,

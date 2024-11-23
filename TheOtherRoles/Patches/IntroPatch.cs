@@ -20,6 +20,7 @@ internal class IntroCutsceneOnDestroyPatch
 
     public static void Prefix(IntroCutscene __instance)
     {
+        Message("游戏开始");
         // Generate and initialize player icons
         var playerCounter = 0;
         var hideNSeekCounter = 0;

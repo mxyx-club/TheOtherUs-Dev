@@ -284,7 +284,6 @@ public static class RPCProcedure
         WarlockTarget,
         MediumInfo,
         BlankUsed,
-        DetectiveOrMedicInfo,
         VampireTimer,
         DeathReasonAndKiller
     }
@@ -3159,11 +3158,6 @@ public static class RPCProcedure
                 if (shouldShowGhostInfo())
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, mediumInfo);
                 break;
-            case GhostInfoTypes.DetectiveOrMedicInfo:
-                var detectiveInfo = reader.ReadString();
-                if (shouldShowGhostInfo())
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, detectiveInfo);
-                break;
             case GhostInfoTypes.BlankUsed:
                 Pursuer.blankedList.Remove(sender);
                 break;
@@ -3171,8 +3165,7 @@ public static class RPCProcedure
                 vampireKillButton.Timer = reader.ReadByte();
                 break;
             case GhostInfoTypes.DeathReasonAndKiller:
-                OverrideDeathReasonAndKiller(playerById(reader.ReadByte()),
-                    (CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
+                OverrideDeathReasonAndKiller(playerById(reader.ReadByte()), (CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
                 break;
         }
     }
