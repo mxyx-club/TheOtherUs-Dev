@@ -37,7 +37,6 @@ internal class ModOption
     public static bool isCanceled;
 
     public static int restrictDevices;
-    public static bool CursedTasks;
 
     // public static float restrictAdminTime = 600f;
     //public static float restrictAdminTimeMax = 600f;
@@ -111,7 +110,6 @@ internal class ModOption
         randomGameStartPosition = CustomOptionHolder.randomGameStartPosition.getBool();
         randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.getBool();
         allowModGuess = CustomOptionHolder.allowModGuess.getBool();
-        CursedTasks = CustomOptionHolder.enableCursedTasks.getBool();
         disableSabotage = CustomOptionHolder.disableSabotage.getBool();
         firstKillPlayer = null;
         isRoundOne = true;
