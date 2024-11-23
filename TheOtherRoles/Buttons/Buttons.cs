@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Hazel;
-using TheOtherRoles.CustomGameModes;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
@@ -11,7 +10,6 @@ using UnityEngine;
 using static TheOtherRoles.Buttons.CustomButton;
 using static TheOtherRoles.Modules.ModInputManager;
 using Object = UnityEngine.Object;
-using Random = System.Random;
 
 namespace TheOtherRoles.Buttons;
 
