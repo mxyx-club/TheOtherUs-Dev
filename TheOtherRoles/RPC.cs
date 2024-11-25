@@ -2084,7 +2084,7 @@ public static class RPCProcedure
             {
                 pva.UnsetVote();
                 var voteAreaPlayer = playerById(pva.TargetPlayerId);
-                if (!voteAreaPlayer.AmOwner) continue;
+                if (voteAreaPlayer != null && !voteAreaPlayer.AmOwner) continue;
                 MeetingHud.Instance.ClearVote();
             }
 
@@ -2727,7 +2727,7 @@ public static class RPCProcedure
             foreach (var pva in MeetingHud.Instance.playerStates)
             {
                 if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || pva.TargetPlayerId == akujoPartnerId
-                    || lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId)
+                    || (lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId))
                 {
                     pva.SetDead(pva.DidReport, true);
                     pva.Overlay.gameObject.SetActive(true);

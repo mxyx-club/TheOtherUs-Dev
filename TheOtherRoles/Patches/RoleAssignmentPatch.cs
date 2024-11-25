@@ -996,6 +996,7 @@ internal class RoleManagerSelectRolesPatch
                 selection = CustomOptionHolder.modifierMini.getSelection();
                 break;
             case RoleId.Giant:
+                if (isFungle) break;
                 selection = CustomOptionHolder.modifierGiant.getSelection();
                 break;
             case RoleId.Aftermath:
