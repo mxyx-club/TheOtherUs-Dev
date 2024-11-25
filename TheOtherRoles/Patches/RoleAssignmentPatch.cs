@@ -522,7 +522,7 @@ internal class RoleManagerSelectRolesPatch
         impPlayerL.RemoveAll(x => !x.Data.Role.IsImpostor);
         crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || isNeutral(x));
 
-        var modifierCount = Mathf.Min(players.Count, modifierCountSettings);
+        var modifierCount = Mathf.Min(players.Count + 1, modifierCountSettings);
 
         if (modifierCount == 0) return;
 
@@ -803,14 +803,14 @@ internal class RoleManagerSelectRolesPatch
 
         if (modifiers.Contains(RoleId.Cursed))
         {
-            List<PlayerControl> Cplayers = Cursed.hideModifier
-                ? new List<PlayerControl>(crewPlayer)
-                : playerList.Where(x => x.isImpostor() || isNeutral(x)).ToList();
-
+            var Cplayers = Cursed.hideModifier ? playerList.Where(x => x.isCrew()).ToList() : crewPlayer;
             playerId = setModifierToRandomPlayer((byte)RoleId.Cursed, Cplayers);
 
-            if (!Cursed.hideModifier) crewPlayer.RemoveAll(x => x.PlayerId == playerId);
+            if (!Cursed.hideModifier)
+            {
+                crewPlayer.RemoveAll(x => x.PlayerId == playerId);
             playerList.RemoveAll(x => x.PlayerId == playerId);
+            }
             modifiers.Remove(RoleId.Cursed);
         }
 

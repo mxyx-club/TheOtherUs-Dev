@@ -922,15 +922,16 @@ internal class CheckEndCriteriaPatch
 
     private static bool CheckAndEndGameForAkujoWin(ShipStatus __instance, PlayerStatistics statistics)
     {
-        if (statistics.TeamAkujoAlive == 2 &&
-            statistics.TeamImpostorsAlive == 0 &&
-            statistics.TeamArsonistAlive == 0 &&
-            statistics.TeamJuggernautAlive == 0 &&
-            statistics.TeamPavlovsAlive == 0 &&
-            statistics.TeamWerewolfAlive == 0 &&
-            statistics.TeamJackalAlive == 0 &&
-            statistics.TeamSwooperAlive == 0 &&
-            !(statistics.TeamLoversAlive != 0 && Lovers.existingWithKiller()))
+        if ((statistics.TeamAkujoAlive == 2 && statistics.TotalAlive <= 3)
+            || (statistics.TeamAkujoAlive == 2 &&
+                statistics.TeamImpostorsAlive == 0 &&
+                statistics.TeamArsonistAlive == 0 &&
+                statistics.TeamJuggernautAlive == 0 &&
+                statistics.TeamPavlovsAlive == 0 &&
+                statistics.TeamWerewolfAlive == 0 &&
+                statistics.TeamJackalAlive == 0 &&
+                statistics.TeamSwooperAlive == 0 &&
+                !(statistics.TeamLoversAlive != 0 && Lovers.existingWithKiller())))
         {
             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.AkujoWin, false);
             return true;
