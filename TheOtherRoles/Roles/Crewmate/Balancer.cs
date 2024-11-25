@@ -74,7 +74,8 @@ public class Balancer
                 {
                     target = targetplayerright;
                 }
-                if (AmongUsClient.Instance.AmHost && !exiled1) MeetingHud.Instance.RpcVotingComplete(new List<MeetingHud.VoterState>().ToArray(), target.Data, false);
+                if (AmongUsClient.Instance.AmHost && !exiled1)
+                    MeetingHud.Instance.RpcVotingComplete(new List<MeetingHud.VoterState>().ToArray(), target.Data, false);
                 exiled1 = true;
                 return;
             }
