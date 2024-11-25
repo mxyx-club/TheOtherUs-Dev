@@ -501,15 +501,13 @@ internal class RoleManagerSelectRolesPatch
             players.RemoveAll(x => GuesserGM.isGuesser(x.PlayerId));
 
         var impPlayer = new List<PlayerControl>(players);
-        var neutralPlayer = new List<PlayerControl>(players);
         var impPlayerL = new List<PlayerControl>(players);
         var crewPlayer = new List<PlayerControl>(players);
         impPlayer.RemoveAll(x => !x.Data.Role.IsImpostor);
-        neutralPlayer.RemoveAll(x => !isNeutral(x));
         impPlayerL.RemoveAll(x => !x.Data.Role.IsImpostor);
         crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || isNeutral(x));
 
-        var modifierCount = Mathf.Min(players.Count, modifierCountSettings);
+        var modifierCount = Mathf.Min(players.Count + 1, modifierCountSettings);
 
         if (modifierCount == 0) return;
 
@@ -790,14 +788,15 @@ internal class RoleManagerSelectRolesPatch
 
         if (modifiers.Contains(RoleId.Cursed))
         {
-            List<PlayerControl> Cplayers = Cursed.hideModifier
-                ? new List<PlayerControl>(crewPlayer)
-                : playerList.Where(x => x.isImpostor() || isNeutral(x)).ToList();
+            var Cplayers = Cursed.hideModifier ? playerList.Where(x => x.isCrew()).ToList() : crewPlayer;
 
             playerId = setModifierToRandomPlayer((byte)RoleId.Cursed, Cplayers);
 
-            if (!Cursed.hideModifier) crewPlayer.RemoveAll(x => x.PlayerId == playerId);
-            playerList.RemoveAll(x => x.PlayerId == playerId);
+            if (!Cursed.hideModifier)
+            {
+                crewPlayer.RemoveAll(x => x.PlayerId == playerId);
+                playerList.RemoveAll(x => x.PlayerId == playerId);
+            }
             modifiers.Remove(RoleId.Cursed);
         }
 
@@ -983,6 +982,7 @@ internal class RoleManagerSelectRolesPatch
                 selection = CustomOptionHolder.modifierMini.getSelection();
                 break;
             case RoleId.Giant:
+                if (isFungle) break;
                 selection = CustomOptionHolder.modifierGiant.getSelection();
                 break;
             case RoleId.Aftermath:
@@ -1019,6 +1019,7 @@ internal class RoleManagerSelectRolesPatch
                 if (multiplyQuantity) selection *= CustomOptionHolder.modifierFlashQuantity.getQuantity();
                 break;
             case RoleId.Multitasker:
+                if (isFungle) break;
                 selection = CustomOptionHolder.modifierMultitasker.getSelection();
                 if (multiplyQuantity) selection *= CustomOptionHolder.modifierMultitaskerQuantity.getQuantity();
                 break;
