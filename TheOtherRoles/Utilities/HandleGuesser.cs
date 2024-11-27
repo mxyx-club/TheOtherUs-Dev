@@ -38,17 +38,17 @@ public static class HandleGuesser
         isGuesserGm = ModOption.gameMode == CustomGamemodes.Guesser;
         if (isGuesserGm)
         {
-            guesserCantGuessSnitch = CustomOptionHolder.guesserGamemodeCantGuessSnitchIfTaksDone.getBool();
-            hasMultipleShotsPerMeeting = CustomOptionHolder.guesserGamemodeHasMultipleShotsPerMeeting.getBool();
-            killsThroughShield = CustomOptionHolder.guesserGamemodeKillsThroughShield.getBool();
-            evilGuesserCanGuessSpy = CustomOptionHolder.guesserGamemodeEvilCanKillSpy.getBool();
+            guesserCantGuessSnitch = CustomOptionHolder.guesserGamemodeCantGuessSnitchIfTaksDone.GetBool();
+            hasMultipleShotsPerMeeting = CustomOptionHolder.guesserGamemodeHasMultipleShotsPerMeeting.GetBool();
+            killsThroughShield = CustomOptionHolder.guesserGamemodeKillsThroughShield.GetBool();
+            evilGuesserCanGuessSpy = CustomOptionHolder.guesserGamemodeEvilCanKillSpy.GetBool();
         }
         else
         {
-            guesserCantGuessSnitch = CustomOptionHolder.guesserCantGuessSnitchIfTaksDone.getBool();
-            hasMultipleShotsPerMeeting = CustomOptionHolder.guesserHasMultipleShotsPerMeeting.getBool();
-            killsThroughShield = CustomOptionHolder.guesserKillsThroughShield.getBool();
-            evilGuesserCanGuessSpy = CustomOptionHolder.guesserEvilCanKillSpy.getBool();
+            guesserCantGuessSnitch = CustomOptionHolder.guesserCantGuessSnitchIfTaksDone.GetBool();
+            hasMultipleShotsPerMeeting = CustomOptionHolder.guesserHasMultipleShotsPerMeeting.GetBool();
+            killsThroughShield = CustomOptionHolder.guesserKillsThroughShield.GetBool();
+            evilGuesserCanGuessSpy = CustomOptionHolder.guesserEvilCanKillSpy.GetBool();
         }
     }
 }

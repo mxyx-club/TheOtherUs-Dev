@@ -24,8 +24,8 @@ public static class Warlock
         currentTarget = null;
         curseVictim = null;
         curseVictimTarget = null;
-        cooldown = CustomOptionHolder.warlockCooldown.getFloat();
-        rootTime = CustomOptionHolder.warlockRootTime.getFloat();
+        cooldown = CustomOptionHolder.warlockCooldown.GetFloat();
+        rootTime = CustomOptionHolder.warlockRootTime.GetFloat();
     }
 
     public static void resetCurse()

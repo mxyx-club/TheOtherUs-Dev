@@ -15,6 +15,6 @@ public static class Disperser
         disperser = null;
         remainingDisperses = 1;
         //remainingDisperses = CustomOptionHolder.modifierDisperserRemainingDisperses.GetInt();
-        DispersesToVent = CustomOptionHolder.modifierDisperserDispersesToVent.getBool();
+        DispersesToVent = CustomOptionHolder.modifierDisperserDispersesToVent.GetBool();
     }
 }

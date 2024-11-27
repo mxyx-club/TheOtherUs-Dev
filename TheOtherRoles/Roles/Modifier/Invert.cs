@@ -10,6 +10,6 @@ public static class Invert
     public static void clearAndReload()
     {
         invert.Clear();
-        meetings = (int)CustomOptionHolder.modifierInvertDuration.getFloat();
+        meetings = (int)CustomOptionHolder.modifierInvertDuration.GetFloat();
     }
 }

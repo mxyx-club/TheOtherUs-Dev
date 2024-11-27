@@ -38,15 +38,15 @@ public static class Snitch
                     Object.Destroy(arrow.arrow);
         }
         localArrows.Clear();
-        taskCountForReveal = Mathf.RoundToInt(CustomOptionHolder.snitchLeftTasksForReveal.getFloat());
-        seeInMeeting = CustomOptionHolder.snitchSeeMeeting.getBool();
+        taskCountForReveal = CustomOptionHolder.snitchLeftTasksForReveal.GetInt();
+        seeInMeeting = CustomOptionHolder.snitchSeeMeeting.GetBool();
         if (text != null) Object.Destroy(text);
         text = null;
         needsUpdate = true;
 
         //canSeeRoles = CustomOptionHolder.snitchCanSeeRoles.getBool();
-        Team = (includeNeutralTeam)CustomOptionHolder.snitchIncludeNeutralTeam.getSelection();
-        teamNeutraUseDifferentArrowColor = CustomOptionHolder.snitchTeamNeutraUseDifferentArrowColor.getBool();
+        Team = (includeNeutralTeam)CustomOptionHolder.snitchIncludeNeutralTeam.GetSelection();
+        teamNeutraUseDifferentArrowColor = CustomOptionHolder.snitchTeamNeutraUseDifferentArrowColor.GetBool();
         snitch = null;
     }
 }

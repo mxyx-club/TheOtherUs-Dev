@@ -9,7 +9,7 @@ public static class FungleAdditionalElectrical
 {
     public static void CreateElectrical()
     {
-        if (!isFungle || !CustomOptionHolder.fungleElectrical.getBool() || !CustomOptionHolder.enableFungleModify.getBool())
+        if (!isFungle || !CustomOptionHolder.fungleElectrical.GetBool() || !CustomOptionHolder.enableFungleModify.GetBool())
             return;
 
         FungleShipStatus fungleShipStatus = ShipStatus.Instance.CastFast<FungleShipStatus>();
@@ -44,7 +44,7 @@ public static class FungleAdditionalElectrical
     {
         public static void Postfix(MapBehaviour __instance)
         {
-            if (!isFungle || !CustomOptionHolder.fungleElectrical.getBool())
+            if (!isFungle || !CustomOptionHolder.fungleElectrical.GetBool())
                 return;
 
             MapRoom mapRoom = Object.Instantiate(MapLoader.Airship.MapPrefab.infectedOverlay.rooms.FirstOrDefault(x => x.room == SystemTypes.Electrical), __instance.infectedOverlay.transform);

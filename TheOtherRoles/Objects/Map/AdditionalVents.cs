@@ -44,7 +44,7 @@ public class AdditionalVents
         switch (GameOptionsManager.Instance.currentNormalGameOptions.MapId)
         {
             // Polus管道追加
-            case 2 when CustomOptionHolder.enableBetterPolus.getBool() && CustomOptionHolder.addPolusVents.getBool():
+            case 2 when CustomOptionHolder.enableBetterPolus.GetBool() && CustomOptionHolder.addPolusVents.GetBool():
             {
                 var position = PlayerControl.LocalPlayer.transform.position;
                 AdditionalVents vents1 = new(new Vector3(36.54f, -21.77f, position.z + 1f)); // 样本室
@@ -59,7 +59,7 @@ public class AdditionalVents
                 break;
             }
             // AirShip管道追加
-            case 4 when CustomOptionHolder.enableAirShipModify.getBool() && CustomOptionHolder.addAirShipVents.getBool():
+            case 4 when CustomOptionHolder.enableAirShipModify.GetBool() && CustomOptionHolder.addAirShipVents.GetBool():
             {
                 var transform = CachedPlayer.LocalPlayer.PlayerControl.transform;
                 var position = transform.position;

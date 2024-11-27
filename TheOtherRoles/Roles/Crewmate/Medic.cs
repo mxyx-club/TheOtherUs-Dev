@@ -60,15 +60,15 @@ public static class Medic
         futureShielded = null;
         currentTarget = null;
         usedShield = false;
-        reset = CustomOptionHolder.medicResetTargetAfterMeeting.getBool();
-        showShielded = CustomOptionHolder.medicShowShielded.getSelection();
-        showAttemptToShielded = CustomOptionHolder.medicShowAttemptToShielded.getBool();
-        unbreakableShield = CustomOptionHolder.medicBreakShield.getBool();
-        showAttemptToMedic = CustomOptionHolder.medicShowAttemptToMedic.getBool();
-        setShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.getSelection() == 2;
-        showShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.getSelection() == 1;
-        ReportNameDuration = CustomOptionHolder.medicReportNameDuration.getFloat();
-        ReportColorDuration = CustomOptionHolder.medicReportColorDuration.getFloat();
+        reset = CustomOptionHolder.medicResetTargetAfterMeeting.GetBool();
+        showShielded = CustomOptionHolder.medicShowShielded.GetSelection();
+        showAttemptToShielded = CustomOptionHolder.medicShowAttemptToShielded.GetBool();
+        unbreakableShield = CustomOptionHolder.medicBreakShield.GetBool();
+        showAttemptToMedic = CustomOptionHolder.medicShowAttemptToMedic.GetBool();
+        setShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.GetSelection() == 2;
+        showShieldAfterMeeting = CustomOptionHolder.medicSetOrShowShieldAfterMeeting.GetSelection() == 1;
+        ReportNameDuration = CustomOptionHolder.medicReportNameDuration.GetFloat();
+        ReportColorDuration = CustomOptionHolder.medicReportColorDuration.GetFloat();
         meetingAfterShielding = false;
     }
 }

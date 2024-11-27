@@ -49,7 +49,7 @@ public static class LobbyRoleInfo
         TextMeshPro textTemplate = HudManager.Instance.TaskPanel.taskText;
 
         TextMeshPro newtitle = Object.Instantiate(textTemplate, container.transform);
-        newtitle.text = getString("lobbyInfoSummary");
+        newtitle.text = GetString("lobbyInfoSummary");
         newtitle.color = Color.white;
         newtitle.outlineWidth = 0.01f;
         newtitle.transform.localPosition = new Vector3(1f, 0.17f, -2f);
@@ -64,19 +64,19 @@ public static class LobbyRoleInfo
             switch (Teams[i])
             {
                 case "Impostors":
-                    team = cs(Palette.ImpostorRed, getString("ImpostorRolesText"));
+                    team = cs(Palette.ImpostorRed, GetString("ImpostorRolesText"));
                     teamid = RoleType.Impostor;
                     break;
                 case "Neutrals":
-                    team = cs(new Color32(76, 84, 78, 255), getString("NeutralRolesText"));
+                    team = cs(new Color32(76, 84, 78, 255), GetString("NeutralRolesText"));
                     teamid = RoleType.Neutral;
                     break;
                 case "Crewmates":
-                    team = cs(Palette.CrewmateBlue, getString("CrewmateRolesText"));
+                    team = cs(Palette.CrewmateBlue, GetString("CrewmateRolesText"));
                     teamid = RoleType.Crewmate;
                     break;
                 case "Modifiers":
-                    team = cs(Color.yellow, getString("ModifierRolesText"));
+                    team = cs(Color.yellow, GetString("ModifierRolesText"));
                     teamid = RoleType.Modifier;
                     break;
             }

@@ -464,7 +464,7 @@ internal class HudManagerUpdatePatch
 
     private static void updateSabotageButton(HudManager __instance)
     {
-        if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.getBool()) __instance.SabotageButton.Hide();
+        if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.GetBool()) __instance.SabotageButton.Hide();
     }
 
     private static void updateMapButton(HudManager __instance)

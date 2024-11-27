@@ -36,7 +36,7 @@ public static class Camouflager
         camoComms = false;
         camouflager = null;
         camouflageTimer = 0f;
-        cooldown = CustomOptionHolder.camouflagerCooldown.getFloat();
-        duration = CustomOptionHolder.camouflagerDuration.getFloat();
+        cooldown = CustomOptionHolder.camouflagerCooldown.GetFloat();
+        duration = CustomOptionHolder.camouflagerDuration.GetFloat();
     }
 }

@@ -24,15 +24,15 @@ public static class Trapper
     public static void clearAndReload()
     {
         trapper = null;
-        cooldown = CustomOptionHolder.trapperCooldown.getFloat();
-        maxCharges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat());
-        rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
-        rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.trapperRechargeTasksNumber.getFloat());
-        charges = Mathf.RoundToInt(CustomOptionHolder.trapperMaxCharges.getFloat()) / 2;
-        trapCountToReveal = Mathf.RoundToInt(CustomOptionHolder.trapperTrapNeededTriggerToReveal.getFloat());
+        cooldown = CustomOptionHolder.trapperCooldown.GetFloat();
+        maxCharges = CustomOptionHolder.trapperMaxCharges.GetInt();
+        rechargeTasksNumber = CustomOptionHolder.trapperRechargeTasksNumber.GetInt();
+        rechargedTasks = CustomOptionHolder.trapperRechargeTasksNumber.GetInt();
+        charges = CustomOptionHolder.trapperMaxCharges.GetInt() / 2;
+        trapCountToReveal = CustomOptionHolder.trapperTrapNeededTriggerToReveal.GetInt();
         playersOnMap = new List<PlayerControl>();
-        anonymousMap = CustomOptionHolder.trapperAnonymousMap.getBool();
-        infoType = CustomOptionHolder.trapperInfoType.getSelection();
-        trapDuration = CustomOptionHolder.trapperTrapDuration.getFloat();
+        anonymousMap = CustomOptionHolder.trapperAnonymousMap.GetBool();
+        infoType = CustomOptionHolder.trapperInfoType.GetSelection();
+        trapDuration = CustomOptionHolder.trapperTrapDuration.GetFloat();
     }
 }

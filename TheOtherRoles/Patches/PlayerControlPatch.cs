@@ -1226,7 +1226,7 @@ public static class PlayerControlFixedUpdatePatch
                             gameObject.transform.localPosition = new Vector3(0, -1.8f, gameObject.transform.localPosition.z);
                             gameObject.transform.localScale = Vector3.one * 2f;
                             text = gameObject.GetComponent<TMP_Text>();
-                            text.text = string.Format(getString("trapperGotTrapText"), p.Data.PlayerName);
+                            text.text = string.Format(GetString("trapperGotTrapText"), p.Data.PlayerName);
                             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(3f, new Action<float>((p) =>
                             {
                                 if (p == 1f && text != null && text.gameObject != null)
@@ -2126,7 +2126,7 @@ public static class MurderPlayerPatch
         if (Seer.seer != null &&
             (CachedPlayer.LocalPlayer.PlayerControl == Seer.seer || shouldShowGhostInfo()) &&
             !Seer.seer.Data.IsDead && Seer.seer != target && Seer.mode <= 1)
-            showFlash(new Color(42f / 255f, 187f / 255f, 245f / 255f), message: getString("seerShowInfoText"));
+            showFlash(new Color(42f / 255f, 187f / 255f, 245f / 255f), message: GetString("seerShowInfoText"));
         Seer.deadBodyPositions?.Add(target.transform.position);
 
         // Tracker store body positions

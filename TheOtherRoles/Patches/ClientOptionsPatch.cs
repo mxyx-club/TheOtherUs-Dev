@@ -98,7 +98,7 @@ public static class StartOptionMenuPatch
         //EnableSoundEffects
         enableSoundEffects = AddButton(new Vector2(0, 0), "EnableSoundEffects", () =>
         {
-            enableSoundEffects.UpdateToggleText(!enableSoundEffects.onState, getString("EnableSoundEffectsText"));
+            enableSoundEffects.UpdateToggleText(!enableSoundEffects.onState, GetString("EnableSoundEffectsText"));
             ModOption.enableSoundEffects = Main.EnableSoundEffects.Value = enableSoundEffects.onState;
         }, nebulaTab, toggleButtonTemplate);
 
@@ -106,7 +106,7 @@ public static class StartOptionMenuPatch
         toggleCursor = AddButton(new Vector2(0, 1), "ToggleCursor", () =>
         {
             enableCursor(false);
-            toggleCursor.UpdateToggleText(!toggleCursor.onState, getString("ToggleCursorText"));
+            toggleCursor.UpdateToggleText(!toggleCursor.onState, GetString("ToggleCursorText"));
             ModOption.toggleCursor = Main.ToggleCursor.Value = toggleCursor.onState;
             Message($"toggleCursor: {toggleCursor.onState}");
         }, nebulaTab, toggleButtonTemplate);
@@ -114,21 +114,21 @@ public static class StartOptionMenuPatch
         //ShowFPS
         showKeyReminder = AddButton(new Vector2(1, 0), "ShowKeyReminder", () =>
         {
-            showKeyReminder.UpdateToggleText(!showKeyReminder.onState, getString("ShowKeyReminder"));
+            showKeyReminder.UpdateToggleText(!showKeyReminder.onState, GetString("ShowKeyReminder"));
             ModOption.showKeyReminder = Main.ShowKeyReminder.Value = showKeyReminder.onState;
         }, nebulaTab, toggleButtonTemplate);
 
         //ShowFPS
         showFPS = AddButton(new Vector2(1, 1), "ShowFPS", () =>
         {
-            showFPS.UpdateToggleText(!showFPS.onState, getString("ShowFPS"));
+            showFPS.UpdateToggleText(!showFPS.onState, GetString("ShowFPS"));
             ModOption.showFPS = Main.ShowFPS.Value = showFPS.onState;
         }, nebulaTab, toggleButtonTemplate);
 
         //LocalHats
         localHats = AddButton(new Vector2(0, 2), "LocalHats", () =>
         {
-            localHats.UpdateToggleText(!localHats.onState, getString("LocalHatsText"));
+            localHats.UpdateToggleText(!localHats.onState, GetString("LocalHatsText"));
             ModOption.localHats = Main.LocalHats.Value = localHats.onState;
         }, nebulaTab, toggleButtonTemplate);
 
@@ -145,7 +145,7 @@ public static class StartOptionMenuPatch
         defaultButton.name = "RestoreDefaultsButton";
         defaultButton.transform.GetChild(0).GetComponent<SpriteRenderer>().size = new Vector2(2.25f, 0.4f);
         TextObject = defaultButton.transform.FindChild("Text_TMP").gameObject;
-        TextObject.GetComponent<TextMeshPro>().text = getString("keyBinding.restoreDefaults");
+        TextObject.GetComponent<TextMeshPro>().text = GetString("keyBinding.restoreDefaults");
         TextObject.GetComponent<TextMeshPro>().rectTransform.sizeDelta *= 2;
         TextObject.GetComponent<TextTranslatorTMP>().enabled = false;
         passiveButton = defaultButton.GetComponent<PassiveButton>();
@@ -159,7 +159,7 @@ public static class StartOptionMenuPatch
             {
                 ModInputManager.ModInput input = ModInputManager.allInputs[i];
                 input.resetToDefault();
-                allKeyBindingButtons[i].UpdateCustomText(Color.white, getString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey);
+                allKeyBindingButtons[i].UpdateCustomText(Color.white, GetString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey);
             }
         }
         ));
@@ -175,7 +175,7 @@ public static class StartOptionMenuPatch
             inputButton.name = input.identifier;
             ToggleButtonBehaviour inputToggleButton = inputButton.GetComponent<ToggleButtonBehaviour>();
             inputToggleButton.BaseText = 0;
-            inputToggleButton.Text.text = getString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey;
+            inputToggleButton.Text.text = GetString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey;
             passiveButton = inputButton.GetComponent<PassiveButton>();
             passiveButton.OnClick = new ButtonClickedEvent();
             passiveButton.OnClick.AddListener((UnityAction)(() =>
@@ -189,7 +189,7 @@ public static class StartOptionMenuPatch
                 {
                     selectedKeyBinding = index;
                     allKeyBindingButtons[selectedKeyBinding].UpdateCustomText(Color.yellow,
-                        getString($"{getString($"keyBinding.{input.identifier}")}: {getString("keyBinding.recording")}"));
+                        GetString($"{GetString($"keyBinding.{input.identifier}")}: {GetString("keyBinding.recording")}"));
                     inputToggleButton.UpdateCustomText(Color.yellow, null);
                 }
             }));
@@ -204,7 +204,7 @@ public static class StartOptionMenuPatch
         keyBindingButton.name = "KeyBindingButton";
         keyBindingButton.transform.GetChild(0).GetComponent<SpriteRenderer>().size = new Vector2(2.25f, 0.4f);
         TextObject = keyBindingButton.transform.FindChild("Text_TMP").gameObject;
-        TextObject.GetComponent<TextMeshPro>().text = getString("keyBinding");
+        TextObject.GetComponent<TextMeshPro>().text = GetString("keyBinding");
         TextObject.GetComponent<TextMeshPro>().rectTransform.sizeDelta *= 2;
         TextObject.GetComponent<TextTranslatorTMP>().enabled = false;
         passiveButton = keyBindingButton.GetComponent<PassiveButton>();
@@ -237,7 +237,7 @@ public static class StartOptionMenuPatch
 
                         ModInputManager.ModInput input = ModInputManager.allInputs[selectedKeyBinding];
                         input.changeKeyCode(entry.Key);
-                        allKeyBindingButtons[selectedKeyBinding].UpdateCustomText(Color.white, getString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey);
+                        allKeyBindingButtons[selectedKeyBinding].UpdateCustomText(Color.white, GetString("keyBinding." + input.identifier) + ": " + ModInputManager.allKeyCodes[input.keyCode].displayKey);
                         selectedKeyBinding = -1;
                         break;
                     }
@@ -282,11 +282,11 @@ public static class StartOptionMenuPatch
         {
             __instance.OpenTabGroup(tabs.Count - 2);
 
-            showFPS.UpdateToggleText(Main.ShowFPS.Value, getString("ShowFPS"));
-            enableSoundEffects.UpdateToggleText(Main.EnableSoundEffects.Value, getString("EnableSoundEffectsText"));
-            showKeyReminder.UpdateToggleText(Main.ShowKeyReminder.Value, getString("ShowKeyReminder"));
-            toggleCursor.UpdateToggleText(Main.ToggleCursor.Value, getString("ToggleCursorText"));
-            localHats.UpdateToggleText(Main.LocalHats.Value, getString("LocalHatsText"));
+            showFPS.UpdateToggleText(Main.ShowFPS.Value, GetString("ShowFPS"));
+            enableSoundEffects.UpdateToggleText(Main.EnableSoundEffects.Value, GetString("EnableSoundEffectsText"));
+            showKeyReminder.UpdateToggleText(Main.ShowKeyReminder.Value, GetString("ShowKeyReminder"));
+            toggleCursor.UpdateToggleText(Main.ToggleCursor.Value, GetString("ToggleCursorText"));
+            localHats.UpdateToggleText(Main.LocalHats.Value, GetString("LocalHatsText"));
 
             passiveButton.OnMouseOver.Invoke();
         }

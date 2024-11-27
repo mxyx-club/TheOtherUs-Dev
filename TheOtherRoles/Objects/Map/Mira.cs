@@ -6,7 +6,7 @@ public class AddVitals
 {
     public static void AddVital()
     {
-        if (isMira && CustomOptionHolder.miraVitals.getBool() && CustomOptionHolder.enableMiraModify.getBool())
+        if (isMira && CustomOptionHolder.miraVitals.GetBool() && CustomOptionHolder.enableMiraModify.GetBool())
         {
             Transform Vital = Object.Instantiate(PolusObject.transform.FindChild("Office").FindChild("panel_vitals"),
                 GameObject.Find("MiraShip(Clone)").transform);

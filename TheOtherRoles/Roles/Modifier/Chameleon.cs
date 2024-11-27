@@ -16,9 +16,9 @@ public static class Chameleon
     {
         chameleon.Clear();
         lastMoved = new();
-        holdDuration = CustomOptionHolder.modifierChameleonHoldDuration.getFloat();
-        fadeDuration = CustomOptionHolder.modifierChameleonFadeDuration.getFloat();
-        minVisibility = CustomOptionHolder.modifierChameleonMinVisibility.getSelection() / 10f;
+        holdDuration = CustomOptionHolder.modifierChameleonHoldDuration.GetFloat();
+        fadeDuration = CustomOptionHolder.modifierChameleonFadeDuration.GetFloat();
+        minVisibility = CustomOptionHolder.modifierChameleonMinVisibility.GetSelection() / 10f;
     }
 
     public static float visibility(byte playerId)

@@ -38,10 +38,10 @@ public static class BountyHunter
                 p.gameObject.SetActive(false);
 
 
-        bountyDuration = CustomOptionHolder.bountyHunterBountyDuration.getFloat();
-        bountyKillCooldown = CustomOptionHolder.bountyHunterReducedCooldown.getFloat();
-        punishmentTime = CustomOptionHolder.bountyHunterPunishmentTime.getFloat();
-        showArrow = CustomOptionHolder.bountyHunterShowArrow.getBool();
-        arrowUpdateIntervall = CustomOptionHolder.bountyHunterArrowUpdateIntervall.getFloat();
+        bountyDuration = CustomOptionHolder.bountyHunterBountyDuration.GetFloat();
+        bountyKillCooldown = CustomOptionHolder.bountyHunterReducedCooldown.GetFloat();
+        punishmentTime = CustomOptionHolder.bountyHunterPunishmentTime.GetFloat();
+        showArrow = CustomOptionHolder.bountyHunterShowArrow.GetBool();
+        arrowUpdateIntervall = CustomOptionHolder.bountyHunterArrowUpdateIntervall.GetFloat();
     }
 }

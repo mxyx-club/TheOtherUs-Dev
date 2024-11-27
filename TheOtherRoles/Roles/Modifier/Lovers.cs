@@ -56,8 +56,8 @@ public static class Lovers
         lover1 = null;
         lover2 = null;
         notAckedExiledIsLover = false;
-        bothDie = CustomOptionHolder.modifierLoverBothDie.getBool();
-        enableChat = CustomOptionHolder.modifierLoverEnableChat.getBool();
+        bothDie = CustomOptionHolder.modifierLoverBothDie.GetBool();
+        enableChat = CustomOptionHolder.modifierLoverEnableChat.GetBool();
     }
 
     public static PlayerControl getPartner(this PlayerControl player)

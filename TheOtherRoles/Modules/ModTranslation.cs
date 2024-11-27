@@ -51,7 +51,7 @@ public class ModTranslation
         }
     }
 
-    public static string getString(string key, string def = null)
+    public static string GetString(string key, string def = null)
     {
         // Strip out color tags.
         string keyClean = Regex.Replace(key, "<.*?>", "");
@@ -80,6 +80,6 @@ internal static class LanguageExtension
 {
     internal static string Translate(this string key)
     {
-        return getString(key);
+        return GetString(key);
     }
 }

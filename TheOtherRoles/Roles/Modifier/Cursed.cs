@@ -13,6 +13,6 @@ public static class Cursed
     public static void clearAndReload()
     {
         cursed = null;
-        hideModifier = CustomOptionHolder.modifierHideCursed.getBool();
+        hideModifier = CustomOptionHolder.modifierHideCursed.GetBool();
     }
 }

@@ -21,6 +21,6 @@ public class Miner
     public static void clearAndReload()
     {
         miner = null;
-        cooldown = CustomOptionHolder.minerCooldown.getFloat();
+        cooldown = CustomOptionHolder.minerCooldown.GetFloat();
     }
 }

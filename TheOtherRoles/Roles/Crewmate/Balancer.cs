@@ -215,7 +215,7 @@ public class Balancer
                         MeetingHud.Instance.TitleText.GetComponent<TextTranslatorTMP>().enabled = false;
                         MeetingHud.Instance.TitleText.transform.localPosition = new(0, 2, -1);
                         MeetingHud.Instance.TitleText.transform.localScale = Vector3.one * 2f;
-                        MeetingHud.Instance.TitleText.text = getString("BalancerTitleTextYouVoteEither");
+                        MeetingHud.Instance.TitleText.text = GetString("BalancerTitleTextYouVoteEither");
                         leftplayerarea.transform.localPosition = leftpos;
                         rightplayerarea.transform.localPosition = rightpos;
                         MeetingHud.Instance.discussionTimer = GameOptionsManager.Instance.CurrentGameOptions.GetInt(AmongUs.GameOptions.Int32OptionNames.VotingTime) - BalancerVoteTime;
@@ -324,9 +324,9 @@ public class Balancer
             ChainObjects.Add((createchain(Random.Range(1.8f, -1.7f), Random.Range(-15f, 15f)), 0f, 0));
         }
         ChainObjects.Add((createchain(0, 0, -12f), 0f, 0));
-        textuseability = createtext(new(0, 2.1f, -30), getString("BalancerAbilityUseText"), 12);
+        textuseability = createtext(new(0, 2.1f, -30), GetString("BalancerAbilityUseText"), 12);
         textuseability.enabled = false;
-        textpleasevote = createtext(new(0, -1f, -30f), getString("BalancerVoteText"), 8);
+        textpleasevote = createtext(new(0, -1f, -30f), GetString("BalancerVoteText"), 8);
         textpleasevote.enabled = false;
         textpleasetimer = 0.35f;
         SoundManager.Instance.PlaySound(UnityHelper.loadAudioClipFromResources("TheOtherRoles.Resources.Balancer.chain.raw"), false);

@@ -69,16 +69,16 @@ public static class SecurityGuard
         securityGuard = null;
         ventTarget = null;
         minigame = null;
-        duration = CustomOptionHolder.securityGuardCamDuration.getFloat();
-        maxCharges = Mathf.RoundToInt(CustomOptionHolder.securityGuardCamMaxCharges.getFloat());
-        rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.securityGuardCamRechargeTasksNumber.getFloat());
-        rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.securityGuardCamRechargeTasksNumber.getFloat());
-        charges = Mathf.RoundToInt(CustomOptionHolder.securityGuardCamMaxCharges.getFloat()) / 2;
+        duration = CustomOptionHolder.securityGuardCamDuration.GetFloat();
+        maxCharges = CustomOptionHolder.securityGuardCamMaxCharges.GetInt();
+        rechargeTasksNumber = CustomOptionHolder.securityGuardCamRechargeTasksNumber.GetInt();
+        rechargedTasks = CustomOptionHolder.securityGuardCamRechargeTasksNumber.GetInt();
+        charges = CustomOptionHolder.securityGuardCamMaxCharges.GetInt() / 2;
         placedCameras = 0;
-        cooldown = CustomOptionHolder.securityGuardCooldown.getFloat();
-        totalScrews = remainingScrews = Mathf.RoundToInt(CustomOptionHolder.securityGuardTotalScrews.getFloat());
-        camPrice = Mathf.RoundToInt(CustomOptionHolder.securityGuardCamPrice.getFloat());
-        ventPrice = Mathf.RoundToInt(CustomOptionHolder.securityGuardVentPrice.getFloat());
-        cantMove = CustomOptionHolder.securityGuardNoMove.getBool();
+        cooldown = CustomOptionHolder.securityGuardCooldown.GetFloat();
+        totalScrews = remainingScrews = CustomOptionHolder.securityGuardTotalScrews.GetInt();
+        camPrice = CustomOptionHolder.securityGuardCamPrice.GetInt();
+        ventPrice = CustomOptionHolder.securityGuardVentPrice.GetInt();
+        cantMove = CustomOptionHolder.securityGuardNoMove.GetBool();
     }
 }

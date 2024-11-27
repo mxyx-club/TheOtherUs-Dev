@@ -17,9 +17,9 @@ public static class Juggernaut
     {
         juggernaut = null;
         currentTarget = null;
-        hasImpostorVision = CustomOptionHolder.juggernautHasImpVision.getBool();
-        canUseVents = CustomOptionHolder.juggernautCanUseVents.getBool();
-        cooldown = CustomOptionHolder.juggernautCooldown.getFloat();
-        reducedkill = CustomOptionHolder.juggernautReducedkillEach.getFloat();
+        hasImpostorVision = CustomOptionHolder.juggernautHasImpVision.GetBool();
+        canUseVents = CustomOptionHolder.juggernautCanUseVents.GetBool();
+        cooldown = CustomOptionHolder.juggernautCooldown.GetFloat();
+        reducedkill = CustomOptionHolder.juggernautReducedkillEach.GetFloat();
     }
 }

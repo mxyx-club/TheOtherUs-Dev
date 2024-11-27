@@ -28,12 +28,12 @@ public static class Yoyo
     public static void clearAndReload()
     {
         yoyo = null;
-        blinkDuration = CustomOptionHolder.yoyoBlinkDuration.getFloat();
-        markCooldown = CustomOptionHolder.yoyoMarkCooldown.getFloat();
-        markStaysOverMeeting = CustomOptionHolder.yoyoMarkStaysOverMeeting.getBool();
-        hasAdminTable = CustomOptionHolder.yoyoHasAdminTable.getBool();
-        adminCooldown = CustomOptionHolder.yoyoAdminTableCooldown.getFloat();
-        silhouetteVisibility = CustomOptionHolder.yoyoSilhouetteVisibility.getSelection() / 10f;
+        blinkDuration = CustomOptionHolder.yoyoBlinkDuration.GetFloat();
+        markCooldown = CustomOptionHolder.yoyoMarkCooldown.GetFloat();
+        markStaysOverMeeting = CustomOptionHolder.yoyoMarkStaysOverMeeting.GetBool();
+        hasAdminTable = CustomOptionHolder.yoyoHasAdminTable.GetBool();
+        adminCooldown = CustomOptionHolder.yoyoAdminTableCooldown.GetFloat();
+        silhouetteVisibility = CustomOptionHolder.yoyoSilhouetteVisibility.GetSelection() / 10f;
 
         markedLocation = null;
 

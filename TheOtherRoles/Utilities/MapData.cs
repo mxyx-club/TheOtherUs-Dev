@@ -232,7 +232,7 @@ public class MapData
     {
         if (AntiTeleport.antiTeleport.Any(x => x == PlayerControl.LocalPlayer)) return;
         Vector3 newPosition;
-        if (CustomOptionHolder.randomGameStartToVents.getBool())
+        if (CustomOptionHolder.randomGameStartToVents.GetBool())
         {
             newPosition = FindVentSpawnPositions()[rnd.Next(FindVentSpawnPositions().Count)];
             CachedPlayer.LocalPlayer.PlayerControl.NetTransform.RpcSnapTo(FindVentSpawnPositions()[rnd.Next(FindVentSpawnPositions().Count)]);
@@ -253,7 +253,7 @@ public class MapData
 
     public static void RandomSpawnPlayers(IEnumerable<PlayerControl> players)
     {
-        if (CustomOptionHolder.randomGameStartToVents.getBool()) RandomSpawnToVent(players);
+        if (CustomOptionHolder.randomGameStartToVents.GetBool()) RandomSpawnToVent(players);
         else RandomSpawnToMap(players);
     }
 

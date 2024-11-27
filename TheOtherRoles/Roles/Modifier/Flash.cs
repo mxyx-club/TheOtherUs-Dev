@@ -10,6 +10,6 @@ public static class Flash
     public static void clearAndReload()
     {
         flash.Clear();
-        speed = CustomOptionHolder.modifierFlashSpeed.getFloat();
+        speed = CustomOptionHolder.modifierFlashSpeed.GetFloat();
     }
 }

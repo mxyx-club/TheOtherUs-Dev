@@ -47,14 +47,14 @@ public class Pavlovsdogs
         killTarget = null;
 
         deathTime = CustomOptionHolder.pavlovsownerRampageDeathTime.GetInt();
-        cooldown = CustomOptionHolder.pavlovsownerKillCooldown.getFloat();
-        createDogCooldown = CustomOptionHolder.pavlovsownerCreateDogCooldown.getFloat();
+        cooldown = CustomOptionHolder.pavlovsownerKillCooldown.GetFloat();
+        createDogCooldown = CustomOptionHolder.pavlovsownerCreateDogCooldown.GetFloat();
         createDogNum = CustomOptionHolder.pavlovsownerCreateDogNum.GetInt();
-        canUseVents = CustomOptionHolder.pavlovsownerCanUseVents.getSelection();
-        canSabotage = CustomOptionHolder.pavlovsownerCanUseSabo.getBool();
-        hasImpostorVision = CustomOptionHolder.pavlovsownerHasImpostorVision.getBool();
-        enableRampage = CustomOptionHolder.pavlovsownerRampage.getBool();
-        rampageKillCooldown = CustomOptionHolder.pavlovsownerRampageKillCooldown.getFloat();
+        canUseVents = CustomOptionHolder.pavlovsownerCanUseVents.GetSelection();
+        canSabotage = CustomOptionHolder.pavlovsownerCanUseSabo.GetBool();
+        hasImpostorVision = CustomOptionHolder.pavlovsownerHasImpostorVision.GetBool();
+        enableRampage = CustomOptionHolder.pavlovsownerRampage.GetBool();
+        rampageKillCooldown = CustomOptionHolder.pavlovsownerRampageKillCooldown.GetFloat();
         rampageDeathTime = CustomOptionHolder.pavlovsownerRampageDeathTime.GetInt();
     }
 }

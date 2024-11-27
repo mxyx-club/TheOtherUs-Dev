@@ -8,13 +8,13 @@ namespace TheOtherRoles.Patches;
 [HarmonyPatch]
 public static class CredentialsPatch
 {
-    public static string fullCredentialsVersion = $"<size=130%>{getString("TouTitle")}</size> v{Main.Version + "-Lite"}";
+    public static string fullCredentialsVersion = $"<size=130%>{GetString("TouTitle")}</size> v{Main.Version + "-Lite"}";
 
-    public static string fullCredentials = getString("fullCredentials");
+    public static string fullCredentials = GetString("fullCredentials");
 
-    public static string mainMenuCredentials = getString("mainMenuCredentials");
+    public static string mainMenuCredentials = GetString("mainMenuCredentials");
 
-    public static string contributorsCredentials = getString("contributorsCredentials");
+    public static string contributorsCredentials = GetString("contributorsCredentials");
 
     [HarmonyPatch(typeof(PingTracker), nameof(PingTracker.Update))]
     internal static class PingTrackerPatch
@@ -34,14 +34,14 @@ public static class CredentialsPatch
             var position = __instance.GetComponent<AspectPosition>();
             var gameModeText = ModOption.gameMode switch
             {
-                CustomGamemodes.Guesser => getString("isGuesserGm"),
+                CustomGamemodes.Guesser => GetString("isGuesserGm"),
                 _ => ""
             };
             if (ModOption.DebugMode) gameModeText += "(Debug Mode)";
             if (gameModeText != "") gameModeText = cs(Color.yellow, gameModeText) + "\n";
             if (AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started)
             {
-                __instance.text.text = $"<size=110%>{getString("TouTitle")}</size>  v{Main.Version + "\n" + getString("inGameTitle")}\n{PingText}\n{gameModeText}";
+                __instance.text.text = $"<size=110%>{GetString("TouTitle")}</size>  v{Main.Version + "\n" + GetString("inGameTitle")}\n{PingText}\n{gameModeText}";
                 position.DistanceFromEdge = new Vector3(2.25f, 0.1f, 0);
             }
             else

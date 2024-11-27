@@ -9,10 +9,10 @@ namespace TheOtherRoles.Roles;
 
 public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam, bool isGuessable = false)
 {
-    public string Name => getString(nameKey);
-    public string IntroDescription => getString(nameKey + "IntroDesc");
-    public string ShortDescription => getString(nameKey + "ShortDesc");
-    public string FullDescription => getString(nameKey + "FullDesc");
+    public string Name => GetString(nameKey);
+    public string IntroDescription => GetString(nameKey + "IntroDesc");
+    public string ShortDescription => GetString(nameKey + "ShortDesc");
+    public string FullDescription => GetString(nameKey + "FullDesc");
 
     public Color color = color;
     public RoleId roleId = roleId;
@@ -237,7 +237,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (showModifier)
         {
             // after dead modifier
-            if (!CustomOptionHolder.modifiersAreHidden.getBool() || CachedPlayer.LocalPlayer.IsDead ||
+            if (!CustomOptionHolder.modifiersAreHidden.GetBool() || CachedPlayer.LocalPlayer.IsDead ||
                 AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Ended)
             {
                 if (Bait.bait.Any(x => x.PlayerId == p.PlayerId)) infos.Add(bait);

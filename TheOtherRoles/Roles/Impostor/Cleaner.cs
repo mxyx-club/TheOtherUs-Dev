@@ -14,6 +14,6 @@ public static class Cleaner
     public static void clearAndReload()
     {
         cleaner = null;
-        cooldown = CustomOptionHolder.cleanerCooldown.getFloat();
+        cooldown = CustomOptionHolder.cleanerCooldown.GetFloat();
     }
 }

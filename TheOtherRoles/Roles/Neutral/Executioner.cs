@@ -30,8 +30,8 @@ public static class Executioner
         }
         executioner = null;
         triggerExecutionerWin = false;
-        promotesToLawyer = CustomOptionHolder.executionerPromotesToLawyer.getBool();
-        canCallEmergency = CustomOptionHolder.executionerCanCallEmergency.getBool();
+        promotesToLawyer = CustomOptionHolder.executionerPromotesToLawyer.GetBool();
+        canCallEmergency = CustomOptionHolder.executionerCanCallEmergency.GetBool();
         //role = (targetDeadBecame)CustomOptionHolder.executionerOnTargetDead.getSelection();
     }
 }

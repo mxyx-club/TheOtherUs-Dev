@@ -177,27 +177,27 @@ public class CustomOption
 
     // Getter
 
-    public int getSelection()
+    public int GetSelection()
     {
         return selection;
     }
 
-    public bool getBool()
+    public bool GetBool()
     {
         return selection > 0;
     }
 
-    public float getFloat()
+    public float GetFloat()
     {
         return (float)selections[selection];
     }
 
     public int GetInt()
     {
-        return (int)getFloat();
+        return (int)GetFloat();
     }
 
-    public int getQuantity()
+    public int GetQuantity()
     {
         return selection + 1;
     }
@@ -1116,10 +1116,10 @@ internal class GameOptionsDataPatch
         // find options children with quantity
         var children = options.Where(o => o.parent == customOption);
         var quantity = children.Where(o => o.name.Contains("Quantity")).ToList();
-        if (customOption.getSelection() == 0) return "";
-        if (quantity.Count == 1) return $" ({quantity[0].getQuantity()})";
+        if (customOption.GetSelection() == 0) return "";
+        if (quantity.Count == 1) return $" ({quantity[0].GetQuantity()})";
         if (customOption == CustomOptionHolder.modifierLover)
-            return $" (1 {"EvilLove".Translate()}: {CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10}%)";
+            return $" (1 {"EvilLove".Translate()}: {CustomOptionHolder.modifierLoverImpLoverRate.GetSelection() * 10}%)";
         return "";
     }
 
@@ -1146,7 +1146,7 @@ internal class GameOptionsDataPatch
                 if (type == CustomOptionType.Modifier) line += buildModifierExtras(option);
                 sb.AppendLine(line);
             }
-            else if (option.parent.getSelection() > 0)
+            else if (option.parent.GetSelection() > 0)
             {
                 if (option.id == 30170) //Deputy
                     sb.AppendLine($"- {cs(Deputy.color, "Deputy".Translate())}: {option.getString()}");
@@ -1163,8 +1163,8 @@ internal class GameOptionsDataPatch
         {
             if (option.parent != null)
             {
-                var isIrrelevant = option.parent.getSelection() == 0 ||
-                    (option.parent.parent != null && option.parent.parent.getSelection() == 0);
+                var isIrrelevant = option.parent.GetSelection() == 0 ||
+                    (option.parent.parent != null && option.parent.parent.GetSelection() == 0);
 
                 var c = isIrrelevant ? Color.grey : Color.white; // No use for now
                 if (isIrrelevant) continue;
@@ -1175,8 +1175,8 @@ internal class GameOptionsDataPatch
                 if (option == CustomOptionHolder.neutralRolesCountMin)
                 {
                     var optionName = cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "CrewmateRolesText".Translate());
-                    var neutralMin = CustomOptionHolder.neutralRolesCountMin.getSelection();
-                    var neutralMax = CustomOptionHolder.neutralRolesCountMax.getSelection();
+                    var neutralMin = CustomOptionHolder.neutralRolesCountMin.GetSelection();
+                    var neutralMax = CustomOptionHolder.neutralRolesCountMax.GetSelection();
 
                     var min = Math.Max(0, PlayerControl.AllPlayerControls.Count - neutralMax - ModOption.NumImpostors);
                     var max = Math.Max(0, PlayerControl.AllPlayerControls.Count - neutralMin - ModOption.NumImpostors);
@@ -1186,13 +1186,13 @@ internal class GameOptionsDataPatch
                 else if (option == CustomOptionHolder.neutralRolesCountMax)
                 {
                     var optionName = cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "NeutralRolesText".Translate());
-                    var min = CustomOptionHolder.neutralRolesCountMin.getSelection();
-                    var max = CustomOptionHolder.neutralRolesCountMax.getSelection();
+                    var min = CustomOptionHolder.neutralRolesCountMin.GetSelection();
+                    var max = CustomOptionHolder.neutralRolesCountMax.GetSelection();
                     if (min > max) min = max;
                     var optionValue = min == max ? $"{min}" : $"{min} ~ {max}";
 
-                    var killerMin = CustomOptionHolder.killerNeutralRolesCountMin.getSelection();
-                    var killerMax = CustomOptionHolder.killerNeutralRolesCountMax.getSelection();
+                    var killerMin = CustomOptionHolder.killerNeutralRolesCountMin.GetSelection();
+                    var killerMax = CustomOptionHolder.killerNeutralRolesCountMax.GetSelection();
                     var min2 = Mathf.Min(killerMin, min);
                     var max2 = Mathf.Min(killerMax, max);
                     if (min2 > max2) min2 = max2;
@@ -1209,8 +1209,8 @@ internal class GameOptionsDataPatch
                 else if (option == CustomOptionHolder.modifiersCountMin)
                 {
                     var optionName = cs(new Color(204f / 255f, 204f / 255f, 0, 1f), "ModifierRolesText".Translate());
-                    var min = CustomOptionHolder.modifiersCountMin.getSelection();
-                    var max = CustomOptionHolder.modifiersCountMax.getSelection();
+                    var min = CustomOptionHolder.modifiersCountMin.GetSelection();
+                    var max = CustomOptionHolder.modifiersCountMax.GetSelection();
                     if (min > max) min = max;
                     var optionValue = min == max ? $"{max}" : $"{min} ~ {max}";
                     sb.AppendLine($"{optionName}: {optionValue}");

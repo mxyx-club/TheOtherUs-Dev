@@ -238,7 +238,7 @@ internal class ExileControllerBeginPatch
 
         if (Balancer.currentAbilityUser != null && Balancer.IsDoubleExile && __instance.exiled?.PlayerId == Balancer.targetplayerleft.PlayerId)
         {
-            __instance.completeString = getString("二者一同放逐");
+            __instance.completeString = GetString("二者一同放逐");
         }
     }
 
@@ -430,7 +430,7 @@ internal class ExileControllerWrapUpPatch
         // AntiTeleport set position
         AntiTeleport.setPosition();
 
-        if (CustomOptionHolder.randomGameStartPosition.getBool()) MapData.RandomSpawnPlayers();
+        if (CustomOptionHolder.randomGameStartPosition.GetBool()) MapData.RandomSpawnPlayers();
 
         // Invert add meeting
         if (Invert.meetings > 0) Invert.meetings--;

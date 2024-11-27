@@ -78,7 +78,7 @@ internal class IntroCutsceneOnDestroyPatch
 
         AntiTeleport.setPosition();
 
-        if (CustomOptionHolder.randomGameStartPosition.getBool()) MapData.RandomSpawnPlayers();
+        if (CustomOptionHolder.randomGameStartPosition.GetBool()) MapData.RandomSpawnPlayers();
 
         if (AmongUsClient.Instance.AmHost)
         {

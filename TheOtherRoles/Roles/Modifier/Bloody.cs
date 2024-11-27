@@ -15,6 +15,6 @@ public static class Bloody
         bloody.Clear();
         active.Clear();
         bloodyKillerMap.Clear();
-        duration = CustomOptionHolder.modifierBloodyDuration.getFloat();
+        duration = CustomOptionHolder.modifierBloodyDuration.GetFloat();
     }
 }

@@ -116,7 +116,7 @@ public static class Helpers
     {
         var powerCrewAlive = false;
         // This functions blocks the game from ending if specified crewmate roles are alive
-        if (!CustomOptionHolder.blockGameEnd.getBool()) return false;
+        if (!CustomOptionHolder.blockGameEnd.GetBool()) return false;
 
         if (isRoleAlive(Sheriff.sheriff)) powerCrewAlive = true;
         if (isRoleAlive(Deputy.deputy)) powerCrewAlive = true;
@@ -418,7 +418,7 @@ public static class Helpers
             HudManager.Instance.shhhEmblem.transform.localPosition.x,
             HudManager.Instance.shhhEmblem.transform.localPosition.y,
             HudManager.Instance.FullScreen.transform.position.z + 1f);
-        HudManager.Instance.shhhEmblem.TextImage.text = getString("BlackmailShhhText");
+        HudManager.Instance.shhhEmblem.TextImage.text = ModTranslation.GetString("BlackmailShhhText");
         HudManager.Instance.shhhEmblem.HoldDuration = 3f;
         yield return HudManager.Instance.ShowEmblem(true);
         HudManager.Instance.shhhEmblem.transform.localPosition = TempPosition;
@@ -461,7 +461,7 @@ public static class Helpers
 
     public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText)
     {
-        if (CustomOptionHolder.showButtonTarget.getBool())
+        if (CustomOptionHolder.showButtonTarget.GetBool())
         {
             // Should the button show the target name option
             string text;

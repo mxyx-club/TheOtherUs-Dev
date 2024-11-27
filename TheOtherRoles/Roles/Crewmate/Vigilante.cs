@@ -14,8 +14,8 @@ public class Vigilante
     {
         vigilante = null;
 
-        remainingShotsNiceGuesser = Mathf.RoundToInt(CustomOptionHolder.guesserNumberOfShots.getFloat());
-        hasMultipleShotsPerMeeting = CustomOptionHolder.guesserHasMultipleShotsPerMeeting.getBool();
-        killsThroughShield = CustomOptionHolder.guesserKillsThroughShield.getBool();
+        remainingShotsNiceGuesser = CustomOptionHolder.guesserNumberOfShots.GetInt();
+        hasMultipleShotsPerMeeting = CustomOptionHolder.guesserHasMultipleShotsPerMeeting.GetBool();
+        killsThroughShield = CustomOptionHolder.guesserKillsThroughShield.GetBool();
     }
 }

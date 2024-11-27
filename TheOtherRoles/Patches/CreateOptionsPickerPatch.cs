@@ -25,7 +25,7 @@ internal class CreateOptionsPickerPatch
         switch (gm)
         {
             case CustomGamemodes.Guesser:
-                __instance.GameModeText.text = getString("isGuesserGm");
+                __instance.GameModeText.text = GetString("isGuesserGm");
                 ModOption.gameMode = CustomGamemodes.Guesser;
                 break;
         }
@@ -39,7 +39,7 @@ internal class CreateOptionsPickerPatch
     {
         __instance.GameModeText.text = ModOption.gameMode switch
         {
-            CustomGamemodes.Guesser => getString("isGuesserGm"),
+            CustomGamemodes.Guesser => GetString("isGuesserGm"),
             _ => __instance.GameModeText.text
         };
     }
@@ -71,7 +71,7 @@ internal class GameModeMenuPatch
             }
             else
             {
-                chatLanguageButton.Text.text = i == 3 ? getString("isGuesserGm") : "null";
+                chatLanguageButton.Text.text = i == 3 ? GetString("isGuesserGm") : "null";
             }
 
             chatLanguageButton.Button.OnClick.RemoveAllListeners();

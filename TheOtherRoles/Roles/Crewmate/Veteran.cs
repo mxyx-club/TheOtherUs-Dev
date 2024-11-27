@@ -18,7 +18,7 @@ public static class Veteran
     {
         veteran = null;
         alertActive = false;
-        alertDuration = CustomOptionHolder.veteranAlertDuration.getFloat();
-        cooldown = CustomOptionHolder.veteranCooldown.getFloat();
+        alertDuration = CustomOptionHolder.veteranAlertDuration.GetFloat();
+        cooldown = CustomOptionHolder.veteranCooldown.GetFloat();
     }
 }

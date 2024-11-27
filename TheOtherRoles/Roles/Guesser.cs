@@ -142,7 +142,7 @@ public static class Guesser
             TeambuttonParent.localScale = new(0.55f, 0.55f, 1f);
             Teamlabel.color = getTeamColor((RoleType)index);
             //Info($"{Teamlabel.color} {(RoleTeam)index}");
-            Teamlabel.text = getString(((RoleType)index is RoleType.Crewmate ? "Crewmate" : ((RoleType)index).ToString()) + "RolesText");
+            Teamlabel.text = GetString(((RoleType)index is RoleType.Crewmate ? "Crewmate" : ((RoleType)index).ToString()) + "RolesText");
             Teamlabel.alignment = TextAlignmentOptions.Center;
             Teamlabel.transform.localPosition = new Vector3(0, 0, Teamlabel.transform.localPosition.z);
             Teamlabel.transform.localScale *= 1.6f;
@@ -203,7 +203,7 @@ public static class Guesser
             PagebuttonParent.localPosition = IsNext ? new(3.535f, -2.2f, -200) : new(-3.475f, -2.2f, -200);
             PagebuttonParent.localScale = new(0.55f, 0.55f, 1f);
             Pagelabel.color = Color.white;
-            Pagelabel.text = getString(IsNext ? "下一页" : "上一页");
+            Pagelabel.text = GetString(IsNext ? "下一页" : "上一页");
             Pagelabel.alignment = TextAlignmentOptions.Center;
             Pagelabel.transform.localPosition = new Vector3(0, 0, Pagelabel.transform.localPosition.z);
             Pagelabel.transform.localScale *= 1.6f;
@@ -264,9 +264,9 @@ public static class Guesser
                     continue;
                 case RoleId.Vigilante when HandleGuesser.isGuesserGm || CachedPlayer.LocalPlayer.PlayerId == Vigilante.vigilante?.PlayerId:
                     continue;
-                case RoleId.Sidekick when !CustomOptionHolder.jackalCanCreateSidekick.getBool():
+                case RoleId.Sidekick when !CustomOptionHolder.jackalCanCreateSidekick.GetBool():
                     continue;
-                case RoleId.Deputy when CustomOptionHolder.sheriffSpawnRate.getSelection() == 0:
+                case RoleId.Deputy when CustomOptionHolder.sheriffSpawnRate.GetSelection() == 0:
                     continue;
                 case RoleId.Doomsayer when CachedPlayer.LocalPlayer.PlayerId == Doomsayer.doomsayer?.PlayerId:
                     continue;

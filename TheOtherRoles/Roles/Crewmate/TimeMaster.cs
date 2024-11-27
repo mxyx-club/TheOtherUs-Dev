@@ -22,8 +22,8 @@ public static class TimeMaster
         timeMaster = null;
         isRewinding = false;
         shieldActive = false;
-        rewindTime = CustomOptionHolder.timeMasterRewindTime.getFloat();
-        shieldDuration = CustomOptionHolder.timeMasterShieldDuration.getFloat();
-        cooldown = CustomOptionHolder.timeMasterCooldown.getFloat();
+        rewindTime = CustomOptionHolder.timeMasterRewindTime.GetFloat();
+        shieldDuration = CustomOptionHolder.timeMasterShieldDuration.GetFloat();
+        cooldown = CustomOptionHolder.timeMasterCooldown.GetFloat();
     }
 }

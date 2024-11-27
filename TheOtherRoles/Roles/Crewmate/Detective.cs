@@ -19,11 +19,11 @@ public static class Detective
     public static void clearAndReload()
     {
         detective = null;
-        anonymousFootprints = CustomOptionHolder.detectiveAnonymousFootprints.getSelection();
-        footprintIntervall = CustomOptionHolder.detectiveFootprintIntervall.getFloat();
-        footprintDuration = CustomOptionHolder.detectiveFootprintDuration.getFloat();
-        reportNameDuration = CustomOptionHolder.detectiveReportNameDuration.getFloat();
-        reportColorDuration = CustomOptionHolder.detectiveReportColorDuration.getFloat();
+        anonymousFootprints = CustomOptionHolder.detectiveAnonymousFootprints.GetSelection();
+        footprintIntervall = CustomOptionHolder.detectiveFootprintIntervall.GetFloat();
+        footprintDuration = CustomOptionHolder.detectiveFootprintDuration.GetFloat();
+        reportNameDuration = CustomOptionHolder.detectiveReportNameDuration.GetFloat();
+        reportColorDuration = CustomOptionHolder.detectiveReportColorDuration.GetFloat();
         timer = 6.2f;
         //reportRoleDuration = CustomOptionHolder.detectiveReportRoleDuration.getFloat();
         //reportInfoDuration = CustomOptionHolder.detectiveReportInfoDuration.getFloat();

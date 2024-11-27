@@ -95,7 +95,7 @@ public class GameStartManagerPatch
                 else if (!playerVersions.ContainsKey(client.Id))
                 {
                     versionMismatch = true;
-                    message += $"<color=#FF0000FF>{string.Format(getString("errorNotInstalled"), $"{client.Character.Data.PlayerName}")}\n</color>";
+                    message += $"<color=#FF0000FF>{string.Format(GetString("errorNotInstalled"), $"{client.Character.Data.PlayerName}")}\n</color>";
                 }
                 else
                 {
@@ -103,18 +103,18 @@ public class GameStartManagerPatch
                     int diff = TheOtherRolesPlugin.Version.CompareTo(PV.version);
                     if (diff > 0)
                     {
-                        message += $"<color=#FF0000FF>{string.Format(getString("errorOlderVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(GetString("errorOlderVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
                         versionMismatch = true;
                     }
                     else if (diff < 0)
                     {
-                        message += $"<color=#FF0000FF>{string.Format(getString("errorNewerVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(GetString("errorNewerVersion"), $"{client.Character.Data.PlayerName}")} (v{playerVersions[client.Id].version})\n</color>";
                         versionMismatch = true;
                     }
                     else if (!PV.GuidMatches())
                     {
                         // version presumably matches, check if Guid matches
-                        message += $"<color=#FF0000FF>{string.Format(getString("errorWrongVersion"), $"{client.Character.Data.PlayerName}")} v{playerVersions[client.Id].version} <size=30%>({PV.guid})</size>\n</color>";
+                        message += $"<color=#FF0000FF>{string.Format(GetString("errorWrongVersion"), $"{client.Character.Data.PlayerName}")} v{playerVersions[client.Id].version} <size=30%>({PV.guid})</size>\n</color>";
                         versionMismatch = true;
                     }
                 }
@@ -150,7 +150,7 @@ public class GameStartManagerPatch
                     copiedStartButton.GetComponent<SpriteRenderer>().sprite = UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.StopClean.png", 180f);
                     copiedStartButton.SetActive(true);
                     var startButtonText = copiedStartButton.GetComponentInChildren<TMPro.TextMeshPro>();
-                    startButtonText.text = getString("stopGameStartText");
+                    startButtonText.text = GetString("stopGameStartText");
                     startButtonText.fontSize *= 0.62f;
                     startButtonText.fontSizeMax = startButtonText.fontSize;
                     startButtonText.gameObject.transform.localPosition = Vector3.zero;
@@ -185,12 +185,12 @@ public class GameStartManagerPatch
                         SceneChanger.ChangeScene("MainMenu");
                     }
 
-                    __instance.GameStartText.text = $"<color=#FF0000FF>{string.Format(getString("errorHostNoVersion"), Math.Round(10 - kickingTimer))}</color>";
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{string.Format(GetString("errorHostNoVersion"), Math.Round(10 - kickingTimer))}</color>";
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                 }
                 else if (versionMismatch)
                 {
-                    __instance.GameStartText.text = $"<color=#FF0000FF>{getString("errorDifferentVersion")}\n</color>" + message;
+                    __instance.GameStartText.text = $"<color=#FF0000FF>{GetString("errorDifferentVersion")}\n</color>" + message;
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 2;
                 }
                 else
@@ -202,9 +202,9 @@ public class GameStartManagerPatch
                     }
                 }
 
-                if (!__instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")) || !CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                if (!__instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")) || !CustomOptionHolder.anyPlayerCanStopStart.GetBool())
                     copiedStartButton?.Destroy();
-                if (CustomOptionHolder.anyPlayerCanStopStart.getBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")))
+                if (CustomOptionHolder.anyPlayerCanStopStart.GetBool() && copiedStartButton == null && __instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")))
                 {
 
                     // Activate Stop-Button
@@ -236,7 +236,7 @@ public class GameStartManagerPatch
                     })));
 
                 }
-                if (__instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")) && CustomOptionHolder.anyPlayerCanStopStart.getBool())
+                if (__instance.GameStartText.text.StartsWith(FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.GameStarting).Replace("{0}", "")) && CustomOptionHolder.anyPlayerCanStopStart.GetBool())
                     __instance.GameStartText.transform.localPosition = __instance.StartButton.transform.localPosition + Vector3.up * 0.6f;
             }
 
@@ -303,7 +303,7 @@ public class GameStartManagerPatch
                         break;
                     }
                 }
-                if (CustomOptionHolder.dynamicMap.getBool() && continueStart)
+                if (CustomOptionHolder.dynamicMap.GetBool() && continueStart)
                 {
                     // 0 = Skeld
                     // 1 = Mira HQ
@@ -315,12 +315,12 @@ public class GameStartManagerPatch
                     byte chosenMapId = 0;
                     List<float> probabilities =
                     [
-                        CustomOptionHolder.dynamicMapEnableSkeld.getSelection() / 10f,
-                        CustomOptionHolder.dynamicMapEnableMira.getSelection() / 10f,
-                        CustomOptionHolder.dynamicMapEnablePolus.getSelection() / 10f,
-                        CustomOptionHolder.dynamicMapEnableAirShip.getSelection() / 10f,
-                        CustomOptionHolder.dynamicMapEnableFungle.getSelection() / 10f,
-                        CustomOptionHolder.dynamicMapEnableSubmerged.getSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnableSkeld.GetSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnableMira.GetSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnablePolus.GetSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnableAirShip.GetSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnableFungle.GetSelection() / 10f,
+                        CustomOptionHolder.dynamicMapEnableSubmerged.GetSelection() / 10f,
                     ];
 
                     // if any map is at 100%, remove all maps that are not!
@@ -351,7 +351,7 @@ public class GameStartManagerPatch
                     }
 
                     // Translate chosen map to presets page and use that maps random map preset page
-                    if (CustomOptionHolder.dynamicMapSeparateSettings.getBool())
+                    if (CustomOptionHolder.dynamicMapSeparateSettings.GetBool())
                         CustomOptionHolder.presetSelection.updateSelection(chosenMapId + 3);
                     if (chosenMapId >= 3) chosenMapId++; // Skip dlekS
 

@@ -20,9 +20,9 @@ public class Gambler
     public static void clearAndReload()
     {
         gambler = null;
-        minCooldown = CustomOptionHolder.gamblerMinCooldown.getFloat();
-        maxCooldown = CustomOptionHolder.gamblerMaxCooldown.getFloat();
-        successRate = CustomOptionHolder.gamblerSuccessRate.getSelection() * 10;
+        minCooldown = CustomOptionHolder.gamblerMinCooldown.GetFloat();
+        maxCooldown = CustomOptionHolder.gamblerMaxCooldown.GetFloat();
+        successRate = CustomOptionHolder.gamblerSuccessRate.GetSelection() * 10;
     }
 
 }

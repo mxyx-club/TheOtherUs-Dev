@@ -261,7 +261,7 @@ public static class Shifter
         shifter = null;
         futureShift = null;
         currentTarget = null;
-        shiftNeutral = CustomOptionHolder.modifierShiftNeutral.getBool();
-        shiftALLNeutra = CustomOptionHolder.modifierShiftALLNeutral.getBool();
+        shiftNeutral = CustomOptionHolder.modifierShiftNeutral.GetBool();
+        shiftALLNeutra = CustomOptionHolder.modifierShiftALLNeutral.GetBool();
     }
 }

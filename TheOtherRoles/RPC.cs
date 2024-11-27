@@ -329,7 +329,7 @@ public static class RPCProcedure
 
     public static void stopStart(byte playerId)
     {
-        if (AmongUsClient.Instance.AmHost && CustomOptionHolder.anyPlayerCanStopStart.getBool())
+        if (AmongUsClient.Instance.AmHost && CustomOptionHolder.anyPlayerCanStopStart.GetBool())
         {
             GameStartManager.Instance.ResetStartState();
             PlayerControl.LocalPlayer.RpcSendChat($"{playerById(playerId).Data.PlayerName} 阻止游戏开始");
@@ -1585,7 +1585,7 @@ public static class RPCProcedure
         var isMedicAndShow = Medic.medic == CachedPlayer.LocalPlayer.PlayerControl && Medic.showAttemptToMedic;
 
         if (isShieldedAndShow || isMedicAndShow || shouldShowGhostInfo())
-            showFlash(Palette.ImpostorRed, 1.5f, getString("medicShowAttemptText"));
+            showFlash(Palette.ImpostorRed, 1.5f, GetString("medicShowAttemptText"));
     }
 
     public static void hostKill(byte targetId)
@@ -1841,7 +1841,7 @@ public static class RPCProcedure
             Sidekick.wasImpostor = wasImpostor;
         }
         if (target == CachedPlayer.LocalPlayer.PlayerControl) SoundEffectsManager.play("jackalSidekick");
-        if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.getBool() && !HandleGuesser.isGuesser(targetId))
+        if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(targetId))
             setGuesserGm(targetId);
 
         Jackal.canCreateSidekick = false;
@@ -1865,8 +1865,8 @@ public static class RPCProcedure
             Jackal.formerJackals.Add(Jackal.jackal);
         Jackal.jackal = null;
         Jackal.currentTarget = null;
-        Jackal.cooldown = CustomOptionHolder.jackalKillCooldown.getFloat();
-        Jackal.createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.getFloat();
+        Jackal.cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
+        Jackal.createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.GetFloat();
     }
 
     public static void jackalCanSwooper(bool chance)
@@ -1906,7 +1906,7 @@ public static class RPCProcedure
         if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId)
             CachedPlayer.LocalPlayer.PlayerControl.moveable = true;
         if (player == CachedPlayer.LocalPlayer.PlayerControl) SoundEffectsManager.play("jackalSidekick");
-        if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.getBool() && !HandleGuesser.isGuesser(targetId))
+        if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(targetId))
             setGuesserGm(targetId);
     }
 
@@ -2823,7 +2823,7 @@ public static class RPCProcedure
 
     public static void showBodyGuardFlash()
     {
-        if (CustomOptionHolder.bodyGuardFlash.getBool()) showFlash(BodyGuard.color);
+        if (CustomOptionHolder.bodyGuardFlash.GetBool()) showFlash(BodyGuard.color);
     }
 
     public static void bodyGuardGuardPlayer(byte targetId)
@@ -2909,14 +2909,14 @@ public static class RPCProcedure
         {
             Sidekick.sidekick = thief;
             Jackal.formerJackals.Add(target);
-            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.getBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
                 setGuesserGm(thief.PlayerId);
         }
         if (target == Pavlovsdogs.pavlovsowner)
         {
             Pavlovsdogs.pavlovsdogs.Add(target);
             Pavlovsdogs.pavlovsowner = thief;
-            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.getBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
                 setGuesserGm(thief.PlayerId);
         }
         if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))

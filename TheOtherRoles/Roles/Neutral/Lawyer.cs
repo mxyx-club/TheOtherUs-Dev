@@ -26,11 +26,11 @@ public static class Lawyer
             targetWasGuessed = false;
         }
 
-        vision = CustomOptionHolder.lawyerVision.getFloat();
-        targetKnows = CustomOptionHolder.lawyerTargetKnows.getBool();
-        lawyerKnowsRole = CustomOptionHolder.lawyerKnowsRole.getBool();
-        targetCanBeJester = CustomOptionHolder.lawyerTargetCanBeJester.getBool();
-        stolenWin = CustomOptionHolder.lawyerStolenWin.getBool();
-        canCallEmergency = CustomOptionHolder.lawyerCanCallEmergency.getBool();
+        vision = CustomOptionHolder.lawyerVision.GetFloat();
+        targetKnows = CustomOptionHolder.lawyerTargetKnows.GetBool();
+        lawyerKnowsRole = CustomOptionHolder.lawyerKnowsRole.GetBool();
+        targetCanBeJester = CustomOptionHolder.lawyerTargetCanBeJester.GetBool();
+        stolenWin = CustomOptionHolder.lawyerStolenWin.GetBool();
+        canCallEmergency = CustomOptionHolder.lawyerCanCallEmergency.GetBool();
     }
 }

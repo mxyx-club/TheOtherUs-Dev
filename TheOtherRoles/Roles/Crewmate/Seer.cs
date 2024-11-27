@@ -19,8 +19,8 @@ public static class Seer
     {
         seer = null;
         deadBodyPositions.Clear();
-        limitSoulDuration = CustomOptionHolder.seerLimitSoulDuration.getBool();
-        soulDuration = CustomOptionHolder.seerSoulDuration.getFloat();
-        mode = CustomOptionHolder.seerMode.getSelection();
+        limitSoulDuration = CustomOptionHolder.seerLimitSoulDuration.GetBool();
+        soulDuration = CustomOptionHolder.seerSoulDuration.GetFloat();
+        mode = CustomOptionHolder.seerMode.GetSelection();
     }
 }

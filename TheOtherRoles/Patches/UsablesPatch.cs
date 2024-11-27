@@ -384,7 +384,7 @@ internal class EmergencyMinigameUpdatePatch
             !Swapper.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = getString("swapperMeetingButton");
+            statusText = GetString("swapperMeetingButton");
         }
 
         // Potentially deactivate emergency button for Jester
@@ -392,7 +392,7 @@ internal class EmergencyMinigameUpdatePatch
             !Jester.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = getString("jesterMeetingButton");
+            statusText = GetString("jesterMeetingButton");
         }
 
         // Potentially deactivate emergency button for Jester
@@ -400,7 +400,7 @@ internal class EmergencyMinigameUpdatePatch
             !Prosecutor.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = getString("prosecutorMeetingButton");
+            statusText = GetString("prosecutorMeetingButton");
         }
 
         // Potentially deactivate emergency button for Jester
@@ -408,7 +408,7 @@ internal class EmergencyMinigameUpdatePatch
             !Lawyer.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = getString("lawyerMeetingButton");
+            statusText = GetString("lawyerMeetingButton");
         }
 
         // Potentially deactivate emergency button for Lawyer/Prosecutor
@@ -416,14 +416,14 @@ internal class EmergencyMinigameUpdatePatch
             !Executioner.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            if (Executioner.executioner) statusText = getString("executionerMeetingButton");
+            if (Executioner.executioner) statusText = GetString("executionerMeetingButton");
         }
 
         // Potentially deactivate emergency button for Prophet
         if (Prophet.prophet != null && Prophet.prophet == CachedPlayer.LocalPlayer.PlayerControl && !Prophet.canCallEmergency)
         {
             roleCanCallEmergency = false;
-            statusText = getString("prophetMeetingButton");
+            statusText = GetString("prophetMeetingButton");
         }
 
         if (!roleCanCallEmergency)
@@ -443,7 +443,7 @@ internal class EmergencyMinigameUpdatePatch
             var teamRemaining = Mathf.Max(0, maxNumberOfMeetings - meetingsCount);
             var remaining = Mathf.Min(localRemaining,
                 Mayor.mayor != null && Mayor.mayor == CachedPlayer.LocalPlayer.PlayerControl ? 1 : teamRemaining);
-            __instance.NumberText.text = string.Format(getString("meetingCount"), localRemaining.ToString(), teamRemaining.ToString());
+            __instance.NumberText.text = string.Format(GetString("meetingCount"), localRemaining.ToString(), teamRemaining.ToString());
             __instance.ButtonActive = remaining > 0;
             __instance.ClosedLid.gameObject.SetActive(!__instance.ButtonActive);
             __instance.OpenLid.gameObject.SetActive(__instance.ButtonActive);
@@ -797,10 +797,10 @@ internal class SurveillanceMinigamePatch
             CachedPlayer.LocalPlayer.PlayerControl.myTasks.ToArray().Any(x => x.name.Contains("FixLightsTask")) ||
             Trickster.lightsOutTimer > 0;
         var ignoreNightVision =
-            (CustomOptionHolder.camsNoNightVisionIfImpVision.getBool() &&
+            (CustomOptionHolder.camsNoNightVisionIfImpVision.GetBool() &&
              hasImpVision(GameData.Instance.GetPlayerById(CachedPlayer.LocalPlayer.PlayerId))) ||
             CachedPlayer.LocalPlayer.Data.IsDead;
-        var nightVisionEnabled = CustomOptionHolder.camsNightVision.getBool();
+        var nightVisionEnabled = CustomOptionHolder.camsNightVision.GetBool();
 
         if (isLightsOut && !nightVisionIsActive && nightVisionEnabled && !ignoreNightVision)
         {
@@ -1031,7 +1031,7 @@ internal class ShowSabotageMapPatch
 {
     private static bool Prefix(MapBehaviour __instance)
     {
-        if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.getBool())
+        if (PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.GetBool())
         {
             __instance.ShowNormalMap();
             return false;

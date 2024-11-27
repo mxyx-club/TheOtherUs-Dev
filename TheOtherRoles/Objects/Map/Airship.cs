@@ -19,7 +19,7 @@ internal class OptimizeMapPatch
 
     public static void optimizeMap(int mapId)
     {
-        if (!CustomOptionHolder.airshipOptimize.getBool()) return;
+        if (!CustomOptionHolder.airshipOptimize.GetBool()) return;
         if (mapId == 4)
         {
             var obj = ShipStatus.Instance.FastRooms[SystemTypes.GapRoom].gameObject;
@@ -56,7 +56,7 @@ internal class OptimizeMapPatch
         {
             GameObject meetingRoom = ShipStatus.Instance.FastRooms[SystemTypes.MeetingRoom].gameObject;
             GameObject gapRoom = ShipStatus.Instance.FastRooms[SystemTypes.GapRoom].gameObject;
-            if (CustomOptionHolder.airshipLadder.getBool())
+            if (CustomOptionHolder.airshipLadder.GetBool())
             {
                 // 梯子追加
                 GameObject ladder = meetingRoom.GetComponentsInChildren<SpriteRenderer>().FirstOrDefault(x => x.name == "ladder_meeting").gameObject;
