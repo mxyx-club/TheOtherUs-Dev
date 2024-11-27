@@ -26,10 +26,10 @@ public static class Prosecutor
         ProsecuteThisMeeting = false;
         StartProsecute = false;
         Prosecuted = false;
-        canSeeVoteColors = CustomOptionHolder.prosecutorCanSeeVoteColors.getBool();
+        canSeeVoteColors = CustomOptionHolder.prosecutorCanSeeVoteColors.GetBool();
         tasksNeededToSeeVoteColors = CustomOptionHolder.prosecutorTasksNeededToSeeVoteColors.GetInt();
-        diesOnIncorrectPros = CustomOptionHolder.prosecutorDiesOnIncorrectPros.getBool();
-        canCallEmergency = CustomOptionHolder.prosecutorCanCallEmergency.getBool();
+        diesOnIncorrectPros = CustomOptionHolder.prosecutorDiesOnIncorrectPros.GetBool();
+        canCallEmergency = CustomOptionHolder.prosecutorCanCallEmergency.GetBool();
     }
 }
 

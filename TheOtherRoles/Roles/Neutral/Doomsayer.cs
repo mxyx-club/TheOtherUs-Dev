@@ -82,12 +82,12 @@ public static class Doomsayer
         killedToWin = 0;
         canGuess = true;
         triggerDoomsayerrWin = false;
-        cooldown = CustomOptionHolder.doomsayerCooldown.getFloat();
-        hasMultipleShotsPerMeeting = CustomOptionHolder.doomsayerHasMultipleShotsPerMeeting.getBool();
-        canGuessNeutral = CustomOptionHolder.doomsayerCanGuessNeutral.getBool();
-        canGuessImpostor = CustomOptionHolder.doomsayerCanGuessImpostor.getBool();
+        cooldown = CustomOptionHolder.doomsayerCooldown.GetFloat();
+        hasMultipleShotsPerMeeting = CustomOptionHolder.doomsayerHasMultipleShotsPerMeeting.GetBool();
+        canGuessNeutral = CustomOptionHolder.doomsayerCanGuessNeutral.GetBool();
+        canGuessImpostor = CustomOptionHolder.doomsayerCanGuessImpostor.GetBool();
         formationNum = CustomOptionHolder.doomsayerDormationNum.GetInt();
-        killToWin = CustomOptionHolder.doomsayerKillToWin.getFloat();
-        onlineTarger = CustomOptionHolder.doomsayerOnlineTarger.getBool();
+        killToWin = CustomOptionHolder.doomsayerKillToWin.GetFloat();
+        onlineTarger = CustomOptionHolder.doomsayerOnlineTarger.GetBool();
     }
 }

@@ -23,9 +23,9 @@ public static class Swapper
         swapper = null;
         playerId1 = byte.MaxValue;
         playerId2 = byte.MaxValue;
-        canCallEmergency = CustomOptionHolder.swapperCanCallEmergency.getBool();
-        canOnlySwapOthers = CustomOptionHolder.swapperCanOnlySwapOthers.getBool();
-        canFixSabotages = CustomOptionHolder.swapperCanFixSabotages.getBool();
+        canCallEmergency = CustomOptionHolder.swapperCanCallEmergency.GetBool();
+        canOnlySwapOthers = CustomOptionHolder.swapperCanOnlySwapOthers.GetBool();
+        canFixSabotages = CustomOptionHolder.swapperCanFixSabotages.GetBool();
         charges = CustomOptionHolder.swapperSwapsNumber.GetInt();
         rechargeTasksNumber = CustomOptionHolder.swapperRechargeTasksNumber.GetInt();
         rechargedTasks = CustomOptionHolder.swapperRechargeTasksNumber.GetInt();

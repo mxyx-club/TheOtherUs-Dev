@@ -68,14 +68,14 @@ public class Hacker
         doorLog = null;
         hackerTimer = 0f;
         adminSprite = null;
-        cooldown = CustomOptionHolder.hackerCooldown.getFloat();
-        duration = CustomOptionHolder.hackerHackeringDuration.getFloat();
-        onlyColorType = CustomOptionHolder.hackerOnlyColorType.getBool();
-        toolsNumber = CustomOptionHolder.hackerToolsNumber.getFloat();
-        rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.hackerRechargeTasksNumber.getFloat());
-        rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.hackerRechargeTasksNumber.getFloat());
-        chargesVitals = Mathf.RoundToInt(CustomOptionHolder.hackerToolsNumber.getFloat()) / 2;
-        chargesAdminTable = Mathf.RoundToInt(CustomOptionHolder.hackerToolsNumber.getFloat()) / 2;
-        cantMove = CustomOptionHolder.hackerNoMove.getBool();
+        cooldown = CustomOptionHolder.hackerCooldown.GetFloat();
+        duration = CustomOptionHolder.hackerHackeringDuration.GetFloat();
+        onlyColorType = CustomOptionHolder.hackerOnlyColorType.GetBool();
+        toolsNumber = CustomOptionHolder.hackerToolsNumber.GetFloat();
+        rechargeTasksNumber = CustomOptionHolder.hackerRechargeTasksNumber.GetInt();
+        rechargedTasks = CustomOptionHolder.hackerRechargeTasksNumber.GetInt();
+        chargesVitals = CustomOptionHolder.hackerToolsNumber.GetInt() / 2;
+        chargesAdminTable = CustomOptionHolder.hackerToolsNumber.GetInt() / 2;
+        cantMove = CustomOptionHolder.hackerNoMove.GetBool();
     }
 }

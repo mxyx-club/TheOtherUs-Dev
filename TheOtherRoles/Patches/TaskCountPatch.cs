@@ -10,7 +10,7 @@ namespace TheOtherRoles.Patches;
 
 internal class TaskCount
 {
-    public static bool WireTaskIsRandom => CustomOptionHolder.WireTaskIsRandomOption.getBool();
+    public static bool WireTaskIsRandom => CustomOptionHolder.WireTaskIsRandomOption.GetBool();
     public static int WireTaskNum => CustomOptionHolder.WireTaskNumOption.GetInt();
 
     [HarmonyPatch(typeof(NormalPlayerTask), nameof(NormalPlayerTask.Initialize))]

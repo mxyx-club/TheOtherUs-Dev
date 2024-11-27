@@ -17,11 +17,11 @@ public class Assassin
     public static void clearAndReload()
     {
         assassin.Clear();
-        remainingShotsEvilGuesser = Mathf.RoundToInt(CustomOptionHolder.modifierAssassinNumberOfShots.getFloat());
-        assassinMultipleShotsPerMeeting = CustomOptionHolder.modifierAssassinMultipleShotsPerMeeting.getBool();
-        assassinKillsThroughShield = CustomOptionHolder.modifierAssassinKillsThroughShield.getBool();
-        evilGuesserCanGuessCrewmate = CustomOptionHolder.guesserEvilCanKillCrewmate.getBool();
-        evilGuesserCanGuessSpy = CustomOptionHolder.guesserEvilCanKillSpy.getBool();
-        guesserCantGuessSnitch = CustomOptionHolder.guesserCantGuessSnitchIfTaksDone.getBool();
+        remainingShotsEvilGuesser = CustomOptionHolder.modifierAssassinNumberOfShots.GetInt();
+        assassinMultipleShotsPerMeeting = CustomOptionHolder.modifierAssassinMultipleShotsPerMeeting.GetBool();
+        assassinKillsThroughShield = CustomOptionHolder.modifierAssassinKillsThroughShield.GetBool();
+        evilGuesserCanGuessCrewmate = CustomOptionHolder.guesserEvilCanKillCrewmate.GetBool();
+        evilGuesserCanGuessSpy = CustomOptionHolder.guesserEvilCanKillSpy.GetBool();
+        guesserCantGuessSnitch = CustomOptionHolder.guesserCantGuessSnitchIfTaksDone.GetBool();
     }
 }

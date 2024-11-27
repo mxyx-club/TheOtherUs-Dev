@@ -29,10 +29,10 @@ public static class Vampire
         targetNearGarlic = false;
         localPlacedGarlic = false;
         currentTarget = null;
-        garlicsActive = CustomOptionHolder.vampireSpawnRate.getSelection() > 0;
-        delay = CustomOptionHolder.vampireKillDelay.getFloat();
-        cooldown = CustomOptionHolder.vampireCooldown.getFloat();
-        canKillNearGarlics = CustomOptionHolder.vampireCanKillNearGarlics.getBool();
-        garlicButton = CustomOptionHolder.vampireGarlicButton.getBool();
+        garlicsActive = CustomOptionHolder.vampireSpawnRate.GetSelection() > 0;
+        delay = CustomOptionHolder.vampireKillDelay.GetFloat();
+        cooldown = CustomOptionHolder.vampireCooldown.GetFloat();
+        canKillNearGarlics = CustomOptionHolder.vampireCanKillNearGarlics.GetBool();
+        garlicButton = CustomOptionHolder.vampireGarlicButton.GetBool();
     }
 }

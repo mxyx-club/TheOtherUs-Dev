@@ -20,8 +20,8 @@ public class Amnisiac
     public static void clearAndReload()
     {
         amnisiac = null;
-        showArrows = CustomOptionHolder.amnisiacShowArrows.getBool();
-        resetRole = CustomOptionHolder.amnisiacResetRole.getBool();
+        showArrows = CustomOptionHolder.amnisiacShowArrows.GetBool();
+        resetRole = CustomOptionHolder.amnisiacResetRole.GetBool();
         if (localArrows != null)
             foreach (var arrow in localArrows)
                 if (arrow?.arrow != null)

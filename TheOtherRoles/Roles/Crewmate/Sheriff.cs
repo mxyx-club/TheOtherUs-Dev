@@ -33,7 +33,7 @@ public static class Sheriff
         if (!formerSheriff) formerSheriff = sheriff;
         sheriff = deputy;
         currentTarget = null;
-        cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
+        cooldown = CustomOptionHolder.sheriffCooldown.GetFloat();
     }
 
     public static bool sheriffCanKillNeutral(PlayerControl target)
@@ -68,19 +68,19 @@ public static class Sheriff
         currentTarget = null;
         formerDeputy = null;
         formerSheriff = null;
-        misfireKills = CustomOptionHolder.sheriffMisfireKills.getSelection();
-        cooldown = CustomOptionHolder.sheriffCooldown.getFloat();
-        canKillNeutrals = CustomOptionHolder.sheriffCanKillNeutrals.getBool();
-        canKillSurvivor = CustomOptionHolder.sheriffCanKillSurvivor.getBool();
-        canKillLawyer = CustomOptionHolder.sheriffCanKillLawyer.getBool();
-        canKillJester = CustomOptionHolder.sheriffCanKillJester.getBool();
-        canKillPursuer = CustomOptionHolder.sheriffCanKillPursuer.getBool();
-        canKillPartTimer = CustomOptionHolder.sheriffCanKillPartTimer.getBool();
-        canKillVulture = CustomOptionHolder.sheriffCanKillVulture.getBool();
-        canKillThief = CustomOptionHolder.sheriffCanKillThief.getBool();
-        canKillAmnesiac = CustomOptionHolder.sheriffCanKillAmnesiac.getBool();
-        canKillExecutioner = CustomOptionHolder.sheriffCanKillExecutioner.getBool();
-        spyCanDieToSheriff = CustomOptionHolder.spyCanDieToSheriff.getBool();
-        canKillDoomsayer = CustomOptionHolder.sheriffCanKillDoomsayer.getBool();
+        misfireKills = CustomOptionHolder.sheriffMisfireKills.GetSelection();
+        cooldown = CustomOptionHolder.sheriffCooldown.GetFloat();
+        canKillNeutrals = CustomOptionHolder.sheriffCanKillNeutrals.GetBool();
+        canKillSurvivor = CustomOptionHolder.sheriffCanKillSurvivor.GetBool();
+        canKillLawyer = CustomOptionHolder.sheriffCanKillLawyer.GetBool();
+        canKillJester = CustomOptionHolder.sheriffCanKillJester.GetBool();
+        canKillPursuer = CustomOptionHolder.sheriffCanKillPursuer.GetBool();
+        canKillPartTimer = CustomOptionHolder.sheriffCanKillPartTimer.GetBool();
+        canKillVulture = CustomOptionHolder.sheriffCanKillVulture.GetBool();
+        canKillThief = CustomOptionHolder.sheriffCanKillThief.GetBool();
+        canKillAmnesiac = CustomOptionHolder.sheriffCanKillAmnesiac.GetBool();
+        canKillExecutioner = CustomOptionHolder.sheriffCanKillExecutioner.GetBool();
+        spyCanDieToSheriff = CustomOptionHolder.spyCanDieToSheriff.GetBool();
+        canKillDoomsayer = CustomOptionHolder.sheriffCanKillDoomsayer.GetBool();
     }
 }

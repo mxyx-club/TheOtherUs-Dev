@@ -11,7 +11,7 @@ internal class GuesserGM
     public static Color color = new Color32(255, 255, 0, byte.MaxValue);
 
     public PlayerControl guesser;
-    public int shots = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNumberOfShots.getFloat());
+    public int shots = CustomOptionHolder.guesserGamemodeNumberOfShots.GetInt();
 
     public GuesserGM(PlayerControl player)
     {
@@ -32,7 +32,7 @@ internal class GuesserGM
         var g = guessers.FirstOrDefault(x => x.guesser.PlayerId == playerId);
         if (g != null)
         {
-            g.shots = Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNumberOfShots.getFloat());
+            g.shots = CustomOptionHolder.guesserGamemodeNumberOfShots.GetInt();
             guessers.Remove(g);
         }
     }

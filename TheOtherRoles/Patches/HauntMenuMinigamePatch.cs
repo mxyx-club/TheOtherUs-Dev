@@ -90,7 +90,7 @@ public static class HauntMenuMinigamePatch
     {
         var isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek
                          || PropHunt.isPropHuntGM || HideNSeek.isHideNSeekGM;
-        if (CachedPlayer.LocalPlayer.Data.IsDead && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.getBool() || isGameMode))
+        if (CachedPlayer.LocalPlayer.Data.IsDead && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() || isGameMode))
         {
             // player has haunt button.
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);

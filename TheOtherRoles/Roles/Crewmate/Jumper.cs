@@ -8,13 +8,13 @@ public static class Jumper
     public static Color color = new Color32(204, 155, 20, byte.MaxValue); // mint
 
     public static float JumpTime = 30f;
-    public static float ChargesOnPlace = 1f;
+    public static int ChargesOnPlace = 1;
 
     public static bool resetPlaceAfterMeeting;
 
-    public static float ChargesGainOnMeeting = 2f;
+    public static int ChargesGainOnMeeting = 2;
     public static float MaxCharges = 3f;
-    public static float Charges = 1f;
+    public static int Charges = 1;
 
     public static Vector3 jumpLocation;
 
@@ -24,7 +24,7 @@ public static class Jumper
 
     public static void resetPlaces()
     {
-        Charges = Mathf.RoundToInt(ChargesOnPlace);
+        Charges = ChargesOnPlace;
         jumpLocation = Vector3.zero;
         usedPlace = false;
     }
@@ -34,12 +34,12 @@ public static class Jumper
         resetPlaces();
         jumpLocation = Vector3.zero;
         jumper = null;
-        resetPlaceAfterMeeting = CustomOptionHolder.jumperResetPlaceAfterMeeting.getBool();
-        Charges = CustomOptionHolder.jumperMaxCharges.getFloat();
-        JumpTime = CustomOptionHolder.jumperJumpTime.getFloat();
-        ChargesOnPlace = 1f;
-        ChargesGainOnMeeting = CustomOptionHolder.jumperChargesGainOnMeeting.getFloat();
-        MaxCharges = CustomOptionHolder.jumperMaxCharges.getFloat();
+        resetPlaceAfterMeeting = CustomOptionHolder.jumperResetPlaceAfterMeeting.GetBool();
+        Charges = CustomOptionHolder.jumperMaxCharges.GetInt();
+        JumpTime = CustomOptionHolder.jumperJumpTime.GetFloat();
+        ChargesOnPlace = 1;
+        ChargesGainOnMeeting = CustomOptionHolder.jumperChargesGainOnMeeting.GetInt();
+        MaxCharges = CustomOptionHolder.jumperMaxCharges.GetFloat();
         usedPlace = false;
     }
 }

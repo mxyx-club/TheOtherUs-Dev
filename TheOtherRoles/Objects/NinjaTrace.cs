@@ -30,7 +30,7 @@ internal class NinjaTrace
         timeRemaining = duration;
 
         // display the ninjas color in the trace
-        var colorDuration = CustomOptionHolder.ninjaTraceColorTime.getFloat();
+        var colorDuration = CustomOptionHolder.ninjaTraceColorTime.GetFloat();
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(colorDuration, new Action<float>(p =>
         {
             Color c = Palette.PlayerColors[Ninja.ninja.Data.DefaultOutfit.ColorId];

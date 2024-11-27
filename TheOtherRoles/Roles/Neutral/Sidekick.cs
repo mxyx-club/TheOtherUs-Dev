@@ -23,11 +23,11 @@ public class Sidekick
     {
         sidekick = null;
         currentTarget = null;
-        cooldown = CustomOptionHolder.jackalKillCooldown.getFloat();
-        canUseVents = CustomOptionHolder.sidekickCanUseVents.getBool();
-        canKill = CustomOptionHolder.sidekickCanKill.getBool();
-        promotesToJackal = CustomOptionHolder.sidekickPromotesToJackal.getBool();
-        hasImpostorVision = CustomOptionHolder.jackalAndSidekickHaveImpostorVision.getBool();
+        cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
+        canUseVents = CustomOptionHolder.sidekickCanUseVents.GetBool();
+        canKill = CustomOptionHolder.sidekickCanKill.GetBool();
+        promotesToJackal = CustomOptionHolder.sidekickPromotesToJackal.GetBool();
+        hasImpostorVision = CustomOptionHolder.jackalAndSidekickHaveImpostorVision.GetBool();
         wasTeamRed = wasImpostor = wasSpy = false;
     }
 }

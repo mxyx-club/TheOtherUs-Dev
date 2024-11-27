@@ -25,15 +25,15 @@ internal class CreateOptionsPickerPatch
         switch (gm)
         {
             case CustomGamemodes.Guesser:
-                __instance.GameModeText.text = getString("isGuesserGm");
+                __instance.GameModeText.text = GetString("isGuesserGm");
                 ModOption.gameMode = CustomGamemodes.Guesser;
                 break;
             case CustomGamemodes.HideNSeek:
-                __instance.GameModeText.text = getString("isHideNSeekGM");
+                __instance.GameModeText.text = GetString("isHideNSeekGM");
                 ModOption.gameMode = CustomGamemodes.HideNSeek;
                 break;
             case CustomGamemodes.PropHunt:
-                __instance.GameModeText.text = getString("isPropHuntGM");
+                __instance.GameModeText.text = GetString("isPropHuntGM");
                 ModOption.gameMode = CustomGamemodes.PropHunt;
                 break;
         }
@@ -47,9 +47,9 @@ internal class CreateOptionsPickerPatch
     {
         __instance.GameModeText.text = ModOption.gameMode switch
         {
-            CustomGamemodes.Guesser => getString("isGuesserGm"),
-            CustomGamemodes.HideNSeek => getString("isHideNSeekGM"),
-            CustomGamemodes.PropHunt => getString("isPropHuntGM"),
+            CustomGamemodes.Guesser => GetString("isGuesserGm"),
+            CustomGamemodes.HideNSeek => GetString("isHideNSeekGM"),
+            CustomGamemodes.PropHunt => GetString("isPropHuntGM"),
             _ => __instance.GameModeText.text
         };
     }
@@ -81,9 +81,9 @@ internal class GameModeMenuPatch
             }
             else
             {
-                chatLanguageButton.Text.text = i == 3 ? getString("isGuesserGm") : getString("isHideNSeekGM");
+                chatLanguageButton.Text.text = i == 3 ? GetString("isGuesserGm") : GetString("isHideNSeekGM");
                 if (i == 5)
-                    chatLanguageButton.Text.text = getString("isPropHuntGM");
+                    chatLanguageButton.Text.text = GetString("isPropHuntGM");
             }
 
             chatLanguageButton.Button.OnClick.RemoveAllListeners();

@@ -21,9 +21,9 @@ public static class Undertaker
     {
         undertaker = null;
         isDraging = false;
-        canDragAndVent = CustomOptionHolder.undertakerCanDragAndVent.getBool();
+        canDragAndVent = CustomOptionHolder.undertakerCanDragAndVent.GetBool();
         deadBodyDraged = null;
-        velocity = CustomOptionHolder.undertakerDragingAfterVelocity.getFloat();
-        dragingDelaiAfterKill = CustomOptionHolder.undertakerDragingDelaiAfterKill.getFloat();
+        velocity = CustomOptionHolder.undertakerDragingAfterVelocity.GetFloat();
+        dragingDelaiAfterKill = CustomOptionHolder.undertakerDragingDelaiAfterKill.GetFloat();
     }
 }

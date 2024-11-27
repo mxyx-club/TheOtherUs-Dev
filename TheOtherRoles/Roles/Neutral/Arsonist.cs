@@ -43,8 +43,8 @@ public static class Arsonist
             if (p != null && p.gameObject != null)
                 p.gameObject.SetActive(false);
 
-        cooldown = CustomOptionHolder.arsonistCooldown.getFloat();
-        duration = CustomOptionHolder.arsonistDuration.getFloat();
-        igniteCooldownRemoved = CustomOptionHolder.arsonistIgniteCdRemoved.getBool();
+        cooldown = CustomOptionHolder.arsonistCooldown.GetFloat();
+        duration = CustomOptionHolder.arsonistDuration.GetFloat();
+        igniteCooldownRemoved = CustomOptionHolder.arsonistIgniteCdRemoved.GetBool();
     }
 }

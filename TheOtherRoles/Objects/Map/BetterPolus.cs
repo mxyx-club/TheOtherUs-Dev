@@ -66,20 +66,20 @@ public static class ShipStatusPatch2
 
     public static void AdjustPolus()
     {
-        if (!CustomOptionHolder.enableBetterPolus.getBool()) return;
+        if (!CustomOptionHolder.enableBetterPolus.GetBool()) return;
         if (IsObjectsFetched && IsRoomsFetched)
         {
-            if (CustomOptionHolder.movePolusVitals.getBool()) MoveVitals();
-            if (CustomOptionHolder.swapNavWifi.getBool()) SwitchNavWifi();
-            if (CustomOptionHolder.movePolusVitals.getBool() && !CustomOptionHolder.moveColdTemp.getBool()) MoveTempCold();
-            if (CustomOptionHolder.moveColdTemp.getBool()) MoveTempColdDV();
+            if (CustomOptionHolder.movePolusVitals.GetBool()) MoveVitals();
+            if (CustomOptionHolder.swapNavWifi.GetBool()) SwitchNavWifi();
+            if (CustomOptionHolder.movePolusVitals.GetBool() && !CustomOptionHolder.moveColdTemp.GetBool()) MoveTempCold();
+            if (CustomOptionHolder.moveColdTemp.GetBool()) MoveTempColdDV();
         }
         else
         {
             Warn("[BetterPolus] Couldn't move elements as not all of them have been fetched.");
         }
 
-        if (CustomOptionHolder.movePolusVents.getBool()) AdjustVents(); // Programed
+        if (CustomOptionHolder.movePolusVents.GetBool()) AdjustVents(); // Programed
 
         IsAdjustmentsDone = true;
     }

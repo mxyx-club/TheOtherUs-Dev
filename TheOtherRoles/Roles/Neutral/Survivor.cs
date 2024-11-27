@@ -34,13 +34,13 @@ public class Survivor
         vestActive = false;
         blanksUsed = 0;
         vestUsed = 0;
-        vestEnable = CustomOptionHolder.survivorVestEnable.getBool();
+        vestEnable = CustomOptionHolder.survivorVestEnable.GetBool();
         vestNumber = CustomOptionHolder.survivorVestNumber.GetInt();
-        vestCooldown = CustomOptionHolder.survivorVestCooldown.getFloat();
-        vestDuration = CustomOptionHolder.survivorVestDuration.getFloat();
-        vestResetCooldown = CustomOptionHolder.survivorVestResetCooldown.getFloat();
-        blanksEnable = CustomOptionHolder.survivorBlanksEnable.getBool();
+        vestCooldown = CustomOptionHolder.survivorVestCooldown.GetFloat();
+        vestDuration = CustomOptionHolder.survivorVestDuration.GetFloat();
+        vestResetCooldown = CustomOptionHolder.survivorVestResetCooldown.GetFloat();
+        blanksEnable = CustomOptionHolder.survivorBlanksEnable.GetBool();
         blanksNumber = CustomOptionHolder.survivorBlanksNumber.GetInt();
-        blanksCooldown = CustomOptionHolder.survivorBlanksCooldown.getFloat();
+        blanksCooldown = CustomOptionHolder.survivorBlanksCooldown.GetFloat();
     }
 }

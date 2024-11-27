@@ -62,11 +62,11 @@ public static class Deputy
         handcuffedPlayers = [];
         handcuffedKnows = [];
         HudManagerStartPatch.setAllButtonsHandcuffedStatus(false, true);
-        promotesToSheriff = CustomOptionHolder.deputyGetsPromoted.getSelection();
-        remainingHandcuffs = CustomOptionHolder.deputyNumberOfHandcuffs.getFloat();
-        handcuffCooldown = CustomOptionHolder.deputyHandcuffCooldown.getFloat();
-        keepsHandcuffsOnPromotion = CustomOptionHolder.deputyKeepsHandcuffs.getBool();
-        handcuffDuration = CustomOptionHolder.deputyHandcuffDuration.getFloat();
-        knowsSheriff = CustomOptionHolder.deputyKnowsSheriff.getBool();
+        promotesToSheriff = CustomOptionHolder.deputyGetsPromoted.GetSelection();
+        remainingHandcuffs = CustomOptionHolder.deputyNumberOfHandcuffs.GetFloat();
+        handcuffCooldown = CustomOptionHolder.deputyHandcuffCooldown.GetFloat();
+        keepsHandcuffsOnPromotion = CustomOptionHolder.deputyKeepsHandcuffs.GetBool();
+        handcuffDuration = CustomOptionHolder.deputyHandcuffDuration.GetFloat();
+        knowsSheriff = CustomOptionHolder.deputyKnowsSheriff.GetBool();
     }
 }

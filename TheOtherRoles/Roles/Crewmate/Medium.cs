@@ -34,10 +34,10 @@ public static class Medium
         futureDeadBodies.Clear();
         souls.Clear();
         meetingStartTime = DateTime.UtcNow;
-        cooldown = CustomOptionHolder.mediumCooldown.getFloat();
-        duration = CustomOptionHolder.mediumDuration.getFloat();
-        oneTimeUse = CustomOptionHolder.mediumOneTimeUse.getBool();
-        chanceAdditionalInfo = CustomOptionHolder.mediumChanceAdditionalInfo.getSelection() / 10f;
+        cooldown = CustomOptionHolder.mediumCooldown.GetFloat();
+        duration = CustomOptionHolder.mediumDuration.GetFloat();
+        oneTimeUse = CustomOptionHolder.mediumOneTimeUse.GetBool();
+        chanceAdditionalInfo = CustomOptionHolder.mediumChanceAdditionalInfo.GetSelection() / 10f;
     }
     public static string getInfo(PlayerControl target, PlayerControl killer)
     {

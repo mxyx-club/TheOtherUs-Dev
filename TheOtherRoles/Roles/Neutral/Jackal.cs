@@ -51,18 +51,18 @@ public class Jackal
         formerJackals.Clear();
         currentTarget = null;
         isInvisable = false;
-        cooldown = CustomOptionHolder.jackalKillCooldown.getFloat();
-        swoopCooldown = CustomOptionHolder.jackalSwooperCooldown.getFloat();
-        duration = CustomOptionHolder.jackalSwooperDuration.getFloat();
-        createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.getFloat();
-        canUseVents = CustomOptionHolder.jackalCanUseVents.getBool();
-        canSabotage = CustomOptionHolder.jackalCanUseSabo.getBool();
-        CanImpostorFindSidekick = CustomOptionHolder.jackalCanImpostorFindSidekick.getBool();
-        canCreateSidekick = CustomOptionHolder.jackalCanCreateSidekick.getBool();
-        jackalPromotedFromSidekickCanCreateSidekick = CustomOptionHolder.jackalPromotedFromSidekickCanCreateSidekick.getBool();
-        hasImpostorVision = CustomOptionHolder.jackalAndSidekickHaveImpostorVision.getBool();
-        killFakeImpostor = CustomOptionHolder.jackalkillFakeImpostor.getBool();
+        cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
+        swoopCooldown = CustomOptionHolder.jackalSwooperCooldown.GetFloat();
+        duration = CustomOptionHolder.jackalSwooperDuration.GetFloat();
+        createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.GetFloat();
+        canUseVents = CustomOptionHolder.jackalCanUseVents.GetBool();
+        canSabotage = CustomOptionHolder.jackalCanUseSabo.GetBool();
+        CanImpostorFindSidekick = CustomOptionHolder.jackalCanImpostorFindSidekick.GetBool();
+        canCreateSidekick = CustomOptionHolder.jackalCanCreateSidekick.GetBool();
+        jackalPromotedFromSidekickCanCreateSidekick = CustomOptionHolder.jackalPromotedFromSidekickCanCreateSidekick.GetBool();
+        hasImpostorVision = CustomOptionHolder.jackalAndSidekickHaveImpostorVision.GetBool();
+        killFakeImpostor = CustomOptionHolder.jackalkillFakeImpostor.GetBool();
         wasTeamRed = wasImpostor = wasSpy = false;
-        chanceSwoop = CustomOptionHolder.jackalChanceSwoop.getSelection() / 10f;
+        chanceSwoop = CustomOptionHolder.jackalChanceSwoop.GetSelection() / 10f;
     }
 }

@@ -299,24 +299,24 @@ internal class MeetingHudPatch
             ? HandleGuesser.remainingShots(CachedPlayer.LocalPlayer.PlayerControl.PlayerId) : 0;
         if (numGuesses > 0)
         {
-            meetingInfoText = string.Format(getString("guesserGuessesLeft"), numGuesses);
+            meetingInfoText = string.Format(GetString("guesserGuessesLeft"), numGuesses);
         }
 
         if (CachedPlayer.LocalPlayer.PlayerControl == Akujo.akujo && Akujo.timeLeft > 0)
         {
-            meetingInfoText = string.Format(getString("akujoTimeRemaining"), $"{TimeSpan.FromSeconds(Akujo.timeLeft):mm\\:ss}");
+            meetingInfoText = string.Format(GetString("akujoTimeRemaining"), $"{TimeSpan.FromSeconds(Akujo.timeLeft):mm\\:ss}");
         }
         else if (CachedPlayer.LocalPlayer.PlayerControl == Doomsayer.doomsayer)
         {
-            meetingInfoText = string.Format(getString("DoomsayerKilledToWin"), Doomsayer.killToWin - Doomsayer.killedToWin);
+            meetingInfoText = string.Format(GetString("DoomsayerKilledToWin"), Doomsayer.killToWin - Doomsayer.killedToWin);
         }
         else if (CachedPlayer.LocalPlayer.PlayerControl == Swapper.swapper)
         {
-            meetingInfoText = string.Format(getString("SwapperCharges"), Swapper.charges);
+            meetingInfoText = string.Format(GetString("SwapperCharges"), Swapper.charges);
         }
         else if (CachedPlayer.LocalPlayer.PlayerControl == PartTimer.partTimer && PartTimer.target == null)
         {
-            meetingInfoText = string.Format(getString("PartTimerMeetingInfo"), Swapper.charges);
+            meetingInfoText = string.Format(GetString("PartTimerMeetingInfo"), Swapper.charges);
         }
 
         if (meetingInfoText == "") return;

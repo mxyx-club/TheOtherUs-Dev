@@ -1,18 +1,17 @@
 using System.Collections.Generic;
 using AmongUs.GameOptions;
 using TheOtherRoles.Utilities;
-using UnityEngine;
 
 namespace TheOtherRoles.Options;
 
 internal class ModOption
 {
-    public static float ButtonCooldown => CustomOptionHolder.resteButtonCooldown.getFloat();
-    public static bool PreventTaskEnd => CustomOptionHolder.disableTaskGameEnd.getBool();
+    public static float ButtonCooldown => CustomOptionHolder.resteButtonCooldown.GetFloat();
+    public static bool PreventTaskEnd => CustomOptionHolder.disableTaskGameEnd.GetBool();
     public static float KillCooddown => GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
     public static int NumImpostors => GameOptionsManager.Instance.currentNormalGameOptions.NumImpostors;
-    public static bool DebugMode => CustomOptionHolder.debugMode.getBool();
-    public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.getBool();
+    public static bool DebugMode => CustomOptionHolder.debugMode.GetBool();
+    public static bool DisableGameEnd => DebugMode && CustomOptionHolder.disableGameEnd.GetBool();
     public static NormalGameOptionsV07 NormalOptions => GameOptionsManager.Instance.currentNormalGameOptions;
 
     // Set values
@@ -91,32 +90,32 @@ internal class ModOption
         ventsToSeal = [];
         playerIcons = new Dictionary<byte, PoolablePlayer>();
 
-        maxNumberOfMeetings = Mathf.RoundToInt(CustomOptionHolder.maxNumberOfMeetings.getSelection());
-        blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.getBool();
-        blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.getBool();
-        noVoteIsSelfVote = CustomOptionHolder.noVoteIsSelfVote.getBool();
-        hidePlayerNames = CustomOptionHolder.hidePlayerNames.getBool();
-        hideOutOfSightNametags = CustomOptionHolder.hideOutOfSightNametags.getBool();
-        hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.getBool();
-        allowParallelMedBayScans = CustomOptionHolder.allowParallelMedBayScans.getBool();
-        disableMedscanWalking = CustomOptionHolder.disableMedbayWalk.getBool();
-        camoComms = CustomOptionHolder.enableCamoComms.getBool();
+        maxNumberOfMeetings = CustomOptionHolder.maxNumberOfMeetings.GetInt();
+        blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.GetBool();
+        blockSkippingInEmergencyMeetings = CustomOptionHolder.blockSkippingInEmergencyMeetings.GetBool();
+        noVoteIsSelfVote = CustomOptionHolder.noVoteIsSelfVote.GetBool();
+        hidePlayerNames = CustomOptionHolder.hidePlayerNames.GetBool();
+        hideOutOfSightNametags = CustomOptionHolder.hideOutOfSightNametags.GetBool();
+        hideVentAnim = CustomOptionHolder.hideVentAnimOnShadows.GetBool();
+        allowParallelMedBayScans = CustomOptionHolder.allowParallelMedBayScans.GetBool();
+        disableMedscanWalking = CustomOptionHolder.disableMedbayWalk.GetBool();
+        camoComms = CustomOptionHolder.enableCamoComms.GetBool();
         fungleDisableCamoComms = false;
-        shieldFirstKill = CustomOptionHolder.shieldFirstKill.getBool();
-        impostorSeeRoles = CustomOptionHolder.impostorSeeRoles.getBool();
-        transparentTasks = CustomOptionHolder.transparentTasks.getBool();
-        restrictDevices = CustomOptionHolder.restrictDevices.getSelection();
+        shieldFirstKill = CustomOptionHolder.shieldFirstKill.GetBool();
+        impostorSeeRoles = CustomOptionHolder.impostorSeeRoles.GetBool();
+        transparentTasks = CustomOptionHolder.transparentTasks.GetBool();
+        restrictDevices = CustomOptionHolder.restrictDevices.GetSelection();
         //restrictAdminTime = restrictAdminTimeMax = CustomOptionHolder.restrictAdmin.getFloat();
-        restrictCamerasTime = restrictCamerasTimeMax = CustomOptionHolder.restrictCameras.getFloat();
-        restrictVitalsTime = restrictVitalsTimeMax = CustomOptionHolder.restrictVents.getFloat();
-        disableCamsRoundOne = CustomOptionHolder.disableCamsRound1.getBool();
-        randomGameStartPosition = CustomOptionHolder.randomGameStartPosition.getBool();
-        ShowVentsOnMap = CustomOptionHolder.ShowVentsOnMap.getBool();
-        ShowVentsOnMeetingMap = CustomOptionHolder.ShowVentsOnMeetingMap.getBool();
-        randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.getBool();
-        allowModGuess = CustomOptionHolder.allowModGuess.getBool();
-        CursedTasks = CustomOptionHolder.enableCursedTasks.getBool();
-        disableSabotage = CustomOptionHolder.disableSabotage.getBool();
+        restrictCamerasTime = restrictCamerasTimeMax = CustomOptionHolder.restrictCameras.GetFloat();
+        restrictVitalsTime = restrictVitalsTimeMax = CustomOptionHolder.restrictVents.GetFloat();
+        disableCamsRoundOne = CustomOptionHolder.disableCamsRound1.GetBool();
+        randomGameStartPosition = CustomOptionHolder.randomGameStartPosition.GetBool();
+        ShowVentsOnMap = CustomOptionHolder.ShowVentsOnMap.GetBool();
+        ShowVentsOnMeetingMap = CustomOptionHolder.ShowVentsOnMeetingMap.GetBool();
+        randomLigherPlayer = CustomOptionHolder.randomLigherPlayer.GetBool();
+        allowModGuess = CustomOptionHolder.allowModGuess.GetBool();
+        CursedTasks = CustomOptionHolder.enableCursedTasks.GetBool();
+        disableSabotage = CustomOptionHolder.disableSabotage.GetBool();
         firstKillPlayer = null;
         isRoundOne = true;
         isCanceled = false;

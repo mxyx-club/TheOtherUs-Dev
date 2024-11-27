@@ -20,6 +20,6 @@ public static class Blackmailer
         blackmailer = null;
         currentTarget = null;
         blackmailed = null;
-        cooldown = CustomOptionHolder.blackmailerCooldown.getFloat();
+        cooldown = CustomOptionHolder.blackmailerCooldown.GetFloat();
     }
 }

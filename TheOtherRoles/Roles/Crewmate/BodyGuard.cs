@@ -23,9 +23,9 @@ public static class BodyGuard
     public static void clearAndReload()
     {
         bodyguard = null;
-        showShielded = CustomOptionHolder.bodyGuardShowShielded.getBool();
-        guardFlash = CustomOptionHolder.bodyGuardFlash.getBool();
-        reset = CustomOptionHolder.bodyGuardResetTargetAfterMeeting.getBool();
+        showShielded = CustomOptionHolder.bodyGuardShowShielded.GetBool();
+        guardFlash = CustomOptionHolder.bodyGuardFlash.GetBool();
+        reset = CustomOptionHolder.bodyGuardResetTargetAfterMeeting.GetBool();
         guarded = null;
         usedGuard = false;
     }

@@ -21,11 +21,11 @@ public static class Bait
     {
         bait.Clear();
         active.Clear();
-        reportDelayMin = CustomOptionHolder.modifierBaitReportDelayMin.getFloat();
-        reportDelayMax = CustomOptionHolder.modifierBaitReportDelayMax.getFloat();
+        reportDelayMin = CustomOptionHolder.modifierBaitReportDelayMin.GetFloat();
+        reportDelayMax = CustomOptionHolder.modifierBaitReportDelayMax.GetFloat();
         if (reportDelayMin > reportDelayMax) reportDelayMin = reportDelayMax;
-        showKillFlash = CustomOptionHolder.modifierBaitShowKillFlash.getBool();
-        SwapCrewmate = CustomOptionHolder.modifierBaitSwapCrewmate.getBool();
+        showKillFlash = CustomOptionHolder.modifierBaitShowKillFlash.GetBool();
+        SwapCrewmate = CustomOptionHolder.modifierBaitSwapCrewmate.GetBool();
         //SwapNeutral = CustomOptionHolder.modifierBaitSwapNeutral.getBool();
         //SwapImpostor = CustomOptionHolder.modifierBaitSwapImpostor.getBool();
     }

@@ -21,12 +21,12 @@ public static class Vulture
     public static void clearAndReload()
     {
         vulture = null;
-        vultureNumberToWin = Mathf.RoundToInt(CustomOptionHolder.vultureNumberToWin.getFloat());
+        vultureNumberToWin = CustomOptionHolder.vultureNumberToWin.GetInt();
         eatenBodies = 0;
-        cooldown = CustomOptionHolder.vultureCooldown.getFloat();
+        cooldown = CustomOptionHolder.vultureCooldown.GetFloat();
         triggerVultureWin = false;
-        canUseVents = CustomOptionHolder.vultureCanUseVents.getBool();
-        showArrows = CustomOptionHolder.vultureShowArrows.getBool();
+        canUseVents = CustomOptionHolder.vultureCanUseVents.GetBool();
+        showArrows = CustomOptionHolder.vultureShowArrows.GetBool();
         if (localArrows != null)
             foreach (var arrow in localArrows)
                 if (arrow?.arrow != null)

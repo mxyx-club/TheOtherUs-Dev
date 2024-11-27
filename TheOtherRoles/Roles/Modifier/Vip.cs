@@ -10,6 +10,6 @@ public static class Vip
     public static void clearAndReload()
     {
         vip.Clear();
-        showColor = CustomOptionHolder.modifierVipShowColor.getBool();
+        showColor = CustomOptionHolder.modifierVipShowColor.GetBool();
     }
 }

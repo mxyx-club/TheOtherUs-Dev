@@ -48,8 +48,8 @@ public static class Tracker
         tracker = null;
         resetTracked();
         timeUntilUpdate = 0f;
-        updateIntervall = CustomOptionHolder.trackerUpdateIntervall.getFloat();
-        resetTargetAfterMeeting = CustomOptionHolder.trackerResetTargetAfterMeeting.getBool();
+        updateIntervall = CustomOptionHolder.trackerUpdateIntervall.GetFloat();
+        resetTargetAfterMeeting = CustomOptionHolder.trackerResetTargetAfterMeeting.GetBool();
         if (localArrows != null)
         {
             foreach (Arrow arrow in localArrows)
@@ -58,10 +58,10 @@ public static class Tracker
         }
         deadBodyPositions.Clear();
         corpsesTrackingTimer = 0f;
-        corpsesTrackingCooldown = CustomOptionHolder.trackerCorpsesTrackingCooldown.getFloat();
-        corpsesTrackingDuration = CustomOptionHolder.trackerCorpsesTrackingDuration.getFloat();
-        canTrackCorpses = CustomOptionHolder.trackerCanTrackCorpses.getBool();
-        trackingMode = CustomOptionHolder.trackerTrackingMethod.getSelection();
+        corpsesTrackingCooldown = CustomOptionHolder.trackerCorpsesTrackingCooldown.GetFloat();
+        corpsesTrackingDuration = CustomOptionHolder.trackerCorpsesTrackingDuration.GetFloat();
+        canTrackCorpses = CustomOptionHolder.trackerCanTrackCorpses.GetBool();
+        trackingMode = CustomOptionHolder.trackerTrackingMethod.GetSelection();
         if (DangerMeterParent)
         {
             Meter.gameObject.Destroy();

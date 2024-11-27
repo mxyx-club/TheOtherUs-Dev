@@ -29,8 +29,8 @@ internal class GameOptionsDataGetAdjustedNumImpostorsPatch
         if (ModOption.gameMode is CustomGamemodes.HideNSeek or CustomGamemodes.PropHunt)
         {
             var impCount = ModOption.gameMode == CustomGamemodes.HideNSeek
-                ? Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat())
-                : CustomOptionHolder.propHuntNumberOfHunters.getQuantity();
+                ? CustomOptionHolder.hideNSeekHunterCount.GetInt()
+                : CustomOptionHolder.propHuntNumberOfHunters.GetQuantity();
             __result = impCount;
             ; // Set Imp Num
         }
@@ -50,7 +50,7 @@ internal class GameOptionsDataValidatePatch
         if (ModOption.gameMode == CustomGamemodes.HideNSeek ||
             GameOptionsManager.Instance.CurrentGameOptions.GameMode != GameModes.Normal) return;
         if (ModOption.gameMode == CustomGamemodes.PropHunt)
-            __instance.NumImpostors = CustomOptionHolder.propHuntNumberOfHunters.getQuantity();
+            __instance.NumImpostors = CustomOptionHolder.propHuntNumberOfHunters.GetQuantity();
         __instance.NumImpostors = GameOptionsManager.Instance.CurrentGameOptions.NumImpostors;
     }
 }
@@ -100,10 +100,10 @@ internal class RoleManagerSelectRolesPatch
         var impostors = PlayerControl.AllPlayerControls.ToList().OrderBy(x => Guid.NewGuid()).ToList();
         impostors.RemoveAll(x => !x.Data.Role.IsImpostor);
 
-        var neutralMin = CustomOptionHolder.neutralRolesCountMin.getSelection();
-        var neutralMax = CustomOptionHolder.neutralRolesCountMax.getSelection();
-        var killerNeutralMin = CustomOptionHolder.killerNeutralRolesCountMin.getSelection();
-        var killerNeutralMax = CustomOptionHolder.killerNeutralRolesCountMax.getSelection();
+        var neutralMin = CustomOptionHolder.neutralRolesCountMin.GetSelection();
+        var neutralMax = CustomOptionHolder.neutralRolesCountMax.GetSelection();
+        var killerNeutralMin = CustomOptionHolder.killerNeutralRolesCountMin.GetSelection();
+        var killerNeutralMax = CustomOptionHolder.killerNeutralRolesCountMax.GetSelection();
         var impostorNum = ModOption.NumImpostors;
 
         // Make sure min is less or equal to max
@@ -129,47 +129,47 @@ internal class RoleManagerSelectRolesPatch
         var killerNeutralSettings = new Dictionary<byte, int>();
         var crewSettings = new Dictionary<byte, int>();
 
-        impSettings.Add((byte)RoleId.Morphling, CustomOptionHolder.morphlingSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Camouflager, CustomOptionHolder.camouflagerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Vampire, CustomOptionHolder.vampireSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Eraser, CustomOptionHolder.eraserSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Trickster, CustomOptionHolder.tricksterSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Cleaner, CustomOptionHolder.cleanerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.undertakerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Miner, CustomOptionHolder.minerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Butcher, CustomOptionHolder.butcherSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Witch, CustomOptionHolder.witchSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Escapist, CustomOptionHolder.escapistSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Ninja, CustomOptionHolder.ninjaSpawnRate.getSelection());
-        if (!Poucher.spawnModifier) impSettings.Add((byte)RoleId.Poucher, CustomOptionHolder.poucherSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Mimic, CustomOptionHolder.mimicSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Terrorist, CustomOptionHolder.terroristSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Bomber, CustomOptionHolder.bomberSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Blackmailer, CustomOptionHolder.blackmailerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.EvilTrapper, CustomOptionHolder.evilTrapperSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.getSelection());
-        impSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.getSelection());
+        impSettings.Add((byte)RoleId.Morphling, CustomOptionHolder.morphlingSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Camouflager, CustomOptionHolder.camouflagerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Vampire, CustomOptionHolder.vampireSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Eraser, CustomOptionHolder.eraserSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Trickster, CustomOptionHolder.tricksterSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Cleaner, CustomOptionHolder.cleanerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Undertaker, CustomOptionHolder.undertakerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Miner, CustomOptionHolder.minerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Butcher, CustomOptionHolder.butcherSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Witch, CustomOptionHolder.witchSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Escapist, CustomOptionHolder.escapistSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Ninja, CustomOptionHolder.ninjaSpawnRate.GetSelection());
+        if (!Poucher.spawnModifier) impSettings.Add((byte)RoleId.Poucher, CustomOptionHolder.poucherSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Mimic, CustomOptionHolder.mimicSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Terrorist, CustomOptionHolder.terroristSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Bomber, CustomOptionHolder.bomberSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Blackmailer, CustomOptionHolder.blackmailerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.EvilTrapper, CustomOptionHolder.evilTrapperSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.GetSelection());
 
-        neutralSettings.Add((byte)RoleId.Survivor, CustomOptionHolder.survivorSpawnRate.getSelection());
+        neutralSettings.Add((byte)RoleId.Survivor, CustomOptionHolder.survivorSpawnRate.GetSelection());
         //neutralSettings.Add((byte)RoleId.Pursuer, CustomOptionHolder.pursuerSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Amnisiac, CustomOptionHolder.amnisiacSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.PartTimer, CustomOptionHolder.partTimerSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Jester, CustomOptionHolder.jesterSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Executioner, CustomOptionHolder.executionerSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Doomsayer, CustomOptionHolder.doomsayerSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Akujo, CustomOptionHolder.akujoSpawnRate.getSelection());
-        neutralSettings.Add((byte)RoleId.Thief, CustomOptionHolder.thiefSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Pavlovsowner, CustomOptionHolder.pavlovsownerSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Werewolf, CustomOptionHolder.werewolfSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Juggernaut, CustomOptionHolder.juggernautSpawnRate.getSelection());
-        killerNeutralSettings.Add((byte)RoleId.Swooper, CustomOptionHolder.swooperSpawnRate.getSelection());
+        neutralSettings.Add((byte)RoleId.Amnisiac, CustomOptionHolder.amnisiacSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.PartTimer, CustomOptionHolder.partTimerSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Jester, CustomOptionHolder.jesterSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Executioner, CustomOptionHolder.executionerSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Doomsayer, CustomOptionHolder.doomsayerSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Akujo, CustomOptionHolder.akujoSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Thief, CustomOptionHolder.thiefSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Arsonist, CustomOptionHolder.arsonistSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Jackal, CustomOptionHolder.jackalSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Pavlovsowner, CustomOptionHolder.pavlovsownerSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Werewolf, CustomOptionHolder.werewolfSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Juggernaut, CustomOptionHolder.juggernautSpawnRate.GetSelection());
+        killerNeutralSettings.Add((byte)RoleId.Swooper, CustomOptionHolder.swooperSpawnRate.GetSelection());
 
         // Check if killerNeutralMin and killerNeutralMax are 0
         if (killerNeutralMin + killerNeutralMax == 0)
@@ -184,32 +184,32 @@ internal class RoleManagerSelectRolesPatch
             maxNeutralRoles = Math.Min(maxNeutralRoles - killerNeutralCount, neutralMax);
         }
 
-        crewSettings.Add((byte)RoleId.Mayor, CustomOptionHolder.mayorSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.prosecutorSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Portalmaker, CustomOptionHolder.portalmakerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.BodyGuard, CustomOptionHolder.bodyGuardSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Veteran, CustomOptionHolder.veteranSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Medic, CustomOptionHolder.medicSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Swapper, CustomOptionHolder.swapperSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Seer, CustomOptionHolder.seerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.InfoSleuth, CustomOptionHolder.infoSleuthSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Balancer, CustomOptionHolder.balancerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Tracker, CustomOptionHolder.trackerSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Snitch, CustomOptionHolder.snitchSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Medium, CustomOptionHolder.mediumSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Prophet, CustomOptionHolder.prophetSpawnRate.getSelection());
+        crewSettings.Add((byte)RoleId.Mayor, CustomOptionHolder.mayorSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Prosecutor, CustomOptionHolder.prosecutorSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Portalmaker, CustomOptionHolder.portalmakerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Engineer, CustomOptionHolder.engineerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.BodyGuard, CustomOptionHolder.bodyGuardSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Detective, CustomOptionHolder.detectiveSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.TimeMaster, CustomOptionHolder.timeMasterSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Veteran, CustomOptionHolder.veteranSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Medic, CustomOptionHolder.medicSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Swapper, CustomOptionHolder.swapperSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Seer, CustomOptionHolder.seerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Hacker, CustomOptionHolder.hackerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.InfoSleuth, CustomOptionHolder.infoSleuthSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Balancer, CustomOptionHolder.balancerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Tracker, CustomOptionHolder.trackerSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Snitch, CustomOptionHolder.snitchSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Medium, CustomOptionHolder.mediumSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Prophet, CustomOptionHolder.prophetSpawnRate.GetSelection());
         if (!isGuesserGamemode)
-            crewSettings.Add((byte)RoleId.Vigilante, CustomOptionHolder.guesserSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.getSelection());
+            crewSettings.Add((byte)RoleId.Vigilante, CustomOptionHolder.guesserSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Trapper, CustomOptionHolder.trapperSpawnRate.GetSelection());
         if (impostors.Count > 1)
             // Only add Spy if more than 1 impostor as the spy role is otherwise useless
-            crewSettings.Add((byte)RoleId.Spy, CustomOptionHolder.spySpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.SecurityGuard, CustomOptionHolder.securityGuardSpawnRate.getSelection());
-        crewSettings.Add((byte)RoleId.Jumper, CustomOptionHolder.jumperSpawnRate.getSelection());
+            crewSettings.Add((byte)RoleId.Spy, CustomOptionHolder.spySpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.SecurityGuard, CustomOptionHolder.securityGuardSpawnRate.GetSelection());
+        crewSettings.Add((byte)RoleId.Jumper, CustomOptionHolder.jumperSpawnRate.GetSelection());
         return new RoleAssignmentData
         {
             crewmates = crewmates,
@@ -228,10 +228,10 @@ internal class RoleManagerSelectRolesPatch
     private static void selectFactionForFactionIndependentRoles(RoleAssignmentData data)
     {
         // Assign Sheriff
-        if ((CustomOptionHolder.deputySpawnRate.getSelection() > 0 &&
-             CustomOptionHolder.sheriffSpawnRate.getSelection() == 10) ||
-            CustomOptionHolder.deputySpawnRate.getSelection() == 0)
-            data.crewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.getSelection());
+        if ((CustomOptionHolder.deputySpawnRate.GetSelection() > 0 &&
+             CustomOptionHolder.sheriffSpawnRate.GetSelection() == 10) ||
+            CustomOptionHolder.deputySpawnRate.GetSelection() == 0)
+            data.crewSettings.Add((byte)RoleId.Sheriff, CustomOptionHolder.sheriffSpawnRate.GetSelection());
 
         crewValues = data.crewSettings.Values.ToList().Sum();
         impValues = data.impSettings.Values.ToList().Sum();
@@ -317,8 +317,8 @@ internal class RoleManagerSelectRolesPatch
         // Roles that prob have a dependent role
         //bool guesserFlag = CustomOptionHolder.guesserSpawnBothRate.getSelection() > 0 
         //     && CustomOptionHolder.guesserSpawnRate.getSelection() > 0;
-        var sheriffFlag = CustomOptionHolder.deputySpawnRate.getSelection() > 0
-                          && CustomOptionHolder.sheriffSpawnRate.getSelection() > 0;
+        var sheriffFlag = CustomOptionHolder.deputySpawnRate.GetSelection() > 0
+                          && CustomOptionHolder.sheriffSpawnRate.GetSelection() > 0;
 
         //if (isGuesserGamemode) guesserFlag = false;
         // if (!guesserFlag && !sheriffFlag) return; // assignDependentRoles is not needed
@@ -338,7 +338,7 @@ internal class RoleManagerSelectRolesPatch
         // --- Simulate Crew & Imp ticket system ---
         while (crew > 0 && !isSheriff /* || (!isEvilGuesser && !isGuesser)*/)
         {
-            if (!isSheriff && rnd.Next(crewValues) < CustomOptionHolder.sheriffSpawnRate.getSelection())
+            if (!isSheriff && rnd.Next(crewValues) < CustomOptionHolder.sheriffSpawnRate.GetSelection())
                 isSheriff = true;
             crew--;
             crewValues -= crewSteps;
@@ -358,7 +358,7 @@ internal class RoleManagerSelectRolesPatch
         if (Sheriff.sheriff != null)
         {
             // Deputy
-            if (CustomOptionHolder.deputySpawnRate.getSelection() == 10 && data.crewmates.Count > 0 &&
+            if (CustomOptionHolder.deputySpawnRate.GetSelection() == 10 && data.crewmates.Count > 0 &&
                 data.maxCrewmateRoles > 0)
             {
                 // Force Deputy
@@ -366,10 +366,10 @@ internal class RoleManagerSelectRolesPatch
                 data.crewmates.ToList().RemoveAll(x => x.PlayerId == deputy);
                 data.maxCrewmateRoles--;
             }
-            else if (CustomOptionHolder.deputySpawnRate.getSelection() <
+            else if (CustomOptionHolder.deputySpawnRate.GetSelection() <
                      10) // Dont force, add Deputy to the ticket system
             {
-                data.crewSettings.Add((byte)RoleId.Deputy, CustomOptionHolder.deputySpawnRate.getSelection());
+                data.crewSettings.Add((byte)RoleId.Deputy, CustomOptionHolder.deputySpawnRate.GetSelection());
             }
         }
 
@@ -505,12 +505,12 @@ internal class RoleManagerSelectRolesPatch
 
     private static void assignModifiers()
     {
-        var modifierMin = CustomOptionHolder.modifiersCountMin.getSelection();
-        var modifierMax = CustomOptionHolder.modifiersCountMax.getSelection();
+        var modifierMin = CustomOptionHolder.modifiersCountMin.GetSelection();
+        var modifierMax = CustomOptionHolder.modifiersCountMax.GetSelection();
         if (modifierMin > modifierMax) modifierMin = modifierMax;
         var modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
         var players = PlayerControl.AllPlayerControls.ToArray().ToList();
-        if (isGuesserGamemode && !CustomOptionHolder.guesserGamemodeHaveModifier.getBool())
+        if (isGuesserGamemode && !CustomOptionHolder.guesserGamemodeHaveModifier.GetBool())
             players.RemoveAll(x => GuesserGM.isGuesser(x.PlayerId));
 
         var impPlayer = new List<PlayerControl>(players);
@@ -568,10 +568,10 @@ internal class RoleManagerSelectRolesPatch
             RoleId.Assassin
         ]);
 
-        if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.getSelection() * 10)
+        if (rnd.Next(1, 101) <= CustomOptionHolder.modifierLover.GetSelection() * 10)
         {
             // Assign lover
-            var isEvilLover = rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.getSelection() * 10;
+            var isEvilLover = rnd.Next(1, 101) <= CustomOptionHolder.modifierLoverImpLoverRate.GetSelection() * 10;
             byte firstLoverId;
 
             if (isEvilLover) firstLoverId = setModifierToRandomPlayer((byte)RoleId.Lover, impPlayerL);
@@ -646,14 +646,14 @@ internal class RoleManagerSelectRolesPatch
         neutralPlayer.RemoveAll(x => !isNeutral(x) || x == Doomsayer.doomsayer);
         crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || isNeutral(x));
         assignGuesserGamemodeToPlayers(crewPlayer,
-            Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeCrewNumber.getFloat()));
+            CustomOptionHolder.guesserGamemodeCrewNumber.GetInt());
         assignGuesserGamemodeToPlayers(neutralPlayer,
-            Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeNeutralNumber.getFloat()),
-            CustomOptionHolder.guesserForceJackalGuesser.getBool(),
-            CustomOptionHolder.guesserForceThiefGuesser.getBool(),
-            CustomOptionHolder.guesserForcePavlovsGuesser.getBool());
+            CustomOptionHolder.guesserGamemodeNeutralNumber.GetInt(),
+            CustomOptionHolder.guesserForceJackalGuesser.GetBool(),
+            CustomOptionHolder.guesserForceThiefGuesser.GetBool(),
+            CustomOptionHolder.guesserForcePavlovsGuesser.GetBool());
         assignGuesserGamemodeToPlayers(impPlayer,
-            Mathf.RoundToInt(CustomOptionHolder.guesserGamemodeImpNumber.getFloat()));
+            CustomOptionHolder.guesserGamemodeImpNumber.GetInt());
     }
 
     private static void assignGuesserGamemodeToPlayers(List<PlayerControl> playerList, int count,
@@ -809,7 +809,7 @@ internal class RoleManagerSelectRolesPatch
             if (!Cursed.hideModifier)
             {
                 crewPlayer.RemoveAll(x => x.PlayerId == playerId);
-            playerList.RemoveAll(x => x.PlayerId == playerId);
+                playerList.RemoveAll(x => x.PlayerId == playerId);
             }
             modifiers.Remove(RoleId.Cursed);
         }
@@ -960,103 +960,104 @@ internal class RoleManagerSelectRolesPatch
         switch (roleId)
         {
             case RoleId.Lover:
-                selection = CustomOptionHolder.modifierLover.getSelection();
+                selection = CustomOptionHolder.modifierLover.GetSelection();
                 break;
             case RoleId.Tiebreaker:
-                selection = CustomOptionHolder.modifierTieBreaker.getSelection();
+                selection = CustomOptionHolder.modifierTieBreaker.GetSelection();
                 break;
             case RoleId.Indomitable:
-                selection = CustomOptionHolder.modifierIndomitable.getSelection();
+                selection = CustomOptionHolder.modifierIndomitable.GetSelection();
                 break;
             case RoleId.Cursed:
-                selection = CustomOptionHolder.modifierCursed.getSelection();
+                selection = CustomOptionHolder.modifierCursed.GetSelection();
                 break;
             case RoleId.Slueth:
-                selection = CustomOptionHolder.modifierSlueth.getSelection();
+                selection = CustomOptionHolder.modifierSlueth.GetSelection();
                 break;
             case RoleId.Blind:
-                selection = CustomOptionHolder.modifierBlind.getSelection();
+                selection = CustomOptionHolder.modifierBlind.GetSelection();
                 break;
             case RoleId.Watcher:
-                selection = CustomOptionHolder.modifierWatcher.getSelection();
+                selection = CustomOptionHolder.modifierWatcher.GetSelection();
                 break;
             case RoleId.Radar:
-                selection = CustomOptionHolder.modifierRadar.getSelection();
+                selection = CustomOptionHolder.modifierRadar.GetSelection();
                 break;
             case RoleId.Disperser:
-                selection = CustomOptionHolder.modifierDisperser.getSelection();
+                selection = CustomOptionHolder.modifierDisperser.GetSelection();
                 break;
             case RoleId.Specoality:
-                selection = CustomOptionHolder.modifierSpecoality.getSelection();
+                selection = CustomOptionHolder.modifierSpecoality.GetSelection();
                 break;
             case RoleId.PoucherModifier:
-                if (Poucher.spawnModifier) selection = CustomOptionHolder.poucherSpawnRate.getSelection();
+                if (Poucher.spawnModifier) selection = CustomOptionHolder.poucherSpawnRate.GetSelection();
                 break;
             case RoleId.Mini:
-                selection = CustomOptionHolder.modifierMini.getSelection();
+                selection = CustomOptionHolder.modifierMini.GetSelection();
                 break;
             case RoleId.Giant:
                 if (isFungle) break;
-                selection = CustomOptionHolder.modifierGiant.getSelection();
+                selection = CustomOptionHolder.modifierGiant.GetSelection();
                 break;
             case RoleId.Aftermath:
-                selection = CustomOptionHolder.modifierAftermath.getSelection();
+                selection = CustomOptionHolder.modifierAftermath.GetSelection();
                 break;
             case RoleId.Bait:
-                selection = CustomOptionHolder.modifierBait.getSelection();
+                selection = CustomOptionHolder.modifierBait.GetSelection();
                 break;
             case RoleId.Bloody:
-                selection = CustomOptionHolder.modifierBloody.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierBloodyQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierBloody.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierBloodyQuantity.GetQuantity();
                 break;
             case RoleId.AntiTeleport:
                 if (isFungle) break;
-                selection = CustomOptionHolder.modifierAntiTeleport.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierAntiTeleportQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierAntiTeleport.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierAntiTeleportQuantity.GetQuantity();
                 break;
             case RoleId.Tunneler:
-                selection = CustomOptionHolder.modifierTunneler.getSelection();
+                selection = CustomOptionHolder.modifierTunneler.GetSelection();
                 break;
             case RoleId.ButtonBarry:
-                selection = CustomOptionHolder.modifierButtonBarry.getSelection();
+                selection = CustomOptionHolder.modifierButtonBarry.GetSelection();
                 break;
             case RoleId.Sunglasses:
-                selection = CustomOptionHolder.modifierSunglasses.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierSunglassesQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierSunglasses.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierSunglassesQuantity.GetQuantity();
                 break;
             case RoleId.Torch:
-                selection = CustomOptionHolder.modifierTorch.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierTorchQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierTorch.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierTorchQuantity.GetQuantity();
                 break;
             case RoleId.Flash:
-                selection = CustomOptionHolder.modifierFlash.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierFlashQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierFlash.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierFlashQuantity.GetQuantity();
                 break;
             case RoleId.Multitasker:
-                selection = CustomOptionHolder.modifierMultitasker.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierMultitaskerQuantity.getQuantity();
+                if (isFungle) break;
+                selection = CustomOptionHolder.modifierMultitasker.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierMultitaskerQuantity.GetQuantity();
                 break;
             case RoleId.Vip:
-                selection = CustomOptionHolder.modifierVip.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierVipQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierVip.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierVipQuantity.GetQuantity();
                 break;
             case RoleId.Invert:
-                selection = CustomOptionHolder.modifierInvert.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierInvertQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierInvert.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierInvertQuantity.GetQuantity();
                 break;
             case RoleId.Chameleon:
-                selection = CustomOptionHolder.modifierChameleon.getSelection();
-                if (multiplyQuantity) selection *= CustomOptionHolder.modifierChameleonQuantity.getQuantity();
+                selection = CustomOptionHolder.modifierChameleon.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierChameleonQuantity.GetQuantity();
                 break;
             case RoleId.Shifter:
-                selection = CustomOptionHolder.modifierShifter.getSelection();
+                selection = CustomOptionHolder.modifierShifter.GetSelection();
                 break;
             case RoleId.Assassin:
                 if (!isGuesserGamemode)
                 {
-                    selection = CustomOptionHolder.modifierAssassin.getSelection();
+                    selection = CustomOptionHolder.modifierAssassin.GetSelection();
                     if (multiplyQuantity)
-                        selection *= CustomOptionHolder.modifierAssassinQuantity.getQuantity();
+                        selection *= CustomOptionHolder.modifierAssassinQuantity.GetQuantity();
                 }
                 break;
         }

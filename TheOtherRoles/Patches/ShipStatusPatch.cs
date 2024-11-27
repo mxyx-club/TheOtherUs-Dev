@@ -175,12 +175,9 @@ public class ShipStatusPatch
         }
         else
         {
-            GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekCommonTasks.getFloat());
-            GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekShortTasks.getFloat());
-            GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks =
-                Mathf.RoundToInt(CustomOptionHolder.hideNSeekLongTasks.getFloat());
+            GameOptionsManager.Instance.currentNormalGameOptions.NumCommonTasks = CustomOptionHolder.hideNSeekCommonTasks.GetInt();
+            GameOptionsManager.Instance.currentNormalGameOptions.NumShortTasks = CustomOptionHolder.hideNSeekShortTasks.GetInt();
+            GameOptionsManager.Instance.currentNormalGameOptions.NumLongTasks = CustomOptionHolder.hideNSeekLongTasks.GetInt();
         }
 
         MapBehaviourPatch.VentNetworks.Clear();

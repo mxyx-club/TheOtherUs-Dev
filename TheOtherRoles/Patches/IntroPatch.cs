@@ -110,7 +110,7 @@ internal class IntroCutsceneOnDestroyPatch
 
         AntiTeleport.setPosition();
 
-        if (CustomOptionHolder.randomGameStartPosition.getBool()) MapData.RandomSpawnPlayers();
+        if (CustomOptionHolder.randomGameStartPosition.GetBool()) MapData.RandomSpawnPlayers();
 
         if (AmongUsClient.Instance.AmHost)
         {
@@ -169,7 +169,7 @@ internal class IntroCutsceneOnDestroyPatch
                         if (p == 1f)
                         {
                             player.moveable = true;
-                            HideNSeek.timer = CustomOptionHolder.hideNSeekTimer.getFloat() * 60;
+                            HideNSeek.timer = CustomOptionHolder.hideNSeekTimer.GetFloat() * 60;
                             HideNSeek.isWaitingTimer = false;
                         }
                     })));
@@ -207,11 +207,11 @@ internal class IntroCutsceneOnDestroyPatch
                 GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown;
 
             GameOptionsManager.Instance.currentNormalGameOptions.ImpostorLightMod =
-                CustomOptionHolder.hideNSeekHunterVision.getFloat();
+                CustomOptionHolder.hideNSeekHunterVision.GetFloat();
             GameOptionsManager.Instance.currentNormalGameOptions.CrewLightMod =
-                CustomOptionHolder.hideNSeekHuntedVision.getFloat();
+                CustomOptionHolder.hideNSeekHuntedVision.GetFloat();
             GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown =
-                CustomOptionHolder.hideNSeekKillCooldown.getFloat();
+                CustomOptionHolder.hideNSeekKillCooldown.GetFloat();
         }
     }
 

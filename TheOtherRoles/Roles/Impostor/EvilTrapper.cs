@@ -42,14 +42,14 @@ public static class EvilTrapper
     public static void clearAndReload()
     {
         evilTrapper = null;
-        numTrap = (int)CustomOptionHolder.evilTrapperNumTrap.getFloat();
-        extensionTime = CustomOptionHolder.evilTrapperExtensionTime.getFloat();
-        killTimer = CustomOptionHolder.evilTrapperKillTimer.getFloat();
-        cooldown = CustomOptionHolder.evilTrapperCooldown.getFloat();
-        maxDistance = CustomOptionHolder.evilTrapperMaxDistance.getFloat();
-        trapRange = CustomOptionHolder.evilTrapperTrapRange.getFloat();
-        penaltyTime = CustomOptionHolder.evilTrapperPenaltyTime.getFloat();
-        bonusTime = CustomOptionHolder.evilTrapperBonusTime.getFloat();
+        numTrap = (int)CustomOptionHolder.evilTrapperNumTrap.GetFloat();
+        extensionTime = CustomOptionHolder.evilTrapperExtensionTime.GetFloat();
+        killTimer = CustomOptionHolder.evilTrapperKillTimer.GetFloat();
+        cooldown = CustomOptionHolder.evilTrapperCooldown.GetFloat();
+        maxDistance = CustomOptionHolder.evilTrapperMaxDistance.GetFloat();
+        trapRange = CustomOptionHolder.evilTrapperTrapRange.GetFloat();
+        penaltyTime = CustomOptionHolder.evilTrapperPenaltyTime.GetFloat();
+        bonusTime = CustomOptionHolder.evilTrapperBonusTime.GetFloat();
         meetingFlag = false;
         KillTrap.clearAllTraps();
     }

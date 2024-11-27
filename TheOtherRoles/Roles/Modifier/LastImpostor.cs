@@ -33,7 +33,7 @@ public static class LastImpostor
     public static void clearAndReload()
     {
         lastImpostor = null;
-        deduce = CustomOptionHolder.modifierLastImpostorDeduce.getFloat();
-        isEnable = CustomOptionHolder.modifierLastImpostor.getBool();
+        deduce = CustomOptionHolder.modifierLastImpostorDeduce.GetFloat();
+        isEnable = CustomOptionHolder.modifierLastImpostor.GetBool();
     }
 }

@@ -20,9 +20,9 @@ public static class Mayor
         mayor = null;
         Revealed = false;
         Vote = CustomOptionHolder.mayorVote.GetInt();
-        meetingButton = CustomOptionHolder.mayorMeetingButton.getBool();
-        remoteMeetingsLeft = Mathf.RoundToInt(CustomOptionHolder.mayorMaxRemoteMeetings.getFloat());
-        SabotageRemoteMeetings = CustomOptionHolder.mayorSabotageRemoteMeetings.getBool();
-        vision = CustomOptionHolder.mayorRevealVision.getSelection() + 2;
+        meetingButton = CustomOptionHolder.mayorMeetingButton.GetBool();
+        remoteMeetingsLeft = CustomOptionHolder.mayorMaxRemoteMeetings.GetInt();
+        SabotageRemoteMeetings = CustomOptionHolder.mayorSabotageRemoteMeetings.GetBool();
+        vision = CustomOptionHolder.mayorRevealVision.GetSelection() + 2;
     }
 }

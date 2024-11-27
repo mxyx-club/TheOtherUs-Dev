@@ -12,7 +12,7 @@ public static class ElectricPatch
     public static void Reset()
     {
         onTask = false;
-        IsReactorDurationSetting = CustomOptionHolder.IsReactorDurationSetting.getBool();
+        IsReactorDurationSetting = CustomOptionHolder.IsReactorDurationSetting.GetBool();
     }
     public static bool onTask;
     public static bool done;
@@ -59,11 +59,11 @@ public static class LifeSuppBooster
                 return;
             switch (MapUtilities.CachedShipStatus.Type)
             {
-                case ShipStatus.MapType.Ship when __instance.Countdown >= CustomOptionHolder.SkeldLifeSuppTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.SkeldLifeSuppTimeLimit.getFloat();
+                case ShipStatus.MapType.Ship when __instance.Countdown >= CustomOptionHolder.SkeldLifeSuppTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.SkeldLifeSuppTimeLimit.GetFloat();
                     return;
-                case ShipStatus.MapType.Hq when __instance.Countdown >= CustomOptionHolder.MiraLifeSuppTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.MiraLifeSuppTimeLimit.getFloat();
+                case ShipStatus.MapType.Hq when __instance.Countdown >= CustomOptionHolder.MiraLifeSuppTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.MiraLifeSuppTimeLimit.GetFloat();
                     return;
                 default:
                     return;
@@ -83,17 +83,17 @@ public static class MeltdownBooster
             if (!__instance.IsActive) return;
             switch (MapUtilities.CachedShipStatus.Type)
             {
-                case ShipStatus.MapType.Ship when __instance.Countdown >= CustomOptionHolder.SkeldReactorTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.SkeldReactorTimeLimit.getFloat();
+                case ShipStatus.MapType.Ship when __instance.Countdown >= CustomOptionHolder.SkeldReactorTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.SkeldReactorTimeLimit.GetFloat();
                     return;
-                case ShipStatus.MapType.Hq when __instance.Countdown >= CustomOptionHolder.MiraReactorTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.MiraReactorTimeLimit.getFloat();
+                case ShipStatus.MapType.Hq when __instance.Countdown >= CustomOptionHolder.MiraReactorTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.MiraReactorTimeLimit.GetFloat();
                     return;
-                case ShipStatus.MapType.Pb when __instance.Countdown >= CustomOptionHolder.PolusReactorTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.PolusReactorTimeLimit.getFloat();
+                case ShipStatus.MapType.Pb when __instance.Countdown >= CustomOptionHolder.PolusReactorTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.PolusReactorTimeLimit.GetFloat();
                     return;
-                case ShipStatus.MapType.Fungle when __instance.Countdown >= CustomOptionHolder.FungleReactorTimeLimit.getFloat():
-                    __instance.Countdown = CustomOptionHolder.FungleReactorTimeLimit.getFloat();
+                case ShipStatus.MapType.Fungle when __instance.Countdown >= CustomOptionHolder.FungleReactorTimeLimit.GetFloat():
+                    __instance.Countdown = CustomOptionHolder.FungleReactorTimeLimit.GetFloat();
                     return;
                 default:
                     return;
@@ -108,15 +108,15 @@ public static class HeliMeltdownBooster
 {
     public static void Prefix(HeliSabotageSystem __instance)
     {
-        if (CustomOptionHolder.IsReactorDurationSetting.getBool())
+        if (CustomOptionHolder.IsReactorDurationSetting.GetBool())
         {
             if (!__instance.IsActive)
                 return;
 
             if (MapUtilities.CachedShipStatus != null)
             {
-                if (__instance.Countdown >= CustomOptionHolder.AirshipReactorTimeLimit.getFloat())
-                    __instance.Countdown = CustomOptionHolder.AirshipReactorTimeLimit.getFloat();
+                if (__instance.Countdown >= CustomOptionHolder.AirshipReactorTimeLimit.GetFloat())
+                    __instance.Countdown = CustomOptionHolder.AirshipReactorTimeLimit.GetFloat();
             }
         }
     }

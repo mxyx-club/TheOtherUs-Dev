@@ -19,10 +19,10 @@ public static class Portalmaker
     public static void clearAndReload()
     {
         portalmaker = null;
-        cooldown = CustomOptionHolder.portalmakerCooldown.getFloat();
-        usePortalCooldown = CustomOptionHolder.portalmakerUsePortalCooldown.getFloat();
-        logOnlyHasColors = CustomOptionHolder.portalmakerLogOnlyColorType.getBool();
-        logShowsTime = CustomOptionHolder.portalmakerLogHasTime.getBool();
-        canPortalFromAnywhere = CustomOptionHolder.portalmakerCanPortalFromAnywhere.getBool();
+        cooldown = CustomOptionHolder.portalmakerCooldown.GetFloat();
+        usePortalCooldown = CustomOptionHolder.portalmakerUsePortalCooldown.GetFloat();
+        logOnlyHasColors = CustomOptionHolder.portalmakerLogOnlyColorType.GetBool();
+        logShowsTime = CustomOptionHolder.portalmakerLogHasTime.GetBool();
+        canPortalFromAnywhere = CustomOptionHolder.portalmakerCanPortalFromAnywhere.GetBool();
     }
 }

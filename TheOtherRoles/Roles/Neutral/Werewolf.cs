@@ -24,8 +24,8 @@ public static class Werewolf
         canUseVents = false;
         canKill = false;
         hasImpostorVision = false;
-        rampageCooldown = CustomOptionHolder.werewolfRampageCooldown.getFloat();
-        rampageDuration = CustomOptionHolder.werewolfRampageDuration.getFloat();
-        killCooldown = CustomOptionHolder.werewolfKillCooldown.getFloat();
+        rampageCooldown = CustomOptionHolder.werewolfRampageCooldown.GetFloat();
+        rampageDuration = CustomOptionHolder.werewolfRampageDuration.GetFloat();
+        killCooldown = CustomOptionHolder.werewolfKillCooldown.GetFloat();
     }
 }

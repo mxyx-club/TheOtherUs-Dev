@@ -28,12 +28,12 @@ public static class Witch
         witch = null;
         futureSpelled.Clear();
         currentTarget = spellCastingTarget = null;
-        cooldown = CustomOptionHolder.witchCooldown.getFloat();
-        cooldownAddition = CustomOptionHolder.witchAdditionalCooldown.getFloat();
+        cooldown = CustomOptionHolder.witchCooldown.GetFloat();
+        cooldownAddition = CustomOptionHolder.witchAdditionalCooldown.GetFloat();
         currentCooldownAddition = 0f;
-        canSpellAnyone = CustomOptionHolder.witchCanSpellAnyone.getBool();
-        spellCastingDuration = CustomOptionHolder.witchSpellCastingDuration.getFloat();
-        triggerBothCooldowns = CustomOptionHolder.witchTriggerBothCooldowns.getBool();
-        witchVoteSavesTargets = CustomOptionHolder.witchVoteSavesTargets.getBool();
+        canSpellAnyone = CustomOptionHolder.witchCanSpellAnyone.GetBool();
+        spellCastingDuration = CustomOptionHolder.witchSpellCastingDuration.GetFloat();
+        triggerBothCooldowns = CustomOptionHolder.witchTriggerBothCooldowns.GetBool();
+        witchVoteSavesTargets = CustomOptionHolder.witchVoteSavesTargets.GetBool();
     }
 }

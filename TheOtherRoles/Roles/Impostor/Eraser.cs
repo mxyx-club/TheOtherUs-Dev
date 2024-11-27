@@ -23,9 +23,9 @@ public static class Eraser
         eraser = null;
         futureErased.Clear();
         currentTarget = null;
-        cooldown = CustomOptionHolder.eraserCooldown.getFloat();
-        canEraseAnyone = CustomOptionHolder.eraserCanEraseAnyone.getBool();
-        canEraseGuess = CustomOptionHolder.erasercanEraseGuess.getBool();
+        cooldown = CustomOptionHolder.eraserCooldown.GetFloat();
+        canEraseAnyone = CustomOptionHolder.eraserCanEraseAnyone.GetBool();
+        canEraseGuess = CustomOptionHolder.erasercanEraseGuess.GetBool();
         alreadyErased.Clear();
     }
 }

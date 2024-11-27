@@ -51,13 +51,13 @@ public static class Akujo
         keeps.Clear();
         currentTarget = null;
         startTime = DateTime.UtcNow;
-        timeLimit = CustomOptionHolder.akujoTimeLimit.getFloat();
-        forceKeeps = CustomOptionHolder.akujoForceKeeps.getBool();
-        knowsRoles = CustomOptionHolder.akujoKnowsRoles.getBool();
-        honmeiCannotFollowWin = CustomOptionHolder.akujoHonmeiCannotFollowWin.getBool();
-        honmeiOptimizeWin = CustomOptionHolder.akujoHonmeiOptimizeWin.getBool();
+        timeLimit = CustomOptionHolder.akujoTimeLimit.GetFloat();
+        forceKeeps = CustomOptionHolder.akujoForceKeeps.GetBool();
+        knowsRoles = CustomOptionHolder.akujoKnowsRoles.GetBool();
+        honmeiCannotFollowWin = CustomOptionHolder.akujoHonmeiCannotFollowWin.GetBool();
+        honmeiOptimizeWin = CustomOptionHolder.akujoHonmeiOptimizeWin.GetBool();
         timeLeft = (int)Math.Ceiling(timeLimit - (DateTime.UtcNow - startTime).TotalSeconds);
-        numKeeps = Math.Min((int)CustomOptionHolder.akujoNumKeeps.getFloat(), PlayerControl.AllPlayerControls.Count - 2);
+        numKeeps = Math.Min(CustomOptionHolder.akujoNumKeeps.GetInt(), PlayerControl.AllPlayerControls.Count - 2);
         keepsLeft = numKeeps;
     }
 }

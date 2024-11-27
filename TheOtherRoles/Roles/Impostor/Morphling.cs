@@ -33,7 +33,7 @@ public static class Morphling
         sampledTarget = null;
         morphTarget = null;
         morphTimer = 0f;
-        cooldown = CustomOptionHolder.morphlingCooldown.getFloat();
-        duration = CustomOptionHolder.morphlingDuration.getFloat();
+        cooldown = CustomOptionHolder.morphlingCooldown.GetFloat();
+        duration = CustomOptionHolder.morphlingDuration.GetFloat();
     }
 }

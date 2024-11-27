@@ -32,11 +32,11 @@ public static class Bomber
         currentBombTarget = null;
         hasBombPlayer = null;
         bombActive = false;
-        cooldown = CustomOptionHolder.bomberBombCooldown.getFloat();
-        bombDelay = CustomOptionHolder.bomberDelay.getFloat();
-        bombTimer = CustomOptionHolder.bomberTimer.getFloat();
-        triggerBothCooldowns = CustomOptionHolder.bomberTriggerBothCooldowns.getBool();
-        canGiveToBomber = CustomOptionHolder.bomberCanGiveToBomber.getBool();
-        hotPotatoMode = CustomOptionHolder.bomberHotPotatoMode.getBool();
+        cooldown = CustomOptionHolder.bomberBombCooldown.GetFloat();
+        bombDelay = CustomOptionHolder.bomberDelay.GetFloat();
+        bombTimer = CustomOptionHolder.bomberTimer.GetFloat();
+        triggerBothCooldowns = CustomOptionHolder.bomberTriggerBothCooldowns.GetBool();
+        canGiveToBomber = CustomOptionHolder.bomberCanGiveToBomber.GetBool();
+        hotPotatoMode = CustomOptionHolder.bomberHotPotatoMode.GetBool();
     }
 }

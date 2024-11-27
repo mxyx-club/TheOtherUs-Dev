@@ -21,8 +21,8 @@ public static class Mini
     {
         mini = null;
         triggerMiniLose = false;
-        growingUpDuration = CustomOptionHolder.modifierMiniGrowingUpDuration.getFloat();
-        isGrowingUpInMeeting = CustomOptionHolder.modifierMiniGrowingUpInMeeting.getBool();
+        growingUpDuration = CustomOptionHolder.modifierMiniGrowingUpDuration.GetFloat();
+        isGrowingUpInMeeting = CustomOptionHolder.modifierMiniGrowingUpInMeeting.GetBool();
         timeOfGrowthStart = DateTime.UtcNow;
     }
 

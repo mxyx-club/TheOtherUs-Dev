@@ -10,6 +10,6 @@ public static class Torch
     public static void clearAndReload()
     {
         torch.Clear();
-        vision = CustomOptionHolder.modifierTorchVision.getFloat();
+        vision = CustomOptionHolder.modifierTorchVision.GetFloat();
     }
 }

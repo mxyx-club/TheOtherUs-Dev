@@ -24,7 +24,7 @@ public static class Pursuer
         blankedList.Clear();
         blanks = 0;
 
-        cooldown = CustomOptionHolder.pursuerBlanksCooldown.getFloat();
-        blanksNumber = Mathf.RoundToInt(CustomOptionHolder.pursuerBlanksNumber.getFloat());
+        cooldown = CustomOptionHolder.pursuerBlanksCooldown.GetFloat();
+        blanksNumber = CustomOptionHolder.pursuerBlanksNumber.GetInt();
     }
 }

@@ -33,12 +33,12 @@ internal static class MapBehaviourPatch
     [HarmonyPatch(typeof(MapBehaviour), nameof(MapBehaviour.FixedUpdate))]
     private static void Postfix(MapBehaviour __instance)
     {
-        if (__instance.infectedOverlay.gameObject.active && PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.getBool())
+        if (__instance.infectedOverlay.gameObject.active && PlayerControl.LocalPlayer.Data.IsDead && CustomOptionHolder.deadImpsBlockSabotage.GetBool())
         {
             __instance.Close();
         }
         // Show location of all players on the map for ghosts!
-        if (PlayerControl.LocalPlayer.Data.IsDead && (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || CustomOptionHolder.deadImpsBlockSabotage.getBool()))
+        if (PlayerControl.LocalPlayer.Data.IsDead && (!PlayerControl.LocalPlayer.Data.Role.IsImpostor || CustomOptionHolder.deadImpsBlockSabotage.GetBool()))
         {
             foreach (PlayerControl player in CachedPlayer.AllPlayers)
             {

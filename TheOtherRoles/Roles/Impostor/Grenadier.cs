@@ -81,9 +81,9 @@ public class Grenadier
     {
         grenadier = null;
         controls.Clear();
-        cooldown = CustomOptionHolder.grenadierCooldown.getFloat();
-        duration = CustomOptionHolder.grenadierDuration.getFloat() + 0.5f;
-        radius = CustomOptionHolder.grenadierFlashRadius.getFloat();
-        indicatorsMode = CustomOptionHolder.grenadierTeamIndicators.getSelection();
+        cooldown = CustomOptionHolder.grenadierCooldown.GetFloat();
+        duration = CustomOptionHolder.grenadierDuration.GetFloat() + 0.5f;
+        radius = CustomOptionHolder.grenadierFlashRadius.GetFloat();
+        indicatorsMode = CustomOptionHolder.grenadierTeamIndicators.GetSelection();
     }
 }

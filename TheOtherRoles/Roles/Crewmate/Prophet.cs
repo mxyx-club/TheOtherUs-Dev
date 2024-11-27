@@ -45,15 +45,15 @@ public static class Prophet
         currentTarget = null;
         isRevealed = false;
         examined.Clear();
-        revealProphet = CustomOptionHolder.prophetIsRevealed.getBool();
-        cooldown = CustomOptionHolder.prophetCooldown.getFloat();
-        examineNum = Mathf.RoundToInt(CustomOptionHolder.prophetNumExamines.getFloat());
-        killCrewAsRed = CustomOptionHolder.prophetKillCrewAsRed.getBool();
-        benignNeutralAsRed = CustomOptionHolder.prophetBenignNeutralAsRed.getBool();
-        evilNeutralAsRed = CustomOptionHolder.prophetEvilNeutralAsRed.getBool();
-        killNeutralAsRed = CustomOptionHolder.prophetKillNeutralAsRed.getBool();
-        canCallEmergency = CustomOptionHolder.prophetCanCallEmergency.getBool();
-        examinesToBeRevealed = Math.Min(examineNum, Mathf.RoundToInt(CustomOptionHolder.prophetExaminesToBeRevealed.getFloat()));
+        revealProphet = CustomOptionHolder.prophetIsRevealed.GetBool();
+        cooldown = CustomOptionHolder.prophetCooldown.GetFloat();
+        examineNum = CustomOptionHolder.prophetNumExamines.GetInt();
+        killCrewAsRed = CustomOptionHolder.prophetKillCrewAsRed.GetBool();
+        benignNeutralAsRed = CustomOptionHolder.prophetBenignNeutralAsRed.GetBool();
+        evilNeutralAsRed = CustomOptionHolder.prophetEvilNeutralAsRed.GetBool();
+        killNeutralAsRed = CustomOptionHolder.prophetKillNeutralAsRed.GetBool();
+        canCallEmergency = CustomOptionHolder.prophetCanCallEmergency.GetBool();
+        examinesToBeRevealed = Math.Min(examineNum, CustomOptionHolder.prophetExaminesToBeRevealed.GetInt());
         examinesLeft = examineNum;
         if (arrows != null)
         {

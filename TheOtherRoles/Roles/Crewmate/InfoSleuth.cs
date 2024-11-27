@@ -14,6 +14,6 @@ public class InfoSleuth
     {
         infoSleuth = null;
         target = null;
-        infoType = CustomOptionHolder.infoSleuthInfoType.getSelection();
+        infoType = CustomOptionHolder.infoSleuthInfoType.GetSelection();
     }
 }

@@ -43,12 +43,12 @@ public static class Terrorist
         bomb = null;
         isPlanted = false;
         isActive = false;
-        destructionTime = CustomOptionHolder.terroristBombDestructionTime.getFloat();
-        destructionRange = CustomOptionHolder.terroristBombDestructionRange.getFloat() / 10;
-        hearRange = CustomOptionHolder.terroristBombHearRange.getFloat() / 10;
-        defuseDuration = CustomOptionHolder.terroristDefuseDuration.getFloat();
-        bombCooldown = CustomOptionHolder.terroristBombCooldown.getFloat();
-        bombActiveAfter = CustomOptionHolder.terroristBombActiveAfter.getFloat();
+        destructionTime = CustomOptionHolder.terroristBombDestructionTime.GetFloat();
+        destructionRange = CustomOptionHolder.terroristBombDestructionRange.GetFloat() / 10;
+        hearRange = CustomOptionHolder.terroristBombHearRange.GetFloat() / 10;
+        defuseDuration = CustomOptionHolder.terroristDefuseDuration.GetFloat();
+        bombCooldown = CustomOptionHolder.terroristBombCooldown.GetFloat();
+        bombActiveAfter = CustomOptionHolder.terroristBombActiveAfter.GetFloat();
         Bomb.clearBackgroundSprite();
     }
 }

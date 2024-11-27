@@ -16,8 +16,8 @@ public static class Jester
     {
         jester = null;
         triggerJesterWin = false;
-        canCallEmergency = CustomOptionHolder.jesterCanCallEmergency.getBool();
-        canUseVents = CustomOptionHolder.jesterCanVent.getBool();
-        hasImpostorVision = CustomOptionHolder.jesterHasImpostorVision.getBool();
+        canCallEmergency = CustomOptionHolder.jesterCanCallEmergency.GetBool();
+        canUseVents = CustomOptionHolder.jesterCanVent.GetBool();
+        hasImpostorVision = CustomOptionHolder.jesterHasImpostorVision.GetBool();
     }
 }

@@ -22,11 +22,11 @@ public static class Swooper
     {
         swooper = null;
         isInvisable = false;
-        cooldown = CustomOptionHolder.swooperKillCooldown.getFloat();
-        swoopCooldown = CustomOptionHolder.swooperCooldown.getFloat();
-        duration = CustomOptionHolder.swooperDuration.getFloat();
-        hasImpVision = CustomOptionHolder.swooperHasImpVision.getBool();
-        swoopSpeed = CustomOptionHolder.swooperSpeed.getFloat();
-        canUseVents = CustomOptionHolder.swooperCanUseVents.getBool();
+        cooldown = CustomOptionHolder.swooperKillCooldown.GetFloat();
+        swoopCooldown = CustomOptionHolder.swooperCooldown.GetFloat();
+        duration = CustomOptionHolder.swooperDuration.GetFloat();
+        hasImpVision = CustomOptionHolder.swooperHasImpVision.GetBool();
+        swoopSpeed = CustomOptionHolder.swooperSpeed.GetFloat();
+        canUseVents = CustomOptionHolder.swooperCanUseVents.GetBool();
     }
 }

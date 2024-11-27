@@ -21,8 +21,8 @@ public class Butcher
         butcher = null;
         dissected = null;
         canDissection = true;
-        dissectionCooldown = CustomOptionHolder.butcherDissectionCooldown.getFloat();
-        dissectionDuration = CustomOptionHolder.butcherDissectionDuration.getFloat();
+        dissectionCooldown = CustomOptionHolder.butcherDissectionCooldown.GetFloat();
+        dissectionDuration = CustomOptionHolder.butcherDissectionDuration.GetFloat();
         dissectedBodyCount = CustomOptionHolder.butcherDissectedBodyCount.GetInt();
     }
 }

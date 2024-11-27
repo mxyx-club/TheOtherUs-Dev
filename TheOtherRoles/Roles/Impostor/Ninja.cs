@@ -26,10 +26,10 @@ public static class Ninja
     {
         ninja = null;
         currentTarget = ninjaMarked = null;
-        cooldown = CustomOptionHolder.ninjaCooldown.getFloat();
-        knowsTargetLocation = CustomOptionHolder.ninjaKnowsTargetLocation.getBool();
-        traceTime = CustomOptionHolder.ninjaTraceTime.getFloat();
-        invisibleDuration = CustomOptionHolder.ninjaInvisibleDuration.getFloat();
+        cooldown = CustomOptionHolder.ninjaCooldown.GetFloat();
+        knowsTargetLocation = CustomOptionHolder.ninjaKnowsTargetLocation.GetBool();
+        traceTime = CustomOptionHolder.ninjaTraceTime.GetFloat();
+        invisibleDuration = CustomOptionHolder.ninjaInvisibleDuration.GetFloat();
         invisibleTimer = 0f;
         isInvisble = false;
         if (arrow?.arrow != null) Object.Destroy(arrow.arrow);

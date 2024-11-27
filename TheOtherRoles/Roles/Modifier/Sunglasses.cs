@@ -10,6 +10,6 @@ public static class Sunglasses
     public static void clearAndReload()
     {
         sunglasses.Clear();
-        vision = CustomOptionHolder.modifierSunglassesVision.getSelection() + 1;
+        vision = CustomOptionHolder.modifierSunglassesVision.GetSelection() + 1;
     }
 }

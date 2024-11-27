@@ -14,6 +14,6 @@ public static class ButtonBarry
         remoteMeetingsLeft = 1;
 
         //SabotageRemoteMeetings = false;
-        SabotageRemoteMeetings = CustomOptionHolder.modifierButtonSabotageRemoteMeetings.getBool();
+        SabotageRemoteMeetings = CustomOptionHolder.modifierButtonSabotageRemoteMeetings.GetBool();
     }
 }

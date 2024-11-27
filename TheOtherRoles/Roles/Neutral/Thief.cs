@@ -27,13 +27,13 @@ public static class Thief
         suicideFlag = false;
         currentTarget = null;
         formerThief = null;
-        hasImpostorVision = CustomOptionHolder.thiefHasImpVision.getBool();
-        cooldown = CustomOptionHolder.thiefCooldown.getFloat();
-        canUseVents = CustomOptionHolder.thiefCanUseVents.getBool();
-        canKillSheriff = CustomOptionHolder.thiefCanKillSheriff.getBool();
-        canKillDeputy = CustomOptionHolder.thiefCanKillDeputy.getBool();
-        canKillVeteran = CustomOptionHolder.thiefCanKillVeteran.getBool();
-        canStealWithGuess = CustomOptionHolder.thiefCanStealWithGuess.getBool();
+        hasImpostorVision = CustomOptionHolder.thiefHasImpVision.GetBool();
+        cooldown = CustomOptionHolder.thiefCooldown.GetFloat();
+        canUseVents = CustomOptionHolder.thiefCanUseVents.GetBool();
+        canKillSheriff = CustomOptionHolder.thiefCanKillSheriff.GetBool();
+        canKillDeputy = CustomOptionHolder.thiefCanKillDeputy.GetBool();
+        canKillVeteran = CustomOptionHolder.thiefCanKillVeteran.GetBool();
+        canStealWithGuess = CustomOptionHolder.thiefCanStealWithGuess.GetBool();
     }
 
     public static bool tiefCanKill(PlayerControl target, PlayerControl killer)

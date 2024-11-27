@@ -18,18 +18,18 @@ public class Engineer
 
     public static void resetFixes()
     {
-        remainingFixes = Mathf.RoundToInt(CustomOptionHolder.engineerNumberOfFixes.getFloat());
+        remainingFixes = CustomOptionHolder.engineerNumberOfFixes.GetInt();
     }
 
     public static void clearAndReload()
     {
         engineer = null;
-        remoteFix = CustomOptionHolder.engineerRemoteFix.getBool();
+        remoteFix = CustomOptionHolder.engineerRemoteFix.GetBool();
         //expertRepairs = CustomOptionHolder.engineerExpertRepairs.getBool();
-        resetFixAfterMeeting = CustomOptionHolder.engineerResetFixAfterMeeting.getBool();
-        remainingFixes = Mathf.RoundToInt(CustomOptionHolder.engineerNumberOfFixes.getFloat());
-        highlightForImpostors = CustomOptionHolder.engineerHighlightForImpostors.getBool();
-        highlightForTeamJackal = CustomOptionHolder.engineerHighlightForTeamJackal.getBool();
+        resetFixAfterMeeting = CustomOptionHolder.engineerResetFixAfterMeeting.GetBool();
+        remainingFixes = CustomOptionHolder.engineerNumberOfFixes.GetInt();
+        highlightForImpostors = CustomOptionHolder.engineerHighlightForImpostors.GetBool();
+        highlightForTeamJackal = CustomOptionHolder.engineerHighlightForTeamJackal.GetBool();
     }
 }
 

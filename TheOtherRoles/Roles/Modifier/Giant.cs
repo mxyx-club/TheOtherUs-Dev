@@ -9,6 +9,6 @@ public static class Giant
     public static void clearAndReload()
     {
         giant = null;
-        speed = CustomOptionHolder.modifierGiantSpped.getFloat();
+        speed = CustomOptionHolder.modifierGiantSpped.GetFloat();
     }
 }

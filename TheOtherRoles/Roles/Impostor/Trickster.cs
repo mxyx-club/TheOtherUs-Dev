@@ -20,9 +20,9 @@ public static class Trickster
     {
         trickster = null;
         lightsOutTimer = 0f;
-        placeBoxCooldown = CustomOptionHolder.tricksterPlaceBoxCooldown.getFloat();
-        lightsOutCooldown = CustomOptionHolder.tricksterLightsOutCooldown.getFloat();
-        lightsOutDuration = CustomOptionHolder.tricksterLightsOutDuration.getFloat();
+        placeBoxCooldown = CustomOptionHolder.tricksterPlaceBoxCooldown.GetFloat();
+        lightsOutCooldown = CustomOptionHolder.tricksterLightsOutCooldown.GetFloat();
+        lightsOutDuration = CustomOptionHolder.tricksterLightsOutDuration.GetFloat();
         JackInTheBox.UpdateStates(); // if the role is erased, we might have to update the state of the created objects
     }
 }

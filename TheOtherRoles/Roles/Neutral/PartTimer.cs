@@ -21,8 +21,8 @@ public class PartTimer
         partTimer = null;
         currentTarget = null;
         target = null;
-        cooldown = CustomOptionHolder.partTimerCooldown.getFloat();
+        cooldown = CustomOptionHolder.partTimerCooldown.GetFloat();
         deathTurn = DeathDefaultTurn = CustomOptionHolder.partTimerDeathTurn.GetInt();
-        knowsRole = CustomOptionHolder.partTimerKnowsRole.getBool();
+        knowsRole = CustomOptionHolder.partTimerKnowsRole.GetBool();
     }
 }

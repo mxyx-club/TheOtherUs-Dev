@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using TheOtherRoles.Objects;
 using TheOtherRoles.Utilities;
 using TMPro;
-using UnityEngine;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.CustomGameModes;
@@ -17,8 +16,8 @@ public static class HideNSeek
     public static bool isWaitingTimer = true;
     public static DateTime startTime = DateTime.UtcNow;
 
-    public static float hunterSpeed => CustomOptionHolder.hideHuntSpeed.getFloat();
-    public static float crewSpeed => CustomOptionHolder.hideCrewSpeed.getFloat();
+    public static float hunterSpeed => CustomOptionHolder.hideHuntSpeed.GetFloat();
+    public static float crewSpeed => CustomOptionHolder.hideCrewSpeed.GetFloat();
 
     public static float timer = 300f;
     public static float hunterVision = 0.5f;
@@ -57,15 +56,15 @@ public static class HideNSeek
         isWaitingTimer = true;
         startTime = DateTime.UtcNow;
 
-        timer = CustomOptionHolder.hideNSeekTimer.getFloat() * 60;
-        hunterVision = CustomOptionHolder.hideNSeekHunterVision.getFloat();
-        huntedVision = CustomOptionHolder.hideNSeekHuntedVision.getFloat();
-        taskWinPossible = CustomOptionHolder.hideNSeekTaskWin.getBool();
-        taskPunish = CustomOptionHolder.hideNSeekTaskPunish.getFloat();
-        impNumber = Mathf.RoundToInt(CustomOptionHolder.hideNSeekHunterCount.getFloat());
-        canSabotage = CustomOptionHolder.hideNSeekCanSabotage.getBool();
-        killCooldown = CustomOptionHolder.hideNSeekKillCooldown.getFloat();
-        hunterWaitingTime = CustomOptionHolder.hideNSeekHunterWaiting.getFloat();
+        timer = CustomOptionHolder.hideNSeekTimer.GetFloat() * 60;
+        hunterVision = CustomOptionHolder.hideNSeekHunterVision.GetFloat();
+        huntedVision = CustomOptionHolder.hideNSeekHuntedVision.GetFloat();
+        taskWinPossible = CustomOptionHolder.hideNSeekTaskWin.GetBool();
+        taskPunish = CustomOptionHolder.hideNSeekTaskPunish.GetFloat();
+        impNumber = CustomOptionHolder.hideNSeekHunterCount.GetInt();
+        canSabotage = CustomOptionHolder.hideNSeekCanSabotage.GetBool();
+        killCooldown = CustomOptionHolder.hideNSeekKillCooldown.GetFloat();
+        hunterWaitingTime = CustomOptionHolder.hideNSeekHunterWaiting.GetFloat();
 
         Hunter.clearAndReload();
         Hunted.clearAndReload();
@@ -107,16 +106,16 @@ public static class Hunter
         lightActive.Clear();
         arrowActive = false;
 
-        lightCooldown = CustomOptionHolder.hunterLightCooldown.getFloat();
-        lightDuration = CustomOptionHolder.hunterLightDuration.getFloat();
-        lightVision = CustomOptionHolder.hunterLightVision.getFloat();
-        lightPunish = CustomOptionHolder.hunterLightPunish.getFloat();
-        AdminCooldown = CustomOptionHolder.hunterAdminCooldown.getFloat();
-        AdminDuration = CustomOptionHolder.hunterAdminDuration.getFloat();
-        AdminPunish = CustomOptionHolder.hunterAdminPunish.getFloat();
-        ArrowCooldown = CustomOptionHolder.hunterArrowCooldown.getFloat();
-        ArrowDuration = CustomOptionHolder.hunterArrowDuration.getFloat();
-        ArrowPunish = CustomOptionHolder.hunterArrowPunish.getFloat();
+        lightCooldown = CustomOptionHolder.hunterLightCooldown.GetFloat();
+        lightDuration = CustomOptionHolder.hunterLightDuration.GetFloat();
+        lightVision = CustomOptionHolder.hunterLightVision.GetFloat();
+        lightPunish = CustomOptionHolder.hunterLightPunish.GetFloat();
+        AdminCooldown = CustomOptionHolder.hunterAdminCooldown.GetFloat();
+        AdminDuration = CustomOptionHolder.hunterAdminDuration.GetFloat();
+        AdminPunish = CustomOptionHolder.hunterAdminPunish.GetFloat();
+        ArrowCooldown = CustomOptionHolder.hunterArrowCooldown.GetFloat();
+        ArrowDuration = CustomOptionHolder.hunterArrowDuration.GetFloat();
+        ArrowPunish = CustomOptionHolder.hunterArrowPunish.GetFloat();
     }
 }
 
@@ -135,10 +134,10 @@ public static class Hunted
         timeshieldActive.Clear();
         taskPunish = false;
 
-        shieldCount = Mathf.RoundToInt(CustomOptionHolder.huntedShieldNumber.getFloat());
-        shieldCooldown = CustomOptionHolder.huntedShieldCooldown.getFloat();
-        shieldDuration = CustomOptionHolder.huntedShieldDuration.getFloat();
-        shieldRewindTime = CustomOptionHolder.huntedShieldRewindTime.getFloat();
+        shieldCount = CustomOptionHolder.huntedShieldNumber.GetInt();
+        shieldCooldown = CustomOptionHolder.huntedShieldCooldown.GetFloat();
+        shieldDuration = CustomOptionHolder.huntedShieldDuration.GetFloat();
+        shieldRewindTime = CustomOptionHolder.huntedShieldRewindTime.GetFloat();
     }
 }
 

@@ -29,8 +29,8 @@ public static class Escapist
         resetPlaces();
         escapeLocation = Vector3.zero;
         escapist = null;
-        resetPlaceAfterMeeting = CustomOptionHolder.escapistResetPlaceAfterMeeting.getBool();
-        EscapeTime = CustomOptionHolder.escapistEscapeTime.getFloat();
+        resetPlaceAfterMeeting = CustomOptionHolder.escapistResetPlaceAfterMeeting.GetBool();
+        EscapeTime = CustomOptionHolder.escapistEscapeTime.GetFloat();
         usedPlace = false;
     }
 }
