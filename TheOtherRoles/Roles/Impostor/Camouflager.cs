@@ -17,7 +17,7 @@ public static class Camouflager
 
     public static void resetCamouflage()
     {
-        if (isCamoComms()) return;
+        if (isCamoComms) return;
         camouflageTimer = 0f;
         foreach (PlayerControl p in CachedPlayer.AllPlayers)
         {

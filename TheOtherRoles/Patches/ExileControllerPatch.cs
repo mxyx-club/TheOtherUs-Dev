@@ -55,14 +55,14 @@ internal class ExileControllerBeginPatch
             controller.EjectSound = null;
             void createlate(int index)
             {
-                new LateTask(() => { controller.StopAllCoroutines(); controller.StartCoroutine(controller.Animate()); }, 0.025f + index * 0.025f);
+                _ = new LateTask(() => { controller.StopAllCoroutines(); controller.StartCoroutine(controller.Animate()); }, 0.025f + index * 0.025f);
             }
-            new LateTask(() => controller.StartCoroutine(controller.Animate()), 0f);
+            _ = new LateTask(() => controller.StartCoroutine(controller.Animate()), 0f);
             for (int i = 0; i < 23; i++)
             {
                 createlate(i);
             }
-            new LateTask(() => { controller.StopAllCoroutines(); controller.EjectSound = sound; controller.StartCoroutine(controller.Animate()); }, 0.6f);
+            _ = new LateTask(() => { controller.StopAllCoroutines(); controller.EjectSound = sound; controller.StartCoroutine(controller.Animate()); }, 0.6f);
             ExileController.Instance = __instance;
             __instance.exiled = Balancer.targetplayerleft.Data;
             exiled = __instance.exiled;
@@ -264,7 +264,6 @@ internal class ExileControllerWrapUpPatch
 {
     // Workaround to add a "postfix" to the destroying of the exile controller (i.e. cutscene) and SpwanInMinigame of submerged
     [HarmonyPatch(typeof(Object), nameof(Object.Destroy), typeof(GameObject))]
-
     public static void Prefix(GameObject obj)
     {
         // Nightvision:
@@ -302,14 +301,29 @@ internal class ExileControllerWrapUpPatch
             Executioner.target.PlayerId == exiled.PlayerId && !Executioner.executioner.Data.IsDead)
         {
             Executioner.triggerExecutionerWin = true;
+            return;
         }
         // Mini exile lose condition
         else if (exiled != null && Mini.mini != null && Mini.mini.PlayerId == exiled.PlayerId && !Mini.isGrownUp() &&
                  !Mini.mini.Data.Role.IsImpostor && !isNeutral(Mini.mini))
+        {
             Mini.triggerMiniLose = true;
+            return;
+        }
         // Jester win condition
         else if (exiled != null && Jester.jester != null && Jester.jester.PlayerId == exiled.PlayerId)
+        {
             Jester.triggerJesterWin = true;
+            return;
+        }
+        else if (Executioner.executioner != null && Executioner.executioner == CachedPlayer.LocalPlayer.PlayerControl && Executioner.target.IsDead())
+        {
+
+            var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
+                (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
+            AmongUsClient.Instance.FinishRpcImmediately(writer);
+            RPCProcedure.executionerPromotesRole();
+        }
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();

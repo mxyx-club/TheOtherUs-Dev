@@ -64,7 +64,7 @@ public static class Medium
             (killer == Jackal.jackal || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId)))
             infos.Add(SpecialMediumInfo.JackalKillsSidekick);
         if (target == Lawyer.lawyer && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
-        if (Medium.target.WasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);
+        if (Medium.target.wasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);
 
         if (infos.Count > 0)
         {

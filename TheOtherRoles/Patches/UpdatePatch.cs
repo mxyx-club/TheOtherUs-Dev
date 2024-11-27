@@ -112,6 +112,16 @@ internal class HudManagerUpdatePatch
             }
         }
 
+        if (Executioner.executioner != null && localPlayer == Executioner.executioner && Executioner.target != null)
+        {
+            setPlayerNameColor(Executioner.target, Executioner.color);
+        }
+
+        if (Lawyer.lawyer != null && localPlayer == Lawyer.lawyer && Lawyer.target != null)
+        {
+            setPlayerNameColor(Lawyer.target, RoleInfo.getRoleInfoForPlayer(Lawyer.target, false)?.FirstOrDefault()?.color ?? Color.white);
+        }
+
         if (Mayor.mayor != null && Mayor.Revealed)
         {
             setPlayerNameColor(Mayor.mayor, Mayor.color);
@@ -286,6 +296,23 @@ internal class HudManagerUpdatePatch
                         player.NameText.text += suffix;
         }
 
+        var localIsArsonist = Arsonist.arsonist != null && Arsonist.dousedPlayers != null && Arsonist.arsonist == local;
+        var localIsDead = Arsonist.arsonist != null && Arsonist.dousedPlayers != null && local.Data.IsDead;
+        if (localIsArsonist || localIsDead)
+        {
+            var suffix = cs(Arsonist.color, " ♨");
+            foreach (var target in Arsonist.dousedPlayers)
+            {
+                target.cosmetics.nameText.text += suffix;
+            }
+
+            if (MeetingHud.Instance != null)
+                foreach (var target in MeetingHud.Instance.playerStates)
+                    if (Arsonist.dousedPlayers.Any(p => p.PlayerId == target.TargetPlayerId))
+                        target.NameText.text += suffix;
+        }
+
+
         // Lawyer or Prosecutor
         var localIsLawyer = Lawyer.lawyer != null && Lawyer.target != null && Lawyer.lawyer == local;
         var localIsKnowingTarget = Lawyer.lawyer != null && Lawyer.target != null && Lawyer.targetKnows && Lawyer.target == local;
@@ -330,6 +357,7 @@ internal class HudManagerUpdatePatch
                 var target = playerById(player.TargetPlayerId);
                 if (target != null) player.NameText.text += $" ({(isLighterColor(target) ? "浅" : "深")})";
             }
+
         // Add medic shield info:
         if (MeetingHud.Instance != null && Medic.medic != null && Medic.shielded != null && Medic.shieldVisible(Medic.shielded))
         {
@@ -370,7 +398,7 @@ internal class HudManagerUpdatePatch
             (Mini.mini == Morphling.morphling && Morphling.morphTimer > 0f) ||
             (Mini.mini == Ninja.ninja && Ninja.isInvisble) || SurveillanceMinigamePatch.nightVisionIsActive ||
             (Mini.mini == Swooper.swooper && Swooper.isInvisable) ||
-            (Mini.mini == Jackal.jackal && Jackal.isInvisable) || isActiveCamoComms()) return;
+            (Mini.mini == Jackal.jackal && Jackal.isInvisable) || isActiveCamoComms) return;
 
         var growingProgress = Mini.growingProgress();
         var scale = (growingProgress * 0.35f) + 0.35f;

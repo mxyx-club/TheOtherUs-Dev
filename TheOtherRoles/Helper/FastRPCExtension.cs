@@ -55,22 +55,27 @@ public static class FastRPCExtension
     {
         return StartRPC(PlayerControl.LocalPlayer.NetId, (byte)RPCId, SendTarget);
     }
+
     public static MessageWriter StartRPC(uint NetId, RpcCalls RPCId, PlayerControl SendTarget = null)
     {
         return StartRPC(NetId, (byte)RPCId, SendTarget);
     }
+
     public static MessageWriter StartRPC(CustomRPC RPCId, PlayerControl SendTarget = null)
     {
         return StartRPC(PlayerControl.LocalPlayer.NetId, (byte)RPCId, SendTarget);
     }
+
     public static MessageWriter StartRPC(uint NetId, CustomRPC RPCId, PlayerControl SendTarget = null)
     {
         return StartRPC(NetId, (byte)RPCId, SendTarget);
     }
+
     public static MessageWriter StartRPC(byte RPCId, PlayerControl SendTarget = null)
     {
         return StartRPC(PlayerControl.LocalPlayer.NetId, RPCId, SendTarget);
     }
+
     public static MessageWriter StartRPC(uint NetId, byte RPCId, PlayerControl SendTarget = null)
     {
         var target = SendTarget != null ? SendTarget.GetClientId() : -1;

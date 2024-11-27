@@ -1651,7 +1651,6 @@ public class HudManagerUpdate
         else OpenSettings(__instance);
     }
 
-    [HarmonyPostfix]
     public static void Postfix(HudManager __instance)
     {
         if (!toggleSettingsButton || !toggleSettingsButtonObject)

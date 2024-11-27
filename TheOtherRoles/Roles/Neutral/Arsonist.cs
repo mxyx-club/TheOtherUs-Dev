@@ -11,9 +11,10 @@ public static class Arsonist
 
     public static float cooldown = 30f;
     public static float duration = 3f;
-    public static bool triggerArsonistWin;
+    public static bool igniteCooldownRemoved;
 
     public static PlayerControl currentTarget;
+    public static PlayerControl currentTarget2;
     public static PlayerControl douseTarget;
     public static List<PlayerControl> dousedPlayers = new();
 
@@ -34,13 +35,15 @@ public static class Arsonist
     {
         arsonist = null;
         currentTarget = null;
+        currentTarget2 = null;
         douseTarget = null;
-        triggerArsonistWin = false;
         dousedPlayers = new List<PlayerControl>();
         foreach (var p in ModOption.playerIcons.Values)
             if (p != null && p.gameObject != null)
                 p.gameObject.SetActive(false);
+
         cooldown = CustomOptionHolder.arsonistCooldown.GetFloat();
         duration = CustomOptionHolder.arsonistDuration.GetFloat();
+        igniteCooldownRemoved = CustomOptionHolder.arsonistIgniteCdRemoved.GetBool();
     }
 }

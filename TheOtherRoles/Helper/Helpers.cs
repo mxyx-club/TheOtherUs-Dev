@@ -247,37 +247,6 @@ public static class Helpers
         return shouldVetKill;
     }
 
-    public static bool isShiftNeutral(PlayerControl player)
-    {
-        if (Shifter.shiftNeutral && Shifter.shiftALLNeutra)
-        {
-            return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
-                       player == Pavlovsdogs.pavlovsowner ||
-                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
-                       player == Akujo.akujo ||
-                       player == Lawyer.lawyer);
-        }
-        else if (Shifter.shiftNeutral)
-        {
-            return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
-                       player == Werewolf.werewolf ||
-                       player == Lawyer.lawyer ||
-                       player == Juggernaut.juggernaut ||
-                       player == Akujo.akujo ||
-                       player == Pavlovsdogs.pavlovsowner ||
-                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
-                       player == Swooper.swooper);
-        }
-        else
-        {
-            return player != null && isNeutral(player);
-        }
-    }
-
     public static bool isNeutral(PlayerControl player)
     {
         var roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
@@ -392,7 +361,7 @@ public static class Helpers
         return roleCouldUse;
     }
 
-    public static SabatageTypes getActiveSabo()
+    public static SabatageTypes GetActiveSabo()
     {
         foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
             if (task.TaskType == TaskTypes.FixLights)
@@ -408,27 +377,21 @@ public static class Helpers
         return SabatageTypes.None;
     }
 
-    public static bool isLightsActive() => getActiveSabo() == SabatageTypes.Lights;
+    public static bool isLightsActive => GetActiveSabo() == SabatageTypes.Lights;
 
-    public static bool isCommsActive() => getActiveSabo() == SabatageTypes.Comms;
+    public static bool isCommsActive => GetActiveSabo() == SabatageTypes.Comms;
 
-    public static bool isCamoComms() => isCommsActive() && ModOption.camoComms;
+    public static bool isReactor => GetActiveSabo() is SabatageTypes.Reactor or SabatageTypes.O2;
 
-    public static bool isActiveCamoComms() => isCamoComms() && Camouflager.camoComms;
+    public static bool isCamoComms => isCommsActive && ModOption.camoComms;
 
-    public static bool wasActiveCamoComms() => !isCamoComms() && Camouflager.camoComms;
+    public static bool isActiveCamoComms => isCamoComms && Camouflager.camoComms;
 
-    public static bool sabotageActive()
-    {
-        var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
-        return sabSystem.AnyActive;
-    }
+    public static bool wasActiveCamoComms => !isCamoComms && Camouflager.camoComms;
 
-    public static float sabotageTimer()
-    {
-        var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
-        return sabSystem.Timer;
-    }
+    public static bool sabotageActive => ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>().AnyActive;
+
+    public static float sabotageTimer => ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>().Timer;
 
     public static bool canUseSabotage()
     {
@@ -511,9 +474,9 @@ public static class Helpers
             // Should the button show the target name option
             string text;
             // set text to default if camo is on
-            if (Camouflager.camouflageTimer >= 0.1f || isCamoComms()) text = defaultText;
+            if (Camouflager.camouflageTimer >= 0.1f || isCamoComms) text = defaultText;
             // set to default if lights are out
-            else if (isLightsActive()) text = defaultText;
+            else if (isLightsActive) text = defaultText;
             // set to default if trickster ability is active
             else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f) text = defaultText;
             // set to morphed player
@@ -981,7 +944,7 @@ public static class Helpers
     public static bool hidePlayerName(PlayerControl source, PlayerControl target)
     {
         var localPlayer = PlayerControl.LocalPlayer;
-        if (Camouflager.camouflageTimer > 0f || MushroomSabotageActive() || isCamoComms())
+        if (Camouflager.camouflageTimer > 0f || MushroomSabotageActive() || isCamoComms)
             return true; // No names are visible
         if (SurveillanceMinigamePatch.nightVisionIsActive) return true;
         if (Ninja.isInvisble && Ninja.ninja == target) return true;

@@ -100,7 +100,6 @@ public enum CustomRPC
     PlaceCamera,
     SealVent,
     PartTimerSet,
-    ArsonistWin,
     GuesserShoot,
     LawyerSetTarget,
     ExecutionerSetTarget,
@@ -174,7 +173,6 @@ public static class RPCProcedure
         WarlockTarget,
         MediumInfo,
         BlankUsed,
-        DetectiveOrMedicInfo,
         VampireTimer,
         DeathReasonAndKiller
     }
@@ -195,6 +193,7 @@ public static class RPCProcedure
         Trap.clearTraps();
         Silhouette.clearSilhouettes();
         ElectricPatch.Reset();
+        GameHistory.Clear();
         setCustomButtonCooldowns();
         toggleZoom(true);
         DestoryClientCache();
@@ -667,7 +666,7 @@ public static class RPCProcedure
         if (Medium.futureDeadBodies != null)
         {
             var deadBody = Medium.futureDeadBodies.Find(x => x.Item1.Player.PlayerId == playerId)?.Item1;
-            if (deadBody != null) deadBody.WasCleaned = true;
+            if (deadBody != null) deadBody.wasCleaned = true;
         }
 
         DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
@@ -1529,7 +1528,7 @@ public static class RPCProcedure
         Shifter.clearAndReload();
 
         // Suicide (exile) when impostor or impostor variants
-        if ((player.Data.Role.IsImpostor || isShiftNeutral(player)) && !oldShifter.Data.IsDead)
+        if ((player.Data.Role.IsImpostor || Shifter.isShiftNeutral(player)) && oldShifter.IsAlive())
         {
             oldShifter.Exiled();
             OverrideDeathReasonAndKiller(oldShifter, CustomDeathReason.Shift, player);
@@ -1607,8 +1606,8 @@ public static class RPCProcedure
 
     public static void camouflagerCamouflage(byte setTimer)
     {
-        if (isActiveCamoComms() && setTimer != 2) return;
-        if (isCamoComms()) Camouflager.camoComms = true;
+        if (isActiveCamoComms && setTimer != 2) return;
+        if (isCamoComms) Camouflager.camoComms = true;
         if (Camouflager.camouflager == null && !Camouflager.camoComms) return;
         if (setTimer == 1) Camouflager.camouflageTimer = Camouflager.duration;
         if (MushroomSabotageActive()) return; // Dont overwrite the fungle "camo"
@@ -1977,7 +1976,7 @@ public static class RPCProcedure
             {
                 pva.UnsetVote();
                 var voteAreaPlayer = playerById(pva.TargetPlayerId);
-                if (!voteAreaPlayer.AmOwner) continue;
+                if (voteAreaPlayer != null && !voteAreaPlayer.AmOwner) continue;
                 MeetingHud.Instance.ClearVote();
             }
 
@@ -2128,7 +2127,7 @@ public static class RPCProcedure
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
 
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() && !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() && !isCamoComms)
                 target.setDefaultLook();
             Ninja.isInvisble = false;
             return;
@@ -2203,7 +2202,12 @@ public static class RPCProcedure
 
         if (akujo != null && Akujo.keepsLeft > 0)
         {
-            Akujo.keeps.Add(target);
+            akujo.Exiled();
+            OverrideDeathReasonAndKiller(akujo, CustomDeathReason.Loneliness);
+
+            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
+            if (PlayerControl.LocalPlayer == Akujo.akujo)
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(akujo.Data, akujo.Data);
             Akujo.breakLovers(target);
             Akujo.keepsLeft--;
         }
@@ -2214,8 +2218,24 @@ public static class RPCProcedure
         var akujo = playerById(akujoId);
         if (akujo != null)
         {
-            akujo.MurderPlayer(akujo, MurderResultFlags.Succeeded);
+            akujo.Exiled();
             OverrideDeathReasonAndKiller(akujo, CustomDeathReason.Loneliness);
+
+            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
+            if (PlayerControl.LocalPlayer == Akujo.akujo)
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(akujo.Data, akujo.Data);
+            if (MeetingHud.Instance)
+            {
+                foreach (var p in MeetingHud.Instance.playerStates)
+                {
+                    if (p.TargetPlayerId == Akujo.akujo.PlayerId || Akujo.honmei?.PlayerId == p.TargetPlayerId)
+                    {
+                        p.SetDead(p.DidReport, true);
+                        p.Overlay.gameObject.SetActive(true);
+                        MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, p.TargetPlayerId);
+                    }
+                }
+            }
         }
     }
 
@@ -2278,7 +2298,7 @@ public static class RPCProcedure
             target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms)
                 target.setDefaultLook();
             Swooper.isInvisable = false;
             return;
@@ -2304,7 +2324,7 @@ public static class RPCProcedure
             target.cosmetics.currentBodySprite.BodySprite.color = Color.white;
             target.cosmetics.colorBlindText.gameObject.SetActive(DataManager.Settings.Accessibility.ColorBlindMode);
             target.cosmetics.colorBlindText.color = target.cosmetics.colorBlindText.color.SetAlpha(1f);
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms())
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() & !isCamoComms)
                 target.setDefaultLook();
             Jackal.isInvisable = false;
             return;
@@ -2489,18 +2509,6 @@ public static class RPCProcedure
         ventsToSeal.Add(vent);
     }
 
-    public static void arsonistWin()
-    {
-        Arsonist.triggerArsonistWin = true;
-        foreach (PlayerControl p in CachedPlayer.AllPlayers)
-            //if (p != Arsonist.arsonist && !p.Data.IsDead)
-            if (p != Arsonist.arsonist && Arsonist.dousedPlayers.Any(x => x == p && !p.Data.IsDead))
-            {
-                p.Exiled();
-                OverrideDeathReasonAndKiller(p, CustomDeathReason.Arson, Arsonist.arsonist);
-            }
-    }
-
     public static void lawyerSetTarget(byte playerId)
     {
         Lawyer.target = playerById(playerId);
@@ -2515,9 +2523,9 @@ public static class RPCProcedure
     {
         var player = Lawyer.lawyer;
         var client = Lawyer.target;
-        Lawyer.clearAndReload(false);
 
         Pursuer.pursuer.Add(player);
+        Lawyer.clearAndReload(false);
 
         if (player.PlayerId == CachedPlayer.LocalPlayer.PlayerId && client != null)
         {
@@ -2616,7 +2624,7 @@ public static class RPCProcedure
             foreach (var pva in MeetingHud.Instance.playerStates)
             {
                 if (pva.TargetPlayerId == dyingTargetId || pva.TargetPlayerId == partnerId || pva.TargetPlayerId == akujoPartnerId
-                    || lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId)
+                    || (lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId))
                 {
                     pva.SetDead(pva.DidReport, true);
                     pva.Overlay.gameObject.SetActive(true);
@@ -2645,8 +2653,7 @@ public static class RPCProcedure
         {
             if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget)
             {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data,
-                    dyingTarget.Data);
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
                 if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
             }
             else if (dyingLoverPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingLoverPartner)
@@ -2815,6 +2822,8 @@ public static class RPCProcedure
         {
             Pavlovsdogs.pavlovsdogs.Add(target);
             Pavlovsdogs.pavlovsowner = thief;
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+                setGuesserGm(thief.PlayerId);
         }
         if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))
         {
@@ -2865,9 +2874,26 @@ public static class RPCProcedure
                 GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
         }
 
-        if (target == Werewolf.werewolf) Werewolf.werewolf = thief;
-        if (target == Juggernaut.juggernaut) Juggernaut.juggernaut = thief;
-        if (target == Swooper.swooper) Swooper.swooper = thief;
+        if (target == Werewolf.werewolf)
+        {
+            Survivor.survivor.Add(target);
+            Werewolf.werewolf = thief;
+        }
+        if (target == Arsonist.arsonist)
+        {
+            Survivor.survivor.Add(target);
+            Arsonist.arsonist = thief;
+        }
+        if (target == Juggernaut.juggernaut)
+        {
+            Survivor.survivor.Add(target);
+            Juggernaut.juggernaut = thief;
+        }
+        if (target == Swooper.swooper)
+        {
+            Survivor.survivor.Add(target);
+            Swooper.swooper = thief;
+        }
 
         if (target == Deputy.deputy) Deputy.deputy = thief;
         if (target == Veteran.veteran) Veteran.veteran = thief;
@@ -2888,7 +2914,7 @@ public static class RPCProcedure
         var position = Vector3.zero;
         position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
         position.y = BitConverter.ToSingle(buff, 1 * sizeof(float));
-        new Trap(position);
+        _ = new Trap(position);
     }
 
     public static void triggerTrap(byte playerId, byte trapId)
@@ -2900,7 +2926,7 @@ public static class RPCProcedure
     {
         var target = playerById(playerId);
         if (target == null) return;
-        new GuesserGM(target);
+        _ = new GuesserGM(target);
     }
 
     public static void shareTimer(float punish)
@@ -3028,11 +3054,6 @@ public static class RPCProcedure
                 if (shouldShowGhostInfo())
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, mediumInfo);
                 break;
-            case GhostInfoTypes.DetectiveOrMedicInfo:
-                var detectiveInfo = reader.ReadString();
-                if (shouldShowGhostInfo())
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(sender, detectiveInfo);
-                break;
             case GhostInfoTypes.BlankUsed:
                 Pursuer.blankedList.Remove(sender);
                 break;
@@ -3040,8 +3061,7 @@ public static class RPCProcedure
                 vampireKillButton.Timer = reader.ReadByte();
                 break;
             case GhostInfoTypes.DeathReasonAndKiller:
-                OverrideDeathReasonAndKiller(playerById(reader.ReadByte()),
-                    (CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
+                OverrideDeathReasonAndKiller(playerById(reader.ReadByte()), (CustomDeathReason)reader.ReadByte(), playerById(reader.ReadByte()));
                 break;
         }
     }
@@ -3394,10 +3414,6 @@ internal class RPCHandlerPatch
 
             case CustomRPC.SealVent:
                 RPCProcedure.sealVent(reader.ReadPackedInt32());
-                break;
-
-            case CustomRPC.ArsonistWin:
-                RPCProcedure.arsonistWin();
                 break;
 
             case CustomRPC.GuesserShoot:

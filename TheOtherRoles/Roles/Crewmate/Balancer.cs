@@ -98,8 +98,8 @@ public class Balancer : RoleBase
                 {
                     target = targetplayerright;
                 }
-                if (AmongUsClient.Instance.AmHost && !exiled1) MeetingHud.Instance.RpcVotingComplete(new List<MeetingHud.VoterState>().ToArray(), target.Data, false);
-                exiled1 = true;
+                if (AmongUsClient.Instance.AmHost && !exiled1)
+                    MeetingHud.Instance.RpcVotingComplete(new List<MeetingHud.VoterState>().ToArray(), target.Data, false); exiled1 = true;
                 return;
             }
             switch (CurrentState)

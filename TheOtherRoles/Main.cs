@@ -136,7 +136,6 @@ public class TheOtherRolesPlugin : BasePlugin
             AddComponent<BepInExUpdater>();
             return;
         }
-        AddComponent<ModUpdater>();
 
         ModOption.reloadPluginOptions();
         CosmeticsManager.Load();
@@ -148,6 +147,7 @@ public class TheOtherRolesPlugin : BasePlugin
         SubmergedCompatibility.Initialize();
         MainMenuPatch.addSceneChangeCallbacks();
         AddToKillDistanceSetting.addKillDistance();
+        AddComponent<ModUpdater>();
         Info($"\n---------------\n Loading TheOtherUs completed!\n TheOtherUs-Edited v{VersionString}\n---------------");
     }
 }

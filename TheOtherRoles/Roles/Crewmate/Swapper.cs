@@ -26,8 +26,8 @@ public static class Swapper
         canCallEmergency = CustomOptionHolder.swapperCanCallEmergency.GetBool();
         canOnlySwapOthers = CustomOptionHolder.swapperCanOnlySwapOthers.GetBool();
         canFixSabotages = CustomOptionHolder.swapperCanFixSabotages.GetBool();
-        charges = Mathf.RoundToInt(CustomOptionHolder.swapperSwapsNumber.GetFloat());
-        rechargeTasksNumber = Mathf.RoundToInt(CustomOptionHolder.swapperRechargeTasksNumber.GetFloat());
-        rechargedTasks = Mathf.RoundToInt(CustomOptionHolder.swapperRechargeTasksNumber.GetFloat());
+        charges = CustomOptionHolder.swapperSwapsNumber.GetInt();
+        rechargeTasksNumber = CustomOptionHolder.swapperRechargeTasksNumber.GetInt();
+        rechargedTasks = CustomOptionHolder.swapperRechargeTasksNumber.GetInt();
     }
 }

@@ -371,7 +371,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
         if (p == Jackal.jackal && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
 
-        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
+        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId) && p != Doomsayer.doomsayer) roleName += "GuessserGMInfo".Translate();
 
         if (!suppressGhostInfo && p != null)
         {
@@ -402,11 +402,9 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                     roleName = cs(Witch.color, "☆ ") + roleName;
                 if (BountyHunter.bounty == p)
                     roleName = cs(BountyHunter.color, "(被悬赏) ") + roleName;
-                if (Arsonist.dousedPlayers.Contains(p))
-                    roleName = cs(Arsonist.color, "♨ ") + roleName;
                 if (p == Arsonist.arsonist)
                     roleName += cs(Arsonist.color,
-                        $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && !x.Data.IsDead && !x.Data.Disconnected && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");
+                        $" (剩余 {CachedPlayer.AllPlayers.Count(x => { return x.PlayerControl != Arsonist.arsonist && x.PlayerControl.IsAlive() && !Arsonist.dousedPlayers.Any(y => y.PlayerId == x.PlayerId); })} )");
                 if (Akujo.keeps.Contains(p))
                     roleName = cs(Color.gray, "(备胎) ") + roleName;
                 if (p == Akujo.honmei)
@@ -416,7 +414,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                 if (p.Data.IsDead)
                 {
                     var deathReasonString = "";
-                    GameHistory.AllDeadPlayers.TryGetValue(p.PlayerId, out var deadPlayer);
+                    var deadPlayer = GameHistory.DeadPlayers.FirstOrDefault(x => x.Player.PlayerId == p.PlayerId);
 
                     Color killerColor = new();
                     if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
@@ -436,7 +434,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                                 deathReasonString = $" - 出警 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.SheriffMisfire:
-                                deathReasonString = " - 走火";
+                                deathReasonString = " - 警长走火";
                                 break;
                             case CustomDeathReason.SheriffMisadventure:
                                 deathReasonString = $" - 被误杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
@@ -451,15 +449,13 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                                 deathReasonString = " - 被驱逐";
                                 break;
                             case CustomDeathReason.Kill:
-                                deathReasonString =
-                                    $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                                deathReasonString = $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.Guess:
-                                if (deadPlayer.KillerIfExisting.Data.PlayerName == p.Data.PlayerName)
+                                if (deadPlayer.KillerIfExisting.PlayerId == p.PlayerId)
                                     deathReasonString = " - 猜测错误";
                                 else
-                                    deathReasonString =
-                                        $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                                    deathReasonString = $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.Shift:
                                 deathReasonString =
