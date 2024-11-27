@@ -1628,7 +1628,7 @@ public static class RPCProcedure
         Shifter.clearAndReload();
 
         // Suicide (exile) when impostor or impostor variants
-        if ((player.Data.Role.IsImpostor || isShiftNeutral(player)) && !oldShifter.Data.IsDead)
+        if ((player.Data.Role.IsImpostor || Shifter.isShiftNeutral(player)) && oldShifter.IsAlive())
         {
             oldShifter.Exiled();
             OverrideDeathReasonAndKiller(oldShifter, CustomDeathReason.Shift, player);

@@ -3062,7 +3062,7 @@ internal static class HudManagerStartPatch
             () =>
             {
                 var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
-                var count = alivePlayersList.Count(pc => isNeutral(pc) && pc.isKiller());
+                var count = alivePlayersList.Count(pc => pc.isKiller());
 
                 if (count < 1 && Arsonist.igniteCooldownRemoved) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
                 else arsonistKillButton.Timer = arsonistKillButton.MaxTimer;

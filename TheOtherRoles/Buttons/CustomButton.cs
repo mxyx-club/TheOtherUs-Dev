@@ -196,7 +196,6 @@ public class CustomButton
     public void Update()
     {
         var localPlayer = CachedPlayer.LocalPlayer;
-        var moveable = localPlayer.PlayerControl.moveable;
 
         if (localPlayer.Data == null || MeetingHud.Instance || ExileController.Instance || !HasButton())
         {
@@ -211,7 +210,7 @@ public class CustomButton
             // This had to be reordered, so that the handcuffs do not stop the underlying timers from running
             if (HasEffect && isEffectActive)
                 DeputyTimer -= Time.deltaTime;
-            else if (!localPlayer.PlayerControl.inVent && moveable)
+            else if (!localPlayer.PlayerControl.inVent)
                 DeputyTimer -= Time.deltaTime;
         }
 
@@ -260,7 +259,7 @@ public class CustomButton
         {
             if (HasEffect && isEffectActive)
                 Timer -= Time.deltaTime;
-            else if (!localPlayer.PlayerControl.inVent && moveable)
+            else if (!localPlayer.PlayerControl.inVent)
                 Timer -= Time.deltaTime;
         }
 
