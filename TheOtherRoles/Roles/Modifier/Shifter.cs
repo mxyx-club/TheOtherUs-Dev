@@ -13,6 +13,34 @@ public static class Shifter
 
     public static ResourceSprite buttonSprite = new("ShiftButton.png");
 
+    public static bool isShiftNeutral(PlayerControl player)
+    {
+        if (shiftNeutral && shiftALLNeutra)
+        {
+            return player != null && (
+                       player == Jackal.jackal ||
+                       player == Sidekick.sidekick ||
+                       player == Pavlovsdogs.pavlovsowner ||
+                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
+                       player == Akujo.akujo ||
+                       player == Lawyer.lawyer);
+        }
+        else if (shiftNeutral)
+        {
+            return player != null && (
+                       player == Jackal.jackal ||
+                       player == Sidekick.sidekick ||
+                       player == Werewolf.werewolf ||
+                       player == Lawyer.lawyer ||
+                       player == Juggernaut.juggernaut ||
+                       player == Akujo.akujo ||
+                       player == Pavlovsdogs.pavlovsowner ||
+                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
+                       player == Swooper.swooper);
+        }
+        return player != null && isNeutral(player);
+    }
+
     public static void shiftRole(PlayerControl player1, PlayerControl player2, bool repeat = true)
     {
         if (Vigilante.vigilante != null && Vigilante.vigilante == player2)

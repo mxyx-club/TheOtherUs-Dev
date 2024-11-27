@@ -254,37 +254,6 @@ public static class Helpers
         return shouldVetKill;
     }
 
-    public static bool isShiftNeutral(PlayerControl player)
-    {
-        if (Shifter.shiftNeutral && Shifter.shiftALLNeutra)
-        {
-            return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
-                       player == Pavlovsdogs.pavlovsowner ||
-                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
-                       player == Akujo.akujo ||
-                       player == Lawyer.lawyer);
-        }
-        else if (Shifter.shiftNeutral)
-        {
-            return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
-                       player == Werewolf.werewolf ||
-                       player == Lawyer.lawyer ||
-                       player == Juggernaut.juggernaut ||
-                       player == Akujo.akujo ||
-                       player == Pavlovsdogs.pavlovsowner ||
-                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
-                       player == Swooper.swooper);
-        }
-        else
-        {
-            return player != null && isNeutral(player);
-        }
-    }
-
     public static bool isNeutral(PlayerControl player)
     {
         var roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
