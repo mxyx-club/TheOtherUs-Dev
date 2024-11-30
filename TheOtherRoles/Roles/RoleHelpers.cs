@@ -8,6 +8,7 @@ namespace TheOtherRoles.Roles;
 
 public static class RoleHelpers
 {
+    public static bool CanSeeRoleInfo;
     public static bool CanMultipleShots(PlayerControl dyingTarget)
     {
         if (dyingTarget == CachedPlayer.LocalPlayer.PlayerControl)
@@ -32,6 +33,7 @@ public static class RoleHelpers
     }
 
     public static Dictionary<byte, byte[]> blockedRolePairings = new();
+    public static Dictionary<RoleId, int> GhostRoles = new();
 
     public static void blockRole()
     {
@@ -164,6 +166,11 @@ public static class RoleHelpers
             { RoleId.Vip, CustomOptionHolder.modifierVip.GetSelection() },
             { RoleId.Watcher, CustomOptionHolder.modifierWatcher.GetSelection()}
         });
+        GhostRoles.Clear();
+        GhostRoles.AddRange(new()
+        {
+            { RoleId.GhostEngineer, CustomOptionHolder.ghostEngineerSpawnRate.GetSelection()}
+        });
     }
 
     public static void clearAndReloadRoles()
@@ -265,6 +272,8 @@ public static class RoleHelpers
         LastImpostor.clearAndReload();
         Specoality.clearAndReload();
 
+        GhostEngineer.ClearAndReload();
+
         // Gamemodes
         HandleGuesser.clearAndReload();
         HideNSeek.clearAndReload();
@@ -272,5 +281,50 @@ public static class RoleHelpers
 
         blockRole();
         ResetRoleSelection();
+        CanSeeRoleInfo = false;
+    }
+
+    [HarmonyPatch(typeof(RoleManager), nameof(RoleManager.AssignRoleOnDeath))]
+    public static class AssignRoleOnDeathPatch
+    {
+        public static bool Prefix([HarmonyArgument(0)] PlayerControl player)
+        {
+            if (player.IsAlive() || player == null) return false;
+            return true;
+        }
+        public static void Postfix([HarmonyArgument(0)] PlayerControl player)
+        {
+            if (player.IsAlive()) return;
+            int RolesCount = GhostRoles.Sum(role => role.Value);
+            if (RolesCount == 0) return;
+
+            if (player.isCrew() && GhostRoles.Any(x => x.Value > 0))
+            {
+                foreach (var role in GhostRoles.Where(x => x.Value == 10))
+                {
+                    var write = StartRPC(PlayerControl.LocalPlayer, CustomRPC.SetGhostRole);
+                    write.Write(player.PlayerId);
+                    write.Write((byte)role.Key);
+                    write.EndRPC();
+                    RPCProcedure.setGhostRole(player.PlayerId, (byte)role.Key);
+                    GhostRoles.Remove(role.Key);
+                    return;
+                }
+
+                foreach (var role in GhostRoles.Where(x => x.Value is > 0 and < 10))
+                {
+                    if (rnd.Next(1, 11) <= role.Value)
+                    {
+                        var write = StartRPC(PlayerControl.LocalPlayer, CustomRPC.SetGhostRole);
+                        write.Write(player.PlayerId);
+                        write.Write((byte)role.Key);
+                        write.EndRPC();
+                        RPCProcedure.setGhostRole(player.PlayerId, (byte)role.Key);
+                        GhostRoles.Remove(role.Key);
+                        break;
+                    }
+                }
+            }
+        }
     }
 }

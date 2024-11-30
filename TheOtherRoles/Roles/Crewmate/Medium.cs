@@ -106,7 +106,7 @@ public static class Medium
             var randomNumber = rnd.Next(4);
             var typeOfColor = isLighterColor(Medium.target.KillerIfExisting) ? "浅" : "深";
             var timeSinceDeath = (float)(meetingStartTime - Medium.target.TimeOfDeath).TotalMilliseconds;
-            var roleString = RoleInfo.GetRolesString(Medium.target.Player, false, false, false);
+            var roleString = RoleInfo.GetRolesString(Medium.target.Player, false, false, false, false);
             if (randomNumber == 0)
             {
                 msg = "我的职业是 " + roleString + " .";

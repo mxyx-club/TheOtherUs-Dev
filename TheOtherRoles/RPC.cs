@@ -132,6 +132,8 @@ public enum RoleId
     ButtonBarry,
     Chameleon,
     Shifter,
+
+    GhostEngineer = 200,
 }
 
 public enum CustomRPC
@@ -142,6 +144,7 @@ public enum CustomRPC
     WorkaroundSetRoles,
     SetRole,
     SetModifier,
+    SetGhostRole,
     VersionHandshake,
     UseUncheckedVent,
     UncheckedMurderPlayer,
@@ -304,7 +307,7 @@ public static class RPCProcedure
         Trap.clearTraps();
         Silhouette.clearSilhouettes();
         ElectricPatch.Reset();
-        GameHistory.Clear();
+        Clear();
         setCustomButtonCooldowns();
         toggleZoom(true);
         GameStartManagerPatch.GameStartManagerUpdatePatch.startingTimer = 0;
@@ -676,6 +679,17 @@ public static class RPCProcedure
         }
     }
 
+    public static void setGhostRole(byte playerId, byte roleId)
+    {
+        var player = playerById(playerId);
+        switch ((RoleId)roleId)
+        {
+            case RoleId.GhostEngineer:
+                GhostEngineer.player = player;
+                break;
+        }
+    }
+
     public static void versionHandshake(int major, int minor, int build, int revision, Guid guid, int clientId)
     {
         var ver = revision < 0 ? new Version(major, minor, build) : new Version(major, minor, build, revision);
@@ -743,13 +757,13 @@ public static class RPCProcedure
 
     // Role functionality
 
-    public static void engineerFixLights()
+    public static void FixLights()
     {
         var switchSystem = MapUtilities.Systems[SystemTypes.Electrical].CastFast<SwitchSystem>();
         switchSystem.ActualSwitches = switchSystem.ExpectedSwitches;
     }
 
-    public static void engineerFixSubmergedOxygen()
+    public static void FixSubmergedOxygen()
     {
         SubmergedCompatibility.RepairOxygen();
     }
@@ -1520,6 +1534,12 @@ public static class RPCProcedure
                 if (Amnisiac.resetRole) Medium.clearAndReload();
                 Medium.medium = Mimic.mimic;
                 mediumButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
+                Mimic.hasMimic = true;
+                break;
+
+            case RoleId.Balancer:
+                if (Amnisiac.resetRole) Balancer.clearAndReload();
+                Balancer.balancer = Mimic.mimic;
                 Mimic.hasMimic = true;
                 break;
 
@@ -2531,7 +2551,7 @@ public static class RPCProcedure
         Trickster.lightsOutTimer = Trickster.lightsOutDuration;
         // If the local player is impostor indicate lights out
         if (hasImpVision(GameData.Instance.GetPlayerById(CachedPlayer.LocalPlayer.PlayerId)))
-            _ = new CustomMessage("TricksterLightsOut", Trickster.lightsOutDuration);
+            _ = new CustomMessage("TricksterLightsOut".Translate(), Trickster.lightsOutDuration);
     }
 
     public static void placeCamera(byte[] buff)
@@ -3246,15 +3266,14 @@ internal class RPCHandlerPatch
                 RPCProcedure.workaroundSetRoles(reader.ReadByte(), reader);
                 break;
             case CustomRPC.SetRole:
-                var roleId = reader.ReadByte();
-                var playerId = reader.ReadByte();
-                RPCProcedure.setRole(roleId, playerId);
+                RPCProcedure.setRole(reader.ReadByte(), reader.ReadByte());
                 break;
             case CustomRPC.SetModifier:
-                var modifierId = reader.ReadByte();
-                var pId = reader.ReadByte();
-                var flag = reader.ReadByte();
-                RPCProcedure.setModifier(modifierId, pId, flag);
+                RPCProcedure.setModifier(reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
+                break;
+
+            case CustomRPC.SetGhostRole:
+                RPCProcedure.setGhostRole(reader.ReadByte(), reader.ReadByte());
                 break;
 
             case CustomRPC.VersionHandshake:
@@ -3316,10 +3335,10 @@ internal class RPCHandlerPatch
             // Role functionality
 
             case CustomRPC.EngineerFixLights:
-                RPCProcedure.engineerFixLights();
+                RPCProcedure.FixLights();
                 break;
             case CustomRPC.EngineerFixSubmergedOxygen:
-                RPCProcedure.engineerFixSubmergedOxygen();
+                RPCProcedure.FixSubmergedOxygen();
                 break;
             case CustomRPC.EngineerUsedRepair:
                 RPCProcedure.engineerUsedRepair();

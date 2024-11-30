@@ -128,6 +128,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
     public static RoleInfo hunted = new("Hunted", Color.white, RoleId.Crewmate, RoleType.Crewmate);
     public static RoleInfo prop = new("Prop", Color.white, RoleId.Crewmate, RoleType.Crewmate);
 
+    public static RoleInfo ghostEngineer = new("GhostEngineer", GhostEngineer.color, RoleId.GhostEngineer, RoleType.GhostRole);
+
     public static List<RoleInfo> allRoleInfos =
     [
         impostor,
@@ -231,9 +233,11 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         buttonBarry,
         chameleon,
         shifter,
+
+        ghostEngineer
     ];
 
-    public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p, bool showModifier = true)
+    public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p, bool showModifier = true, bool showGhost = true)
     {
         var infos = new List<RoleInfo>();
         if (p == null) return infos;
@@ -348,6 +352,11 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (Pursuer.pursuer.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pursuer);
         if (Survivor.survivor.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
 
+        if (showGhost)
+        {
+            if (p == GhostEngineer.player) infos.Add(ghostEngineer);
+        }
+
         // Default roles (just impostor, just crewmate, or hunter / hunted for hide n seek, prop hunt prop ...
         if (infos.Count == count)
         {
@@ -360,10 +369,23 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         return infos;
     }
 
-    public static string GetRolesString(PlayerControl p, bool useColors, bool showModifier = true, bool suppressGhostInfo = false)
+    public static string GetRolesString(PlayerControl p, bool useColors, bool showModifier = true, bool showGhostInfo = true, bool onlyGhostRole = false)
     {
         string roleName;
-        roleName = string.Join(" ", getRoleInfoForPlayer(p, showModifier).Select(x => useColors ? cs(x.color, x.Name) : x.Name).ToArray());
+
+        roleName = string.Join(" ", getRoleInfoForPlayer(p, showModifier, true).Select(x => useColors ? cs(x.color, x.Name) : x.Name).ToArray());
+
+        if (onlyGhostRole)
+        {
+            var ghostRoleInfo = getRoleInfoForPlayer(p, false, true).FirstOrDefault(x => x.roleTeam == RoleType.GhostRole);
+
+            if (p.Data.IsDead && ghostRoleInfo != null)
+            {
+                roleName = string.Join(" ", getRoleInfoForPlayer(p, false, true).Where(x => x.roleTeam is RoleType.GhostRole or RoleType.Modifier)
+                    .Select(x => useColors ? cs(x.color, x.Name) : x.Name).ToArray());
+            }
+        }
+
         if (Lawyer.target != null && p.PlayerId == Lawyer.target.PlayerId &&
             CachedPlayer.LocalPlayer.PlayerControl != Lawyer.target) roleName += useColors ? cs(Lawyer.color, " §") : " §";
 
@@ -374,11 +396,10 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
         if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
 
-        if (!suppressGhostInfo && p != null)
+        if (showGhostInfo && p != null)
         {
             if (p == Shifter.shifter &&
-                (CachedPlayer.LocalPlayer.PlayerControl == Shifter.shifter || shouldShowGhostInfo()) &&
-                Shifter.futureShift != null)
+                (CachedPlayer.LocalPlayer.PlayerControl == Shifter.shifter || shouldShowGhostInfo()) && Shifter.futureShift != null)
                 roleName += cs(Color.yellow, " ← " + Shifter.futureShift.Data.PlayerName);
             if (p == Vulture.vulture && (CachedPlayer.LocalPlayer.PlayerControl == Vulture.vulture || shouldShowGhostInfo()))
                 roleName += cs(Vulture.color, string.Format("roleInfoRemaining".Translate(), Vulture.vultureNumberToWin - Vulture.eatenBodies));
@@ -448,6 +469,9 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                                 break;
                             case CustomDeathReason.Exile:
                                 deathReasonString = " - 被驱逐";
+                                break;
+                            case CustomDeathReason.Eaten:
+                                deathReasonString = $" - 被吞食于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
                                 break;
                             case CustomDeathReason.Kill:
                                 deathReasonString = $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";

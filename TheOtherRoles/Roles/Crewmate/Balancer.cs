@@ -58,7 +58,7 @@ public class Balancer
     private static float openMADENOtimer;
     private static bool exiled1;
 
-    public static void Update()
+    public static void FixedUpdate()
     {
         if (BackObject != null)
         {

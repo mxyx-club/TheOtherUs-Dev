@@ -152,6 +152,10 @@
         "0": "Modifiers",
         "13": "附加能力"
     },
+    "GhostRoleText": {
+        "0": "GhostRole",
+        "13": "幽灵职业"
+    },
     "CrewmateTeam": {
         "0": "Crewmate",
         "13": "船员阵营"
@@ -3985,6 +3989,16 @@
     },
     "ShifterShortDesc": {
         "13": "与他人交换职业"
+    },
+    "GhostEngineer": {
+        "0": "GhostEngineer",
+        "13": "灵魂工程师"
+    },
+    "GhostEngineerIntroDesc": {
+        "13": "弥补生前未能修好飞船的遗憾"
+    },
+    "GhostEngineerShortDesc": {
+        "13": "弥补生前未能修好飞船的遗憾"
     },
     "Hunter": {
         "0": "Hunter",

@@ -132,19 +132,20 @@ public class CustomButton
             }
     }
 
-    public static void ResetAllCooldowns(float Time = 0)
+    public static void ResetAllCooldowns(float Time = -1)
     {
         foreach (var t in buttons)
         {
+            var maxTime = Time == -1 ? t.MaxTimer : Time;
             try
             {
-                t.Timer = t.MaxTimer;
-                t.DeputyTimer = t.MaxTimer;
+                t.Timer = maxTime;
+                t.DeputyTimer = maxTime;
                 t.Update();
             }
-            catch (NullReferenceException)
+            catch (Exception e)
             {
-                Warn("NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine");
+                Error($"NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine\n{e}", "CustomButton");
             }
         }
     }
@@ -152,25 +153,26 @@ public class CustomButton
     /// <summary>
     /// ÷ÿ÷√ÕÊº“ª˜…±∞¥≈•cd
     /// </summary>
-    public static void resetKillButton(PlayerControl p, float time = 0f)
+    public static void resetKillButton(PlayerControl p, float time = -1)
     {
         if (p.IsDead()) return;
-        if (p.Data.Role.IsImpostor && p != Vampire.vampire)
+        if (p.Data.Role.IsImpostor)
         {
-            if (time == 0f) time = ModOption.KillCooddown;
+            if (time == -1) time = ModOption.KillCooddown;
             p.killTimer = time;
-            return;
         }
 
-        vampireKillButton.Timer = time == 0 ? vampireKillButton.MaxTimer : time;
-        sheriffKillButton.Timer = time == 0 ? sheriffKillButton.MaxTimer : time;
-        jackalKillButton.Timer = time == 0 ? jackalKillButton.MaxTimer : time;
-        sidekickKillButton.Timer = time == 0 ? sidekickKillButton.MaxTimer : time;
-        swooperKillButton.Timer = time == 0 ? swooperKillButton.MaxTimer : time;
-        werewolfKillButton.Timer = time == 0 ? werewolfKillButton.MaxTimer : time;
-        juggernautKillButton.Timer = time == 0 ? juggernautKillButton.MaxTimer : time;
-        thiefKillButton.Timer = time == 0 ? thiefKillButton.MaxTimer : time;
-        pavlovsdogsKillButton.Timer = time == 0 ? pavlovsdogsKillButton.MaxTimer : time;
+        warlockCurseButton.Timer = time == -1 ? warlockCurseButton.MaxTimer : time;
+        ninjaButton.Timer = time == -1 ? ninjaButton.MaxTimer : time;
+        vampireKillButton.Timer = time == -1 ? vampireKillButton.MaxTimer : time;
+        sheriffKillButton.Timer = time == -1 ? sheriffKillButton.MaxTimer : time;
+        jackalKillButton.Timer = time == -1 ? jackalKillButton.MaxTimer : time;
+        sidekickKillButton.Timer = time == -1 ? sidekickKillButton.MaxTimer : time;
+        swooperKillButton.Timer = time == -1 ? swooperKillButton.MaxTimer : time;
+        werewolfKillButton.Timer = time == -1 ? werewolfKillButton.MaxTimer : time;
+        juggernautKillButton.Timer = time == -1 ? juggernautKillButton.MaxTimer : time;
+        thiefKillButton.Timer = time == -1 ? thiefKillButton.MaxTimer : time;
+        pavlovsdogsKillButton.Timer = time == -1 ? pavlovsdogsKillButton.MaxTimer : time;
     }
 
     public void setActive(bool isActive)
