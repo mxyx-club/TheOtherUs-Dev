@@ -226,6 +226,8 @@ public class CustomOptionHolder
     public static CustomOption engineerHighlightForImpostors;
     public static CustomOption engineerHighlightForTeamJackal;
 
+    public static CustomOption ghostEngineerSpawnRate;
+
     public static CustomOption sheriffSpawnRate;
     public static CustomOption sheriffMisfireKills;
     public static CustomOption sheriffCooldown;
@@ -1026,6 +1028,8 @@ public class CustomOptionHolder
         thiefCanStealWithGuess = Create(20245, Types.Neutral, "thiefCanStealWithGuess", true, thiefSpawnRate);
 
         //-------------------------- Crewmate Options 30000-39999 -------------------------- //
+
+        ghostEngineerSpawnRate = Create(50010, Types.Crewmate, cs(GhostEngineer.color, "GhostEngineer"), rates, null, true);
 
         guesserSpawnRate = Create(30100, Types.Crewmate, cs(Vigilante.color, "Vigilante"), rates, null, true);
         guesserNumberOfShots = Create(30101, Types.Crewmate, "guesserNumberOfShots", 3f, 1f, 15f, 1f, guesserSpawnRate);

@@ -72,6 +72,11 @@ public static class FastRPCExtension
         return StartRPC(NetId, (byte)RPCId, SendTarget);
     }
 
+    public static MessageWriter StartRPC(PlayerControl player, CustomRPC RPCId, PlayerControl SendTarget = null)
+    {
+        return StartRPC(player.NetId, (byte)RPCId, SendTarget);
+    }
+
     public static MessageWriter StartRPC(byte RPCId, PlayerControl SendTarget = null)
     {
         return StartRPC(PlayerControl.LocalPlayer.NetId, RPCId, SendTarget);

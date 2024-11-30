@@ -88,7 +88,7 @@ public static class HauntMenuMinigamePatch
     public static void showOrHideAbilityButtonPostfix(AbilityButton __instance)
     {
         var isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
-        if (CachedPlayer.LocalPlayer.Data.IsDead && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() || isGameMode))
+        if (CachedPlayer.LocalPlayer.Data.IsDead && CanSeeRoleInfo && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() || isGameMode))
         {
             // player has haunt button.
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);

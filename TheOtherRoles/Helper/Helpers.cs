@@ -44,6 +44,7 @@ public enum RoleType
     Impostor,
     Neutral,
     Modifier,
+    GhostRole,
     Special,
 }
 

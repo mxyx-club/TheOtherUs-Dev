@@ -9,6 +9,7 @@ global using TheOtherRoles.Modules;
 global using TheOtherRoles.Options;
 global using TheOtherRoles.Roles;
 global using TheOtherRoles.Roles.Crewmate;
+global using TheOtherRoles.Roles.Ghost;
 global using TheOtherRoles.Roles.Impostor;
 global using TheOtherRoles.Roles.Modifier;
 global using TheOtherRoles.Roles.Neutral;

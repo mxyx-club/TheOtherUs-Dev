@@ -822,7 +822,7 @@ internal class MeetingHudPatch
                     trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
                     message = trap.trappedPlayer.Aggregate(message, (current, p) => current + Trapper.infoType switch
                     {
-                        0 => RoleInfo.GetRolesString(p, false, false, true) + "\n",
+                        0 => RoleInfo.GetRolesString(p, false, false, false) + "\n",
                         1 when isEvilNeutral(p) || p.Data.Role.IsImpostor => "邪恶职业 \n",
                         1 => "善良职业 \n",
                         _ => p.Data.PlayerName + "\n"
@@ -925,7 +925,7 @@ internal class MeetingHudPatch
         {
             Message("会议开始");
             shookAlready = false;
-
+            if (CachedPlayer.LocalPlayer.IsDead) CanSeeRoleInfo = true;
             // Remove first kill shield
             firstKillPlayer = null;
 

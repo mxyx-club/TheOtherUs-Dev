@@ -49,9 +49,9 @@ public class KeyboardHandler
             {
                 GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.Canceled, false);
             }
-            if (Input.GetKey(ModInputManager.metaControlInput.keyCode) && Input.GetKey(KeyCode.C) && Input.GetKeyDown(KeyCode.Return) && InGame)
+            if (Input.GetKey(ModInputManager.metaControlInput.keyCode) && Input.GetKey(KeyCode.C) && Input.GetKeyDown(KeyCode.Return) && ModOption.DebugMode && InGame)
             {
-                CustomButton.resetKillButton(CachedPlayer.LocalPlayer.PlayerControl, 0.5f);
+                CustomButton.ResetAllCooldowns(0f);
             }
             // 快速开始游戏
             if (Input.GetKeyDown(KeyCode.LeftShift) && IsCountDown)

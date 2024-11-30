@@ -128,7 +128,7 @@ public class OnGameEndPatch
             if (killCount == 0 &&
                 !(killRole.Contains(RoleInfo.getRoleInfoForPlayer(playerControl, false).FirstOrDefault())
                  || playerControl.Data.Role.IsImpostor)) killCount = null;
-            var roleString = RoleInfo.GetRolesString(playerControl, true);
+            var roleString = RoleInfo.GetRolesString(playerControl, true, true, true, false);
             AdditionalTempData.playerRoles.Add(new AdditionalTempData.PlayerRoleInfo
             {
                 PlayerName = playerControl.PlayerName,

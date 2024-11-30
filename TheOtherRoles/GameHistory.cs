@@ -27,6 +27,7 @@ public enum CustomDeathReason
     SheriffMisadventure,
     Suicide,
     BombVictim,
+    Eaten,
 }
 public class DeadPlayer
 {
@@ -55,6 +56,11 @@ internal static class GameHistory
     {
         localPlayerPositions.Clear();
         DeadPlayers.Clear();
+    }
+
+    public static void ClearDeadPlayer(PlayerControl player)
+    {
+        DeadPlayers.RemoveAll(x => x.Player.PlayerId == player.PlayerId);
     }
 
     public static void OverrideDeathReasonAndKiller(PlayerControl player, CustomDeathReason deathReason, PlayerControl killer = null)

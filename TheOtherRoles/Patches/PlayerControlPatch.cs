@@ -686,6 +686,7 @@ public static class PlayerControlFixedUpdatePatch
 
     public static void MiniSizeUpdate(PlayerControl p)
     {
+        if (Mini.mini == null) return;
         // Set default player size
         var collider = p.Collider.CastFast<CircleCollider2D>();
 
@@ -718,10 +719,22 @@ public static class PlayerControlFixedUpdatePatch
 
     public static void GiantSizeUpdate(PlayerControl p)
     {
+        if (Giant.giant == null || InMeeting) return;
+
+        DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
+        foreach (var body in array.Where(x => x.ParentId == Giant.giant.PlayerId))
+        {
+            try
+            {
+                body.transform.localScale = new Vector3(Giant.size, Giant.size, 1f);
+            }
+            catch (Exception e) { Error(e, "updateGiant"); }
+        }
 
         var collider = p.Collider.CastFast<CircleCollider2D>();
         collider.offset = Mini.defaultColliderOffset * Vector2.down;
-        if (MushroomSabotageActive()) return;
+
+        if (MushroomSabotageActive() || isCamoComms) return;
         // Giant
         if (p == Giant.giant)
         {
@@ -790,22 +803,22 @@ public static class PlayerControlFixedUpdatePatch
                 }
 
                 var (tasksCompleted, tasksTotal) = TasksHandler.taskInfo(p.Data);
-                var roleNames = RoleInfo.GetRolesString(p, true, false);
-                var roleText = RoleInfo.GetRolesString(p, true, true);
+                var roleNames = RoleInfo.GetRolesString(p, true, false, false, true);
+                var allRoleText = RoleInfo.GetRolesString(p, true, true, true, true);
                 var taskInfo = tasksTotal > 0 ? $"<color=#FAD934FF>({tasksCompleted}/{tasksTotal})</color>" : "";
 
                 var playerInfoText = "";
                 var meetingInfoText = "";
                 if (p == local)
                 {
-                    if (p.Data.IsDead) roleNames = roleText;
+                    if (p.Data.IsDead) roleNames = allRoleText;
                     playerInfoText = $"{roleNames}";
                     if (HudManager.Instance.TaskPanel != null)
                     {
                         var tabText = HudManager.Instance.TaskPanel.tab.transform.FindChild("TabText_TMP").GetComponent<TextMeshPro>();
                         tabText.SetText(string.Format("tasksNum".Translate(), taskInfo));
                     }
-                    meetingInfoText = $"{roleText} {taskInfo}".Trim();
+                    meetingInfoText = $"{allRoleText} {taskInfo}".Trim();
                 }
                 else if (ModOption.impostorSeeRoles
                     && Spy.spy == null
@@ -835,9 +848,9 @@ public static class PlayerControlFixedUpdatePatch
                     playerInfoText = roleNames;
                     meetingInfoText = playerInfoText;
                 }
-                else
+                else if (CanSeeRoleInfo)
                 {
-                    playerInfoText = $"{roleText} {taskInfo}".Trim();
+                    playerInfoText = $"{allRoleText} {taskInfo}".Trim();
                     meetingInfoText = playerInfoText;
                 }
 
@@ -1885,7 +1898,7 @@ public static class PlayerControlFixedUpdatePatch
             partTimerSetTarget();
             partTimerUpdate();
             //Balancer
-            Balancer.Update();
+            Balancer.FixedUpdate();
 
             hackerUpdate();
             swapperUpdate();
@@ -1928,6 +1941,24 @@ internal class PlayerPhysicsWalkPlayerToPatch
         {
             var currentScaling = (Mini.growingProgress() + 1) * 0.5f;
             __instance.myPlayer.Collider.offset = currentScaling * Mini.defaultColliderOffset * Vector2.down;
+        }
+    }
+}
+
+
+[HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.Revive))]
+internal class PlayerControlRevivePatch
+{
+    public static void Postfix(PlayerControl __instance)
+    {
+        foreach (var p in PlayerControl.AllPlayerControls)
+        {
+            if (p != __instance && p != null)
+            {
+                var playerInfoTransform = p.cosmetics.nameText.transform.parent.FindChild("Info");
+                var playerInfo = playerInfoTransform?.GetComponent<TextMeshPro>();
+                if (playerInfo != null) playerInfo.text = "";
+            }
         }
     }
 }
@@ -2015,7 +2046,7 @@ internal class BodyReportPatch
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
                     }
 
-                    if (msg.IndexOf("who", StringComparison.OrdinalIgnoreCase) >= 0)
+                    if (msg.Contains("who", StringComparison.OrdinalIgnoreCase))
                         FastDestroyableSingleton<UnityTelemetry>.Instance.SendWho();
                 }
             }
@@ -2396,7 +2427,7 @@ public static class ExilePlayerPatch
                 Lawyer.lawyer?.Exiled();
                 if (Pursuer.pursuer != null)
                 {
-                    foreach (var pursuer in Pursuer.pursuer.Where(x => x.PlayerId == Lawyer.lawyer.PlayerId)) pursuer?.Exiled();
+                    foreach (var pursuer in Pursuer.pursuer.Where(x => x.PlayerId == lawyer.PlayerId)) pursuer?.Exiled();
                 }
 
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);

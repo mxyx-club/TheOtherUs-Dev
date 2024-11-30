@@ -11,7 +11,7 @@ namespace TheOtherRoles.Patches;
 public static class LobbyRoleInfo
 {
     public static GameObject RolesSummaryUI { get; set; }
-    public static readonly List<string> Teams = ["Impostors", "Neutrals", "Crewmates", "Modifiers"];
+    public static readonly List<string> Teams = ["Impostors", "Neutrals", "Crewmates", "Modifiers", "GhostRole"];
     private static TextMeshPro infoButtonText;
     private static TextMeshPro infoTitleText;
 
@@ -79,12 +79,16 @@ public static class LobbyRoleInfo
                     team = cs(Color.yellow, GetString("ModifierRolesText"));
                     teamid = RoleType.Modifier;
                     break;
+                case "GhostRole":
+                    team = cs(new Color32(25, 68, 142, byte.MaxValue), GetString("GhostRoleText"));
+                    teamid = RoleType.GhostRole;
+                    break;
             }
 
             Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
             buttonTransform.name = team + " Button";
             buttonTransform.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.55f);
-            buttonTransform.GetComponent<SpriteRenderer>().sprite = UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.LobbyRoleInfo.RolePlate.png", 215f);
+            buttonTransform.GetComponent<SpriteRenderer>().sprite = new ResourceSprite("TheOtherRoles.Resources.LobbyRoleInfo.RolePlate.png", 215f);
             buttons.Add(buttonTransform);
             buttonTransform.localPosition = new Vector3(0, 2.2f - (i * 1f), -5);
             buttonTransform.localScale = new Vector3(2f, 1.5f, 1f);
@@ -93,7 +97,7 @@ public static class LobbyRoleInfo
             label.text = team;
             label.alignment = TextAlignmentOptions.Center;
             label.transform.localPosition = new Vector3(0, 0, label.transform.localPosition.z);
-            label.transform.localScale = new Vector3(1.6f, 2.3f, 1f);
+            label.transform.localScale = new Vector3(1.4f, 2.2f, 1f);
 
             PassiveButton button = buttonTransform.GetComponent<PassiveButton>();
             button.OnClick.RemoveAllListeners();
@@ -133,8 +137,8 @@ public static class LobbyRoleInfo
 
         TextMeshPro newtitle = Object.Instantiate(textTemplate, container.transform);
         newtitle.text = team;
-        newtitle.outlineWidth = 0.01f;
-        newtitle.transform.localPosition = new Vector3(0f, 2.7f, -2f);
+        newtitle.outlineWidth = 0.1f;
+        newtitle.transform.localPosition = new Vector3(0f, 2.8f, -2f);
         newtitle.transform.localScale = Vector3.one * 2.5f;
 
         List<Transform> buttons = new();
@@ -146,6 +150,7 @@ public static class LobbyRoleInfo
             else if (roleInfo.roleTeam == RoleType.Neutral && teamId != RoleType.Neutral) continue;
             else if (roleInfo.roleTeam == RoleType.Impostor && teamId != RoleType.Impostor) continue;
             else if (roleInfo.roleTeam == RoleType.Crewmate && teamId != RoleType.Crewmate) continue;
+            else if (roleInfo.roleTeam == RoleType.GhostRole && teamId != RoleType.GhostRole) continue;
 
             Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
             buttonTransform.name = cs(roleInfo.color, roleInfo.Name) + " Button";

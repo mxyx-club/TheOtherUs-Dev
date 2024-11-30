@@ -21,6 +21,7 @@ internal static class HudManagerStartPatch
     private static readonly float defaultMaxTimer = 0.5f;
     private static readonly float multiplier = Mini.mini != null && CachedPlayer.LocalPlayer.PlayerControl == Mini.mini
         ? Mini.isGrownUp() ? 0.66f : 2f : 1f;
+    public static CustomButton ghostEngineerButton;
     public static CustomButton engineerRepairButton;
     public static CustomButton sheriffKillButton;
     private static CustomButton deputyHandcuffButton;
@@ -134,6 +135,7 @@ internal static class HudManagerStartPatch
         yoyoAdminTableButton.MaxTimer = Yoyo.adminCooldown;
         yoyoAdminTableButton.EffectDuration = 10f;
         engineerRepairButton.MaxTimer = defaultMaxTimer;
+        ghostEngineerButton.MaxTimer = defaultMaxTimer;
         sheriffKillButton.MaxTimer = Sheriff.cooldown;
         deputyHandcuffButton.MaxTimer = Deputy.handcuffCooldown;
         timeMasterShieldButton.MaxTimer = TimeMaster.cooldown;
@@ -446,19 +448,16 @@ internal static class HudManagerStartPatch
             () =>
             {
                 engineerRepairButton.Timer = 0f;
-                var usedRepairWriter = AmongUsClient.Instance.StartRpcImmediately(
-                    CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.EngineerUsedRepair,
-                    SendOption.Reliable);
-                AmongUsClient.Instance.FinishRpcImmediately(usedRepairWriter);
+                var usedRepairWriter = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerUsedRepair);
+                usedRepairWriter.EndRPC();
                 RPCProcedure.engineerUsedRepair();
                 SoundEffectsManager.play("engineerRepair");
                 foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
                     if (task.TaskType == TaskTypes.FixLights)
                     {
-                        var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                            (byte)CustomRPC.EngineerFixLights, SendOption.Reliable);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.engineerFixLights();
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.EngineerFixLights);
+                        writer.EndRPC();
+                        RPCProcedure.FixLights();
                     }
                     else if (task.TaskType == TaskTypes.RestoreOxy)
                     {
@@ -483,14 +482,11 @@ internal static class HudManagerStartPatch
                         MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Reactor, 0 | 16);
                         MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Reactor, 1 | 16);
                     }
-                    else if (SubmergedCompatibility.IsSubmerged &&
-                             task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
+                    else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
                     {
-                        var writer = AmongUsClient.Instance.StartRpcImmediately(
-                            CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.EngineerFixSubmergedOxygen,
-                            SendOption.Reliable);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        RPCProcedure.engineerFixSubmergedOxygen();
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixSubmergedOxygen);
+                        writer.EndRPC();
+                        RPCProcedure.FixSubmergedOxygen();
                     }
             },
             () =>
@@ -505,7 +501,7 @@ internal static class HudManagerStartPatch
                     if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
                         task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic ||
                         task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
-                        || SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
+                        || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
                         sabotageActive = true;
                 return sabotageActive && Engineer.remainingFixes > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
@@ -513,6 +509,72 @@ internal static class HudManagerStartPatch
             {
                 if (Engineer.resetFixAfterMeeting) Engineer.resetFixes();
             },
+            Engineer.buttonSprite,
+            ButtonPositions.upperRowRight,
+            __instance,
+            abilityInput.keyCode,
+            buttonText: GetString("RepairText")
+        );
+
+        ghostEngineerButton = new CustomButton(
+            () =>
+            {
+                ghostEngineerButton.Timer = 0f;
+                SoundEffectsManager.play("engineerRepair");
+                foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
+                    if (task.TaskType == TaskTypes.FixLights)
+                    {
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixLights);
+                        writer.EndRPC();
+                        RPCProcedure.FixLights();
+                    }
+                    else if (task.TaskType == TaskTypes.RestoreOxy)
+                    {
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.LifeSupp, 0 | 64);
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.LifeSupp, 1 | 64);
+                    }
+                    else if (task.TaskType == TaskTypes.ResetReactor)
+                    {
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Reactor, 16);
+                    }
+                    else if (task.TaskType == TaskTypes.ResetSeismic)
+                    {
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Laboratory, 16);
+                    }
+                    else if (task.TaskType == TaskTypes.FixComms)
+                    {
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Comms, 16 | 0);
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Comms, 16 | 1);
+                    }
+                    else if (task.TaskType == TaskTypes.StopCharles)
+                    {
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Reactor, 0 | 16);
+                        MapUtilities.CachedShipStatus.RpcRepairSystem(SystemTypes.Reactor, 1 | 16);
+                    }
+                    else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
+                    {
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixSubmergedOxygen);
+                        writer.EndRPC();
+                        RPCProcedure.FixSubmergedOxygen();
+                    }
+            },
+            () =>
+            {
+                return GhostEngineer.player != null && GhostEngineer.player == CachedPlayer.LocalPlayer.PlayerControl &&
+                       !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead;
+            },
+            () =>
+            {
+                var sabotageActive = false;
+                foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
+                    if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
+                        task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic ||
+                        task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
+                        || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
+                        sabotageActive = true;
+                return sabotageActive && Engineer.remainingFixes > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+            },
+            () => { },
             Engineer.buttonSprite,
             ButtonPositions.upperRowRight,
             __instance,
