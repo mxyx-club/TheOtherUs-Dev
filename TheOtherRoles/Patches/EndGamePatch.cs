@@ -104,8 +104,6 @@ public class OnGameEndPatch
 
     public static void Postfix(AmongUsClient __instance, [HarmonyArgument(0)] ref EndGameResult endGameResult)
     {
-        Message("游戏结束");
-
         AdditionalTempData.clear();
         List<RoleInfo> killRole =
         [
@@ -148,15 +146,15 @@ public class OnGameEndPatch
         notWinners.AddRange(new[]
         {
             Jester.jester,
-            Sidekick.sidekick,
-            Amnisiac.amnisiac,
-            Jackal.jackal,
+            Jackal.sidekick,
             Arsonist.arsonist,
             Swooper.swooper,
             Vulture.vulture,
             Werewolf.werewolf,
             Lawyer.lawyer,
             Executioner.executioner,
+            Witness.player,
+            Specter.player,
             Thief.thief,
             Juggernaut.juggernaut,
             Doomsayer.doomsayer,
@@ -165,8 +163,9 @@ public class OnGameEndPatch
             Pavlovsdogs.pavlovsowner,
         }.Where(p => p != null));
 
+        notWinners.AddRange(Amnisiac.player.Where(p => p != null));
         notWinners.AddRange(Pavlovsdogs.pavlovsdogs.Where(p => p != null));
-        notWinners.AddRange(Jackal.formerJackals.Where(p => p != null));
+        notWinners.AddRange(Jackal.jackal.Where(p => p != null));
         notWinners.AddRange(Pursuer.pursuer.Where(p => p != null));
         notWinners.AddRange(Survivor.survivor.Where(p => p != null));
         if (Akujo.honmeiCannotFollowWin && Akujo.honmei != null) notWinners.Add(Akujo.honmei);
@@ -190,7 +189,7 @@ public class OnGameEndPatch
         var loversWin = Lovers.existingAndAlive() && (gameOverReason == (GameOverReason)CustomGameOverReason.LoversWin ||
                          (GameManager.Instance.DidHumansWin(gameOverReason) && !Lovers.existingWithKiller()));
         var teamJackalWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamJackalWin &&
-                            (Jackal.jackal.IsAlive() || Sidekick.sidekick.IsAlive());
+                            (Jackal.jackal.Any(x => x.IsAlive()) || Jackal.sidekick.IsAlive());
         var teamPavlovsWin = gameOverReason == (GameOverReason)CustomGameOverReason.TeamPavlovsWin &&
                             (Pavlovsdogs.pavlovsowner.IsAlive() || Pavlovsdogs.pavlovsdogs.Any(p => p.IsAlive()));
         var vultureWin = Vulture.vulture != null && gameOverReason == (GameOverReason)CustomGameOverReason.VultureWin;
@@ -307,22 +306,18 @@ public class OnGameEndPatch
             // Jackal wins if nobody except jackal is alive
             AdditionalTempData.winCondition = WinCondition.JackalWin;
             TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Jackal.jackal.Data);
-            wpd.IsImpostor = false;
-            TempData.winners.Add(wpd);
-            // If there is a sidekick. The sidekick also wins
-            if (Sidekick.sidekick != null)
-            {
-                var wpdSidekick = new WinningPlayerData(Sidekick.sidekick.Data);
-                wpdSidekick.IsImpostor = false;
-                TempData.winners.Add(wpdSidekick);
-            }
-
-            foreach (var player in Jackal.formerJackals)
+            foreach (var player in Jackal.jackal)
             {
                 var wpdFormerJackal = new WinningPlayerData(player.Data);
                 wpdFormerJackal.IsImpostor = false;
                 TempData.winners.Add(wpdFormerJackal);
+            }
+            // If there is a sidekick. The sidekick also wins
+            if (Jackal.sidekick != null)
+            {
+                var wpdSidekick = new WinningPlayerData(Jackal.sidekick.Data);
+                wpdSidekick.IsImpostor = false;
+                TempData.winners.Add(wpdSidekick);
             }
         }
         else if (teamPavlovsWin)
@@ -498,6 +493,7 @@ public class OnGameEndPatch
             TempData.winners.Add(new WinningPlayerData(PartTimer.partTimer.Data));
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalPartTimerWin);
         }
+        Message($"游戏结束{AdditionalTempData.winCondition}");
         // Reset Settings
         RPCProcedure.resetVariables();
     }
@@ -1091,6 +1087,15 @@ internal class CheckEndCriteriaPatch
     }
 }
 
+[HarmonyPatch(typeof(GameManager), nameof(GameManager.RpcEndGame))]
+internal class RPCEndGamePatch
+{
+    public static void Postfix(ref GameOverReason endReason)
+    {
+        Message($"游戏结束{(CustomGameOverReason)endReason}");
+    }
+}
+
 internal class PlayerStatistics
 {
     public PlayerStatistics(ShipStatus __instance)
@@ -1157,13 +1162,13 @@ internal class PlayerStatistics
                         if (lover) impLover = true;
                     }
 
-                    if (Jackal.jackal != null && Jackal.jackal.PlayerId == playerInfo.PlayerId)
+                    if (Jackal.jackal != null && Jackal.jackal.Any(x => x.PlayerId == playerInfo.PlayerId))
                     {
                         numJackalAlive++;
                         if (lover) jackalLover = true;
                     }
 
-                    if (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == playerInfo.PlayerId)
+                    if (Jackal.sidekick != null && Jackal.sidekick.PlayerId == playerInfo.PlayerId)
                     {
                         numJackalAlive++;
                         if (lover) jackalLover = true;

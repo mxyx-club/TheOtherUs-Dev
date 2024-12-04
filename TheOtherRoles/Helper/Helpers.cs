@@ -67,7 +67,6 @@ public enum LogLevel
 public static class Helpers
 {
     public static bool zoomOutStatus;
-
     public static bool InGame => AmongUsClient.Instance != null && AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Started;
     public static bool IsCountDown => GameStartManager.InstanceExists && GameStartManager.Instance.startState == GameStartManager.StartingStates.Countdown;
     public static bool InMeeting => InGame && MeetingHud.Instance;
@@ -90,24 +89,25 @@ public static class Helpers
     /// </summary>
     public static bool hasFakeTasks(this PlayerControl player)
     {
+        if (player == Specter.player) return false;
         return player == Werewolf.werewolf ||
                player == Doomsayer.doomsayer ||
                player == Juggernaut.juggernaut ||
                player == Jester.jester ||
                player == Arsonist.arsonist ||
-               player == Jackal.jackal ||
-               player == Sidekick.sidekick ||
-               player == Pavlovsdogs.pavlovsowner ||
+               player == Witness.player ||
                player == PartTimer.partTimer ||
                player == Akujo.akujo ||
                player == Swooper.swooper ||
                player == Lawyer.lawyer ||
                player == Executioner.executioner ||
                player == Vulture.vulture ||
-               Pursuer.pursuer.Contains(player) ||
-               Survivor.survivor.Contains(player) ||
-               Pavlovsdogs.pavlovsdogs.Contains(player) ||
-               Jackal.formerJackals.Contains(player);
+               player == Jackal.sidekick ||
+               player == Pavlovsdogs.pavlovsowner ||
+               Jackal.jackal.Any(x => x == player) ||
+               Pursuer.pursuer.Any(x => x == player) ||
+               Survivor.survivor.Any(x => x == player) ||
+               Pavlovsdogs.pavlovsdogs.Any(x => x == player);
     }
 
     /// <summary>
@@ -136,10 +136,10 @@ public static class Helpers
     public static bool hasImpVision(GameData.PlayerInfo player)
     {
         return player.Role.IsImpostor
-               || (((Jackal.jackal != null && Jackal.jackal.PlayerId == player.PlayerId) || Jackal.formerJackals.Any(x => x.PlayerId == player.PlayerId)) && Jackal.hasImpostorVision)
-               || (Sidekick.sidekick != null && Sidekick.sidekick.PlayerId == player.PlayerId && Sidekick.hasImpostorVision)
+               || (Jackal.jackal.Any(p => p.PlayerId == player.PlayerId) && Jackal.hasImpostorVision)
+               || (Jackal.sidekick != null && Jackal.sidekick.PlayerId == player.PlayerId && Jackal.hasImpostorVision)
                || (Pavlovsdogs.pavlovsowner != null && Pavlovsdogs.pavlovsowner.PlayerId == player.PlayerId && Pavlovsdogs.hasImpostorVision)
-               || (Pavlovsdogs.pavlovsdogs != null && Pavlovsdogs.pavlovsdogs.Any(p => p.PlayerId == player.PlayerId) && Pavlovsdogs.hasImpostorVision)
+               || (Pavlovsdogs.pavlovsdogs.Any(p => p.PlayerId == player.PlayerId) && Pavlovsdogs.hasImpostorVision)
                || (Spy.spy != null && Spy.spy.PlayerId == player.PlayerId && Spy.hasImpostorVision)
                || (Juggernaut.juggernaut != null && Juggernaut.juggernaut.PlayerId == player.PlayerId && Juggernaut.hasImpostorVision)
                || (Jester.jester != null && Jester.jester.PlayerId == player.PlayerId && Jester.hasImpostorVision)
@@ -174,11 +174,11 @@ public static class Helpers
         {
             roleCouldUse = true;
         }
-        else if (Jackal.canUseVents && Jackal.jackal != null && Jackal.jackal == player)
+        else if (Jackal.canUseVents && Jackal.jackal != null && Jackal.jackal.Any(x => x == player))
         {
             roleCouldUse = true;
         }
-        else if (Sidekick.canUseVents && Sidekick.sidekick != null && Sidekick.sidekick == player)
+        else if (Jackal.canUseVents && Jackal.sidekick != null && Jackal.sidekick == player)
         {
             roleCouldUse = true;
         }
@@ -253,7 +253,7 @@ public static class Helpers
     public static bool isNeutral(PlayerControl player)
     {
         var roleInfo = RoleInfo.getRoleInfoForPlayer(player, false).FirstOrDefault();
-        return roleInfo != null && roleInfo.roleTeam == RoleType.Neutral;
+        return roleInfo != null && roleInfo.roleType == RoleType.Neutral;
     }
 
     public static bool isKillerNeutral(PlayerControl player)
@@ -263,17 +263,17 @@ public static class Helpers
                 player == Werewolf.werewolf ||
                 player == Swooper.swooper ||
                 player == Arsonist.arsonist ||
-                player == Jackal.jackal ||
-                player == Sidekick.sidekick ||
+                player == Jackal.sidekick ||
                 player == Pavlovsdogs.pavlovsowner ||
+                Jackal.jackal.Contains(player) ||
                 Pavlovsdogs.pavlovsdogs.Contains(player));
     }
 
     public static bool isEvilNeutral(PlayerControl player)
     {
         return isNeutral(player) &&
-                player != Amnisiac.amnisiac &&
                 player != PartTimer.partTimer &&
+                !Amnisiac.player.Contains(player) &&
                 !Pursuer.pursuer.Contains(player) &&
                 !Survivor.survivor.Contains(player);
     }
@@ -345,7 +345,7 @@ public static class Helpers
     {
         var roleCouldUse = false;
         if (ModOption.disableSabotage) return false;
-        if (Jackal.canSabotage && (player == Jackal.jackal || player == Sidekick.sidekick || Jackal.formerJackals.Contains(player)) && !ModOption.disableSabotage)
+        if (Jackal.canSabotage && (Jackal.jackal.Contains(player) || player == Jackal.sidekick) && !ModOption.disableSabotage)
             roleCouldUse = true;
         if (Pavlovsdogs.canSabotage && (player == Pavlovsdogs.pavlovsowner || Pavlovsdogs.pavlovsdogs.Any(p => p == player)) && !ModOption.disableSabotage)
             roleCouldUse = true;
@@ -475,7 +475,7 @@ public static class Helpers
             // set to morphed player
             else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0) text = Morphling.morphTarget.Data.PlayerName;
             else if (target == Swooper.swooper && Swooper.isInvisable) text = defaultText;
-            else if (target == Jackal.jackal && Jackal.isInvisable) text = defaultText;
+            else if (Jackal.jackal.Any(p => p == target) && Jackal.isInvisable) text = defaultText;
             //else if (target == PhantomRole.phantomRole) text = defaultText;
             else if (target == null) text = defaultText; // Set text to defaultText if no target
             else text = target.Data.PlayerName; // Set text to playername
@@ -630,7 +630,7 @@ public static class Helpers
         var allRoleInfo = new List<RoleInfo>();
         foreach (var role in RoleInfo.allRoleInfos)
         {
-            if (role.roleTeam == RoleType.Modifier) continue;
+            if (role.roleType is RoleType.Modifier or RoleType.GhostRole or RoleType.Special) continue;
             allRoleInfo.Add(role);
         }
         return allRoleInfo;
@@ -639,7 +639,7 @@ public static class Helpers
     public static List<RoleInfo> onlineRoleInfos()
     {
         var role = new List<RoleInfo>();
-        role.AddRange(CachedPlayer.AllPlayers.Select(n => RoleInfo.getRoleInfoForPlayer(n, false)).SelectMany(n => n));
+        role.AddRange(CachedPlayer.AllPlayers.Select(n => RoleInfo.getRoleInfoForPlayer(n, false, false)).SelectMany(x => x));
         return role;
     }
 
@@ -651,12 +651,15 @@ public static class Helpers
         return null;
     }
 
-    public static Dictionary<byte, PlayerControl> allPlayersById()
+    public static bool isSabotageActive()
     {
-        var res = new Dictionary<byte, PlayerControl>();
-        foreach (PlayerControl player in CachedPlayer.AllPlayers)
-            res.Add(player.PlayerId, player);
-        return res;
+        foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
+            if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
+                task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic ||
+                task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
+                || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
+                return true;
+        return false;
     }
 
     public static void handleVampireBiteOnBodyReport()
@@ -755,7 +758,7 @@ public static class Helpers
             RoleType.Impostor => Palette.ImpostorRed,
             RoleType.Neutral => Color.gray,
             RoleType.Modifier => Color.yellow,
-            RoleType.Special => Palette.Purple,
+            RoleType.GhostRole => new Color32(159, 127, 209, byte.MaxValue),
             _ => Palette.White
         };
     }
@@ -939,7 +942,7 @@ public static class Helpers
             return true; // No names are visible
         if (SurveillanceMinigamePatch.nightVisionIsActive) return true;
         if (Ninja.isInvisble && Ninja.ninja == target) return true;
-        if (Jackal.isInvisable && Jackal.jackal == target) return true;
+        if (Jackal.isInvisable && Jackal.jackal.Any(p => p == target)) return true;
         if (Swooper.isInvisable && Swooper.swooper == target) return true;
         if (ModOption.hideOutOfSightNametags && InGame && source.IsAlive() && !isFungle
             && PhysicsHelpers.AnythingBetween(localPlayer.GetTruePosition(), target.GetTruePosition(), Constants.ShadowMask, false))
@@ -948,15 +951,13 @@ public static class Helpers
         if (!ModOption.hidePlayerNames) return false; // All names are visible
         if (source == null || target == null) return true;
         if (source == target) return false; // Player sees his own name
-        if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.spy ||
-                                            (target == Sidekick.sidekick && Sidekick.wasTeamRed) ||
-                                            (target == Jackal.jackal && Jackal.wasTeamRed)))
+        if (source.Data.Role.IsImpostor && (target.Data.Role.IsImpostor || target == Spy.spy))
             return false; // Members of team Impostors see the names of Impostors/Spies
         if ((source == Lovers.lover1 || source == Lovers.lover2) &&
             (target == Lovers.lover1 || target == Lovers.lover2))
             return false; // Members of team Lovers see the names of each other
-        if ((source == Jackal.jackal || source == Sidekick.sidekick)
-            && (target == Jackal.jackal || target == Sidekick.sidekick))
+        if ((Jackal.jackal.Any(p => p == source) || source == Jackal.sidekick)
+            && (Jackal.jackal.Any(p => p == target) || target == Jackal.sidekick))
             return false; // Members of team Jackal see the names of each other
         if ((source == Pavlovsdogs.pavlovsowner || Pavlovsdogs.pavlovsdogs.Any(x => x == target))
             && (target == Pavlovsdogs.pavlovsowner || Pavlovsdogs.pavlovsdogs.Any(x => x == target)))
@@ -1289,7 +1290,7 @@ public static class Helpers
                     CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.MimicMimicRole, SendOption.Reliable);
                 writerMimic.Write(target.PlayerId);
                 AmongUsClient.Instance.FinishRpcImmediately(writerMimic);
-                RPCProcedure.mimicMimicRole(target.PlayerId);
+                Mimic.MimicRole(target.PlayerId);
             }
 
             MurderPlayer(killer, target, showAnimation);

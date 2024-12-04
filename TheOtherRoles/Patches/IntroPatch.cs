@@ -45,7 +45,7 @@ internal class IntroCutsceneOnDestroyPatch
                 player.gameObject.SetActive(false);
 
                 //游戏开始时重置cd
-                CachedPlayer.LocalPlayer.PlayerControl.SetKillTimer(ModOption.ButtonCooldown);
+                CustomButton.ResetAllCooldowns(ModOption.ButtonCooldown);
 
                 if (CachedPlayer.LocalPlayer.PlayerControl == Arsonist.arsonist && p != Arsonist.arsonist)
                 {
@@ -208,9 +208,9 @@ internal class IntroPatch
     public static void setupIntroTeam(IntroCutscene __instance, ref List<PlayerControl> yourTeam)
     {
         var infos = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl);
-        var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
+        var roleInfo = infos.FirstOrDefault(info => info.roleType != RoleType.Modifier);
         if (roleInfo == null) return;
-        if (roleInfo.roleTeam == RoleType.Neutral)
+        if (roleInfo.roleType == RoleType.Neutral)
         {
             var neutralColor = new Color32(76, 84, 78, 255);
             __instance.BackgroundBar.material.color = roleInfo.color;
@@ -264,8 +264,8 @@ internal class IntroPatch
         {
             // Don't override the intro of the vanilla roles
             var infos = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl);
-            var roleInfo = infos.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
-            var modifierInfo = infos.FirstOrDefault(info => info.roleTeam == RoleType.Modifier);
+            var roleInfo = infos.FirstOrDefault(info => info.roleType != RoleType.Modifier);
+            var modifierInfo = infos.FirstOrDefault(info => info.roleType == RoleType.Modifier);
 
             __instance.RoleBlurbText.text = "";
             if (roleInfo != null)

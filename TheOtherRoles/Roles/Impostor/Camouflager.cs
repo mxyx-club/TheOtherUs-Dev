@@ -23,7 +23,7 @@ public static class Camouflager
         {
             if ((p == Ninja.ninja && Ninja.isInvisble)
                 || (p == Swooper.swooper && Swooper.isInvisable)
-                || (p == Jackal.jackal && Jackal.isInvisable))
+                || (Jackal.jackal.Any(x => x == p) && Jackal.isInvisable))
                 continue;
             p.setDefaultLook();
             camoComms = false;

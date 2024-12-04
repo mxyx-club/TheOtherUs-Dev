@@ -56,12 +56,12 @@ public static class Deputy
     {
         if (resetCuffs)
         {
+            handcuffedPlayers = [];
+            handcuffedKnows = [];
+            HudManagerStartPatch.setAllButtonsHandcuffedStatus(false, true);
         }
         deputy = null;
         currentTarget = null;
-        handcuffedPlayers = [];
-        handcuffedKnows = [];
-        HudManagerStartPatch.setAllButtonsHandcuffedStatus(false, true);
         promotesToSheriff = CustomOptionHolder.deputyGetsPromoted.GetSelection();
         remainingHandcuffs = CustomOptionHolder.deputyNumberOfHandcuffs.GetFloat();
         handcuffCooldown = CustomOptionHolder.deputyHandcuffCooldown.GetFloat();

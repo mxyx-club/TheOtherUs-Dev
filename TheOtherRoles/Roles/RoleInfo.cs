@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace TheOtherRoles.Roles;
 
-public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam, bool isGuessable = false)
+public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType, bool isGuessable = false)
 {
     public string Name => GetString(nameKey);
     public string IntroDescription => GetString(nameKey + "IntroDesc");
@@ -16,7 +16,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
     public Color color = color;
     public RoleId roleId = roleId;
-    public RoleType roleTeam = roleTeam;
+    public RoleType roleType = roleType;
     public bool isGuessable = isGuessable;
     private readonly string nameKey = name;
 
@@ -54,7 +54,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
     public static RoleInfo pursuer = new("Pursuer", Pursuer.color, RoleId.Pursuer, RoleType.Neutral);
     public static RoleInfo partTimer = new("PartTimer", PartTimer.color, RoleId.PartTimer, RoleType.Neutral);
     public static RoleInfo jackal = new("Jackal", Jackal.color, RoleId.Jackal, RoleType.Neutral);
-    public static RoleInfo sidekick = new("Sidekick", Sidekick.color, RoleId.Sidekick, RoleType.Neutral);
+    public static RoleInfo sidekick = new("Sidekick", Jackal.color, RoleId.Sidekick, RoleType.Neutral);
     public static RoleInfo pavlovsowner = new("Pavlovsowner", Pavlovsdogs.color, RoleId.Pavlovsowner, RoleType.Neutral);
     public static RoleInfo pavlovsdogs = new("Pavlovsdogs", Pavlovsdogs.color, RoleId.Pavlovsdogs, RoleType.Neutral);
     public static RoleInfo swooper = new("Swooper", Swooper.color, RoleId.Swooper, RoleType.Neutral);
@@ -124,6 +124,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
     public static RoleInfo shifter = new("Shifter", Color.yellow, RoleId.Shifter, RoleType.Modifier);
 
     public static RoleInfo ghostEngineer = new("GhostEngineer", GhostEngineer.color, RoleId.GhostEngineer, RoleType.GhostRole);
+    public static RoleInfo specter = new("Specter", Specter.color, RoleId.Specter, RoleType.GhostRole);
 
     public static List<RoleInfo> allRoleInfos =
     [
@@ -229,7 +230,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         chameleon,
         shifter,
 
-        ghostEngineer
+        ghostEngineer,
+        specter,
     ];
 
     public static List<RoleInfo> getRoleInfoForPlayer(PlayerControl p, bool showModifier = true, bool showGhost = true)
@@ -305,7 +307,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (p == Terrorist.terrorist) infos.Add(terrorist);
         if (p == Detective.detective) infos.Add(detective);
         if (p == TimeMaster.timeMaster) infos.Add(timeMaster);
-        if (p == Amnisiac.amnisiac) infos.Add(amnisiac);
         if (p == Veteran.veteran) infos.Add(veteran);
         if (p == Grenadier.grenadier) infos.Add(grenadier);
         if (p == Medic.medic) infos.Add(medic);
@@ -315,8 +316,6 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (p == Hacker.hacker) infos.Add(hacker);
         if (p == Tracker.tracker) infos.Add(tracker);
         if (p == Snitch.snitch) infos.Add(snitch);
-        if (p == Jackal.jackal || (Jackal.formerJackals != null && Jackal.formerJackals.Any(x => x.PlayerId == p.PlayerId))) infos.Add(jackal);
-        if (p == Sidekick.sidekick) infos.Add(sidekick);
         if (p == Spy.spy) infos.Add(spy);
         if (p == SecurityGuard.securityGuard) infos.Add(securityGuard);
         if (p == Arsonist.arsonist) infos.Add(arsonist);
@@ -342,14 +341,18 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (p == Juggernaut.juggernaut) infos.Add(juggernaut);
         if (p == Doomsayer.doomsayer) infos.Add(doomsayer);
         if (p == Akujo.akujo) infos.Add(akujo);
+        if (p == Jackal.sidekick) infos.Add(sidekick);
         if (p == Pavlovsdogs.pavlovsowner) infos.Add(pavlovsowner);
-        if (p == Pavlovsdogs.pavlovsdogs.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pavlovsdogs);
+        if (Jackal.jackal.Any(x => x != null && x.PlayerId == p.PlayerId)) infos.Add(jackal);
+        if (Amnisiac.player.Any(x => x.PlayerId == p.PlayerId)) infos.Add(amnisiac);
+        if (Pavlovsdogs.pavlovsdogs.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pavlovsdogs);
         if (Pursuer.pursuer.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pursuer);
         if (Survivor.survivor.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
 
         if (showGhost)
         {
             if (p == GhostEngineer.player) infos.Add(ghostEngineer);
+            if (p == Specter.player) infos.Add(specter);
         }
 
         if (infos.Count == count)
@@ -368,11 +371,11 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
 
         if (onlyGhostRole)
         {
-            var ghostRoleInfo = getRoleInfoForPlayer(p, false, true).FirstOrDefault(x => x.roleTeam == RoleType.GhostRole);
+            var ghostRoleInfo = getRoleInfoForPlayer(p, false, true).FirstOrDefault(x => x.roleType == RoleType.GhostRole);
 
             if (p.Data.IsDead && ghostRoleInfo != null)
             {
-                roleName = string.Join(" ", getRoleInfoForPlayer(p, false, true).Where(x => x.roleTeam is RoleType.GhostRole or RoleType.Modifier)
+                roleName = string.Join(" ", getRoleInfoForPlayer(p, false, true).Where(x => x.roleType is RoleType.GhostRole or RoleType.Modifier)
                     .Select(x => useColors ? cs(x.color, x.Name) : x.Name).ToArray());
             }
         }
@@ -383,7 +386,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
         if (Executioner.target != null && p.PlayerId == Executioner.target.PlayerId &&
             CachedPlayer.LocalPlayer.PlayerControl != Executioner.target) roleName += useColors ? cs(Executioner.color, " §") : " §";
 
-        if (p == Jackal.jackal && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
+        if (Jackal.jackal.Any(x => x == p && x.IsAlive()) && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
 
         if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
 
@@ -409,6 +412,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleTeam
                     roleName = cs(Warlock.color, "(被下咒) ") + roleName;
                 if (p == Ninja.ninjaMarked)
                     roleName = cs(Ninja.color, "(被标记) ") + roleName;
+                if (p == Thief.formerThief)
+                    roleName += cs(Thief.color, " (窃)");
                 if (Pursuer.blankedList.Contains(p) && !p.Data.IsDead)
                     roleName = cs(Pursuer.color, "(被塞空包弹) ") + roleName;
                 if (Witch.futureSpelled.Contains(p) && !MeetingHud.Instance) // This is already displayed in meetings!

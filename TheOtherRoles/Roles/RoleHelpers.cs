@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using MonoMod.Utils;
@@ -32,7 +33,8 @@ public static class RoleHelpers
     }
 
     public static Dictionary<byte, byte[]> blockedRolePairings = new();
-    public static Dictionary<RoleId, int> GhostRoles = new();
+    public static Dictionary<AssignType, List<Assignment>> GhostRoles = new();
+    public static List<PlayerControl> GhostPlayer = new();
 
     public static void blockRole()
     {
@@ -166,10 +168,18 @@ public static class RoleHelpers
             { RoleId.Watcher, CustomOptionHolder.modifierWatcher.GetSelection()}
         });
         GhostRoles.Clear();
-        GhostRoles.AddRange(new()
+        GhostPlayer.Clear();
+
+        GhostRoles[AssignType.Crewmate] = new List<Assignment>
         {
-            { RoleId.GhostEngineer, CustomOptionHolder.ghostEngineerSpawnRate.GetSelection()}
-        });
+            new(RoleId.GhostEngineer, CustomOptionHolder.ghostEngineerSpawnRate.GetSelection()),
+        };
+
+
+        GhostRoles[AssignType.otherNeutral] = new List<Assignment>
+        {
+            new(RoleId.Specter, CustomOptionHolder.specterSpawnRate.GetSelection())
+        };
     }
 
     public static void clearAndReloadRoles()
@@ -205,7 +215,6 @@ public static class RoleHelpers
         Vampire.clearAndReload();
         Snitch.clearAndReload();
         Jackal.clearAndReload();
-        Sidekick.clearAndReload();
         Pavlovsdogs.clearAndReload();
         Eraser.clearAndReload();
         Spy.clearAndReload();
@@ -272,6 +281,7 @@ public static class RoleHelpers
         Specoality.clearAndReload();
 
         GhostEngineer.ClearAndReload();
+        Specter.ClearAndReload();
 
         // Gamemodes
         HandleGuesser.clearAndReload();
@@ -289,39 +299,93 @@ public static class RoleHelpers
             if (player.IsAlive() || player == null) return false;
             return true;
         }
+
+        public static bool otherNeutral(PlayerControl player)
+        {
+            if (isNeutral(player) &&
+                       player != Jackal.sidekick &&
+                       player != Pavlovsdogs.pavlovsowner &&
+                       player != Akujo.akujo &&
+                       player != Lawyer.lawyer &&
+                       !Pavlovsdogs.pavlovsdogs.Contains(player) &&
+                       !Jackal.jackal.Contains(player) &&
+                       (player != PartTimer.partTimer || PartTimer.target != null))
+                return true;
+            return false;
+        }
+
         public static void Postfix([HarmonyArgument(0)] PlayerControl player)
         {
-            if (player.IsAlive()) return;
-            int RolesCount = GhostRoles.Sum(role => role.Value);
-            if (RolesCount == 0) return;
+            if (GhostPlayer.Contains(player)) return;
 
-            if (player.isCrew() && GhostRoles.Any(x => x.Value > 0))
+            if (player.isCrew()) AssignRole(player, AssignType.Crewmate);
+
+            if (otherNeutral(player)) AssignRole(player, AssignType.otherNeutral);
+        }
+
+        private static void AssignRole(PlayerControl player, AssignType assignType)
+        {
+            if (!GhostRoles.TryGetValue(assignType, out var roles) || roles.All(x => x.SpawnRate == 0)) return;
+            roles = roles.OrderBy(x => Guid.NewGuid()).ToList();
+            foreach (var role in roles.Where(x => x.SpawnRate == 10 && !x.Assigned).ToList())
             {
-                foreach (var role in GhostRoles.Where(x => x.Value == 10))
-                {
-                    var write = StartRPC(PlayerControl.LocalPlayer, CustomRPC.SetGhostRole);
-                    write.Write(player.PlayerId);
-                    write.Write((byte)role.Key);
-                    write.EndRPC();
-                    RPCProcedure.setGhostRole(player.PlayerId, (byte)role.Key);
-                    GhostRoles.Remove(role.Key);
-                    return;
-                }
+                AssignRoleToPlayer(player, role);
+                return;
+            }
 
-                foreach (var role in GhostRoles.Where(x => x.Value is > 0 and < 10))
+            int maxCount = roles.Count;
+            int count = 0;
+            while (count < maxCount)
+            {
+                bool assigned = false;
+                foreach (var role in roles.Where(x => x.SpawnRate is > 0 and < 10 && !x.Assigned).ToList())
                 {
-                    if (rnd.Next(1, 11) <= role.Value)
+                    if (rnd.Next(1, 101) <= role.SpawnRate * (10 + count))
                     {
-                        var write = StartRPC(PlayerControl.LocalPlayer, CustomRPC.SetGhostRole);
-                        write.Write(player.PlayerId);
-                        write.Write((byte)role.Key);
-                        write.EndRPC();
-                        RPCProcedure.setGhostRole(player.PlayerId, (byte)role.Key);
-                        GhostRoles.Remove(role.Key);
+                        AssignRoleToPlayer(player, role);
+                        assigned = true;
                         break;
                     }
                 }
+                if (assigned) break;
+                count++;
             }
         }
+
+        private static void AssignRoleToPlayer(PlayerControl player, Assignment role)
+        {
+            var write = StartRPC(PlayerControl.LocalPlayer, CustomRPC.SetGhostRole);
+            write.Write(player.PlayerId);
+            write.Write((byte)role.RoleId);
+            write.EndRPC();
+
+            RPCProcedure.setGhostRole(player.PlayerId, (byte)role.RoleId);
+            GhostPlayer.Add(player);
+            role.Assigned = true;
+        }
+    }
+
+    public class Assignment
+    {
+        public RoleId RoleId { get; set; }
+        public int SpawnRate { get; set; }
+        public bool Assigned { get; set; }
+
+        public Assignment(RoleId roleId, int Rate)
+        {
+            RoleId = roleId;
+            SpawnRate = Rate;
+        }
+    }
+
+    public enum AssignType
+    {
+        None,
+        Crewmate,
+        Impostor,
+        Neutral,
+        otherNeutral,
+        Custom
     }
 }
+

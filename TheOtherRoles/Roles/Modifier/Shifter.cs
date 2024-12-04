@@ -18,9 +18,9 @@ public static class Shifter
         if (shiftNeutral && shiftALLNeutra)
         {
             return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
+                       player == Jackal.sidekick ||
                        player == Pavlovsdogs.pavlovsowner ||
+                       Jackal.jackal.Any(x => x == player) || 
                        Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
                        player == Akujo.akujo ||
                        player == Lawyer.lawyer);
@@ -28,15 +28,15 @@ public static class Shifter
         else if (shiftNeutral)
         {
             return player != null && (
-                       player == Jackal.jackal ||
-                       player == Sidekick.sidekick ||
+                       player == Jackal.sidekick ||
                        player == Werewolf.werewolf ||
                        player == Lawyer.lawyer ||
                        player == Juggernaut.juggernaut ||
                        player == Akujo.akujo ||
+                       player == Swooper.swooper ||
                        player == Pavlovsdogs.pavlovsowner ||
-                       Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
-                       player == Swooper.swooper);
+                       Jackal.jackal.Any(x => x == player) ||
+                       Pavlovsdogs.pavlovsdogs.Any(x => x == player));
         }
         return player != null && isNeutral(player);
     }
@@ -172,10 +172,11 @@ public static class Shifter
             if (repeat) shiftRole(player2, player1, false);
             Prosecutor.prosecutor = player1;
         }
-        else if (Amnisiac.amnisiac != null && Amnisiac.amnisiac == player2)
+        else if (Amnisiac.player != null && Amnisiac.player.Any(x => x.PlayerId == player2.PlayerId))
         {
             if (repeat) shiftRole(player2, player1, false);
-            Amnisiac.amnisiac = player1;
+            Amnisiac.player.RemoveAll(p => p.PlayerId == player2.PlayerId);
+            Amnisiac.player.Add(player1);
         }
         else if (Jester.jester != null && Jester.jester == player2)
         {
@@ -253,6 +254,11 @@ public static class Shifter
         {
             if (repeat) shiftRole(player2, player1, false);
             Balancer.balancer = player1;
+        }
+        else if (Witness.player != null && Witness.player == player2)
+        {
+            if (repeat) shiftRole(player2, player1, false);
+            Witness.player = player1;
         }
     }
 

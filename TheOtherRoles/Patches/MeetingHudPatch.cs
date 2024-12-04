@@ -174,7 +174,8 @@ internal class MeetingHudPatch
                 var checkbox = Object.Instantiate(template, playerVoteArea.transform, true);
                 checkbox.transform.position = template.transform.position;
                 checkbox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.3f);
-                if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId))
+                if ((HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId))
+                    || (CachedPlayer.LocalPlayer.PlayerId == Mimic.mimic.PlayerId))
                     checkbox.transform.localPosition = new Vector3(-0.5f, 0.03f, -1.3f);
                 var renderer = checkbox.GetComponent<SpriteRenderer>();
                 renderer.sprite = Swapper.spriteCheck;
@@ -466,26 +467,6 @@ internal class MeetingHudPatch
                     VoterId = playerVoteArea.TargetPlayerId,
                     VotedForId = playerVoteArea.VotedFor
                 });
-                /*
-                if (Tiebreaker.tiebreaker == null || Balancer.currentAbilityUser != null || playerVoteArea.TargetPlayerId != Tiebreaker.tiebreaker.PlayerId)
-                    continue;
-
-                var tiebreakerVote = playerVoteArea.VotedFor;
-                if (swapped1 != null && swapped2 != null)
-                {
-                    if (tiebreakerVote == swapped1.TargetPlayerId) tiebreakerVote = swapped2.TargetPlayerId;
-                    else if (tiebreakerVote == swapped2.TargetPlayerId) tiebreakerVote = swapped1.TargetPlayerId;
-                }
-
-                if (potentialExiled.FindAll(x => x != null && x.PlayerId == tiebreakerVote).Count <= 0 ||
-                    (potentialExiled.Count <= 1 && !skipIsTie)) continue;
-                exiled = potentialExiled.ToArray().FirstOrDefault(v => v.PlayerId == tiebreakerVote);
-                tie = false;
-                tiebreakerHandled = true;
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.SetTiebreak, SendOption.Reliable);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.setTiebreak();*/
             }
 
             states = statesList.ToArray();
@@ -570,7 +551,8 @@ internal class MeetingHudPatch
                 Swapper.charges--;
             }
 
-            __instance.TitleText.text = FastDestroyableSingleton<TranslationController>.Instance.GetString(StringNames.MeetingVotingResults, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
+            __instance.TitleText.text = FastDestroyableSingleton<TranslationController>.Instance
+                .GetString(StringNames.MeetingVotingResults, new Il2CppReferenceArray<Il2CppSystem.Object>(0));
 
             var allNums = new Dictionary<int, int>();
             __instance.TitleText.text = Object.FindObjectOfType<TranslationController>().GetString(StringNames.MeetingVotingResults, []);
@@ -593,10 +575,9 @@ internal class MeetingHudPatch
 
                 playerVoteArea.ClearForResults();
                 var num2 = 0;
-                var mayorVotesDisplayed = 0;
                 for (var j = 0; j < states.Length; j++)
                 {
-                    if (Prosecutor.ProsecuteThisMeeting) continue;
+                    if (Prosecutor.ProsecuteThisMeeting && Prosecutor.prosecutor.IsAlive()) break;
                     var voterState = states[j];
                     var playerById = GameData.Instance.GetPlayerById(voterState.VoterId);
                     if (playerById == null)
@@ -606,57 +587,61 @@ internal class MeetingHudPatch
                     else if (i == 0 && voterState.SkippedVote && !playerById.IsDead)
                     {
                         __instance.BloopAVoteIcon(playerById, num, __instance.SkippedVoting.transform);
+
+                        if (Mayor.mayor != null && voterState.VoterId == Mayor.mayor.PlayerId && Mayor.Revealed)
+                            for (var repeat = 1; repeat < Mayor.Vote; repeat++)
+                                __instance.BloopAVoteIcon(playerById, num, __instance.SkippedVoting.transform);
+
                         num++;
                     }
                     else if (voterState.VotedForId == targetPlayerId && !playerById.IsDead)
                     {
                         __instance.BloopAVoteIcon(playerById, num2, playerVoteArea.transform);
+
+                        if (Mayor.mayor != null && voterState.VoterId == Mayor.mayor.PlayerId && Mayor.Revealed)
+                            for (var repeat = 1; repeat < Mayor.Vote; repeat++)
+                                __instance.BloopAVoteIcon(playerById, num2, playerVoteArea.transform);
+
                         num2++;
                     }
-
-                    // Mayor vote, redo this iteration to place a second vote
-                    if (Mayor.mayor == null || voterState.VoterId != (sbyte)Mayor.mayor.PlayerId
-                        || mayorVotesDisplayed >= Mayor.Vote - 1 || !Mayor.Revealed)
-                    {
-                        mayorVotesDisplayed = 0;
-                        continue;
-                    };
-                    mayorVotesDisplayed++;
-                    j--;
                 }
 
-                for (var stateIdx = 0; stateIdx < states.Length; stateIdx++)
+                for (var j = 0; j < states.Length; j++)
                 {
-                    var voteState = states[stateIdx];
-                    var playerInfo = GameData.Instance.GetPlayerById(voteState.VoterId);
+                    var voterState = states[j];
+                    var playerById = GameData.Instance.GetPlayerById(voterState.VoterId);
+
                     if (Prosecutor.prosecutor == null) continue;
-                    if (Prosecutor.prosecutor.Data.IsDead || Prosecutor.prosecutor.Data.Disconnected) continue;
+                    if (Prosecutor.prosecutor.IsDead()) continue;
                     if (Prosecutor.ProsecuteThisMeeting)
                     {
-                        if (voteState.VoterId == Prosecutor.prosecutor.PlayerId)
+                        byte targetId = playerVoteArea.TargetPlayerId;
+                        if (doSwap)
                         {
-                            if (playerInfo == null)
+                            if (playerVoteArea.TargetPlayerId == swapped2.TargetPlayerId) targetId = swapped1.TargetPlayerId;
+                            if (playerVoteArea.TargetPlayerId == swapped1.TargetPlayerId) targetId = swapped2.TargetPlayerId;
+                        }
+
+                        if (voterState.VoterId == Prosecutor.prosecutor.PlayerId)
+                        {
+                            if (playerById == null)
                             {
-                                Error(string.Format("找不到投票者的玩家信息: {0}", voteState.VoterId));
+                                Error($"找不到投票者的玩家信息: {voterState.VoterId}");
                                 Prosecutor.Prosecuted = true;
                             }
-                            else if (i == 0 && voteState.SkippedVote)
+                            else if (i == 0 && voterState.SkippedVote)
                             {
-                                __instance.BloopAVoteIcon(playerInfo, amountOfSkippedVoters, __instance.SkippedVoting.transform);
-                                __instance.BloopAVoteIcon(playerInfo, amountOfSkippedVoters, __instance.SkippedVoting.transform);
-                                __instance.BloopAVoteIcon(playerInfo, amountOfSkippedVoters, __instance.SkippedVoting.transform);
-                                __instance.BloopAVoteIcon(playerInfo, amountOfSkippedVoters, __instance.SkippedVoting.transform);
-                                __instance.BloopAVoteIcon(playerInfo, amountOfSkippedVoters, __instance.SkippedVoting.transform);
+                                for (var repeat = 0; repeat < 6; repeat++)
+                                    __instance.BloopAVoteIcon(playerById, allNums[i], playerVoteArea.transform);
+
                                 amountOfSkippedVoters += 6;
                                 Prosecutor.Prosecuted = true;
                             }
-                            else if (voteState.VotedForId == playerVoteArea.TargetPlayerId)
+                            else if (voterState.VotedForId == targetId)
                             {
-                                __instance.BloopAVoteIcon(playerInfo, allNums[i], playerVoteArea.transform);
-                                __instance.BloopAVoteIcon(playerInfo, allNums[i], playerVoteArea.transform);
-                                __instance.BloopAVoteIcon(playerInfo, allNums[i], playerVoteArea.transform);
-                                __instance.BloopAVoteIcon(playerInfo, allNums[i], playerVoteArea.transform);
-                                __instance.BloopAVoteIcon(playerInfo, allNums[i], playerVoteArea.transform);
+                                for (var repeat = 0; repeat < 6; repeat++)
+                                    __instance.BloopAVoteIcon(playerById, allNums[i], playerVoteArea.transform);
+
                                 allNums[i] += 6;
                                 Prosecutor.Prosecuted = true;
                             }
@@ -802,7 +787,7 @@ internal class MeetingHudPatch
                     {
                         var timeBeforeMeeting = (float)(DateTime.UtcNow - entry.time).TotalMilliseconds / 1000;
                         msg += Portalmaker.logShowsTime ? $"{(int)timeBeforeMeeting} 秒前: " : "";
-                        msg = msg + $"{entry.name} 使用了星门\n";
+                        msg += $"{entry.name} 使用了星门\n";
                     }
 
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Portalmaker.portalmaker, $"{msg}");
@@ -925,7 +910,7 @@ internal class MeetingHudPatch
         {
             Message("会议开始");
             shookAlready = false;
-            if (CachedPlayer.LocalPlayer.IsDead) CanSeeRoleInfo = true;
+            if (CachedPlayer.LocalPlayer.IsDead && Specter.player != PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
             // Remove first kill shield
             firstKillPlayer = null;
 

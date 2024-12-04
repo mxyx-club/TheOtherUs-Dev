@@ -61,8 +61,7 @@ public static class Medium
                 infos.Add(SpecialMediumInfo.ImpostorTeamkill);
         }
 
-        if (target == Sidekick.sidekick &&
-            (killer == Jackal.jackal || Jackal.formerJackals.Any(x => x.PlayerId == killer.PlayerId)))
+        if (target == Jackal.sidekick && Jackal.jackal.Any(x => x.PlayerId == killer.PlayerId))
             infos.Add(SpecialMediumInfo.JackalKillsSidekick);
         if (target == Lawyer.lawyer && killer == Lawyer.target) infos.Add(SpecialMediumInfo.LawyerKilledByClient);
         if (Medium.target.wasCleaned) infos.Add(SpecialMediumInfo.BodyCleaned);

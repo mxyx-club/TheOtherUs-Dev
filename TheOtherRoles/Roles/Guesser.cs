@@ -240,13 +240,16 @@ public static class Guesser
 
             if (CachedPlayer.LocalId == Doomsayer.doomsayer?.PlayerId)
             {
-                if (!Doomsayer.canGuessImpostor && roleInfo.roleTeam == RoleType.Impostor)
+                if (!Doomsayer.canGuessImpostor && roleInfo.roleType == RoleType.Impostor)
                     continue;
-                if (!Doomsayer.canGuessNeutral && roleInfo.roleTeam == RoleType.Neutral)
+                if (!Doomsayer.canGuessNeutral && roleInfo.roleType == RoleType.Neutral)
                     continue;
             }
 
-            if (roleInfo.roleTeam == RoleType.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
+            if (roleInfo.roleType == RoleType.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
+                continue;
+
+            if (roleInfo.roleType == RoleType.GhostRole)
                 continue;
 
             // remove all roles that cannot spawn due to the settings from the ui.
@@ -285,7 +288,8 @@ public static class Guesser
 
         void CreateRole(RoleInfo roleInfo = null)
         {
-            RoleType team = roleInfo?.roleTeam ?? RoleType.Crewmate;
+            if (roleInfo.roleType is RoleType.GhostRole or RoleType.Special) return;
+            RoleType team = roleInfo?.roleType ?? RoleType.Crewmate;
             //Color color = roleInfo?.color ?? Color.white;
             //RoleId role = roleInfo?.roleId ?? RoleId.Crewmate;
 

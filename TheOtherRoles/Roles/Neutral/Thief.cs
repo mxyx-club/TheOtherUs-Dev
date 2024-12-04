@@ -1,4 +1,8 @@
-﻿using System.Linq;
+﻿using System.Collections.Generic;
+using System.Linq;
+using AmongUs.GameOptions;
+using TheOtherRoles.Buttons;
+using TheOtherRoles.Utilities;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
@@ -39,8 +43,8 @@ public static class Thief
     public static bool tiefCanKill(PlayerControl target, PlayerControl killer)
     {
         return killer == thief && (target.Data.Role.IsImpostor ||
-            target == Jackal.jackal ||
-            target == Sidekick.sidekick ||
+            Jackal.jackal.Any(x => x == target) ||
+            target == Jackal.sidekick ||
             target == Werewolf.werewolf ||
             target == Juggernaut.juggernaut ||
             target == Swooper.swooper ||
@@ -50,4 +54,114 @@ public static class Thief
             (canKillDeputy && target == Deputy.deputy) ||
             (canKillVeteran && target == Veteran.veteran));
     }
+
+    public static void StealsRole(byte playerId)
+    {
+        var target = playerById(playerId);
+        var thief = Thief.thief;
+        if (target == null) return;
+        if (target == Sheriff.sheriff) Sheriff.sheriff = thief;
+        if (target == Deputy.deputy) Deputy.deputy = thief;
+        if (target == Veteran.veteran) Veteran.veteran = thief;
+        if (Jackal.jackal.Any(x => x == target))
+        {
+            Jackal.jackal.Add(thief);
+        }
+
+        if (target == Jackal.sidekick)
+        {
+            Jackal.sidekick = thief;
+            Jackal.jackal.Add(target);
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+                RPCProcedure.setGuesserGm(thief.PlayerId);
+        }
+        if (target == Pavlovsdogs.pavlovsowner)
+        {
+            Pavlovsdogs.pavlovsdogs.Add(target);
+            Pavlovsdogs.pavlovsowner = thief;
+            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
+                RPCProcedure.setGuesserGm(thief.PlayerId);
+        }
+        if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))
+        {
+            Pavlovsdogs.pavlovsdogs.Add(thief);
+        }
+        if (target == Poucher.poucher && !Poucher.spawnModifier) Poucher.poucher = thief;
+        if (target == Butcher.butcher) Butcher.butcher = thief;
+        if (target == Morphling.morphling) Morphling.morphling = thief;
+        if (target == Camouflager.camouflager) Camouflager.camouflager = thief;
+        if (target == Vampire.vampire) Vampire.vampire = thief;
+        if (target == Eraser.eraser) Eraser.eraser = thief;
+        if (target == Trickster.trickster) Trickster.trickster = thief;
+        if (target == Gambler.gambler) Gambler.gambler = thief;
+        if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
+        if (target == Warlock.warlock) Warlock.warlock = thief;
+        if (target == Grenadier.grenadier) Grenadier.grenadier = thief;
+        if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
+        if (target == Witch.witch)
+        {
+            Witch.witch = thief;
+            if (MeetingHud.Instance)
+                if (Witch.witchVoteSavesTargets) // In a meeting, if the thief guesses the witch, all targets are saved or no target is saved.
+                    Witch.futureSpelled = new List<PlayerControl>();
+                else // If thief kills witch during the round, remove the thief from the list of spelled people, keep the rest
+                    Witch.futureSpelled.RemoveAll(x => x.PlayerId == thief.PlayerId);
+        }
+
+        if (target == Ninja.ninja) Ninja.ninja = thief;
+        if (target == Escapist.escapist) Escapist.escapist = thief;
+        if (target == Terrorist.terrorist) Terrorist.terrorist = thief;
+        if (target == Bomber.bomber) Bomber.bomber = thief;
+        if (target == Miner.miner) Miner.miner = thief;
+        if (target == Undertaker.undertaker) Undertaker.undertaker = thief;
+        if (target == Mimic.mimic)
+        {
+            Mimic.mimic = thief;
+            Mimic.hasMimic = false;
+        }
+        if (target == Yoyo.yoyo)
+        {
+            Yoyo.yoyo = thief;
+            Yoyo.markedLocation = null;
+        }
+        if (target.Data.Role.IsImpostor)
+        {
+            RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
+            FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Thief.thief.killTimer,
+                GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
+        }
+
+        if (target == Werewolf.werewolf)
+        {
+            Survivor.survivor.Add(target);
+            Werewolf.werewolf = thief;
+        }
+        if (target == Arsonist.arsonist)
+        {
+            Survivor.survivor.Add(target);
+            Arsonist.arsonist = thief;
+        }
+        if (target == Juggernaut.juggernaut)
+        {
+            Survivor.survivor.Add(target);
+            Juggernaut.juggernaut = thief;
+        }
+        if (target == Swooper.swooper)
+        {
+            Survivor.survivor.Add(target);
+            Swooper.swooper = thief;
+        }
+
+        if (target == Deputy.deputy) Deputy.deputy = thief;
+        if (target == Veteran.veteran) Veteran.veteran = thief;
+        if (target == Blackmailer.blackmailer) Blackmailer.blackmailer = thief;
+        if (target == EvilTrapper.evilTrapper) EvilTrapper.evilTrapper = thief;
+
+        if (Lawyer.lawyer != null && target == Lawyer.target)
+            Lawyer.target = thief;
+        if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
+        Thief.clearAndReload();
+        Thief.formerThief = thief; // After clearAndReload, else it would get reset...
+    }
+
 }

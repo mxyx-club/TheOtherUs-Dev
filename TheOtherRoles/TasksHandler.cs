@@ -31,7 +31,7 @@ public static class TasksHandler
         {
             return !(playerInfo.Object && playerInfo.Object.hasAliveKillingLover())
                 && playerInfo.PlayerId != Thief.thief?.PlayerId
-                && playerInfo.PlayerId != Amnisiac.amnisiac?.PlayerId
+                && !Amnisiac.player.Any(x => x.PlayerId == playerInfo.PlayerId)
                 && playerInfo.PlayerId != Akujo.honmei?.PlayerId;
         }
 
@@ -39,7 +39,7 @@ public static class TasksHandler
         {
             var totalTasks = 0;
             var completedTasks = 0;
-            //任务结算
+
             foreach (var playerInfo in GameData.Instance.AllPlayers.GetFastEnumerator())
             {
                 if (!ShouldCountTasks(playerInfo))

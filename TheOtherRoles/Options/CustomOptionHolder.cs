@@ -1,3 +1,5 @@
+using TheOtherRoles.Roles.Ghost;
+using TheOtherRoles.Roles.Neutral;
 using UnityEngine;
 using static TheOtherRoles.Options.CustomOption;
 using Types = TheOtherRoles.Options.CustomOption.CustomOptionType;
@@ -124,7 +126,6 @@ public class CustomOptionHolder
     public static CustomOption jackalCanUseVents;
     public static CustomOption jackalCanUseSabo;
     public static CustomOption jackalCanCreateSidekick;
-    public static CustomOption jackalCanImpostorFindSidekick;
     public static CustomOption sidekickPromotesToJackal;
     public static CustomOption sidekickCanKill;
     public static CustomOption sidekickCanUseVents;
@@ -227,6 +228,9 @@ public class CustomOptionHolder
     public static CustomOption engineerHighlightForTeamJackal;
 
     public static CustomOption ghostEngineerSpawnRate;
+
+    public static CustomOption specterSpawnRate;
+    public static CustomOption specterResetRole;
 
     public static CustomOption sheriffSpawnRate;
     public static CustomOption sheriffMisfireKills;
@@ -382,6 +386,8 @@ public class CustomOptionHolder
     public static CustomOption executionerCanCallEmergency;
     public static CustomOption executionerPromotesToLawyer;
     public static CustomOption executionerOnTargetDead;
+
+    public static CustomOption witnessSpawnRate;
 
     public static CustomOption balancerSpawnRate;
     public static CustomOption balancerCount;
@@ -900,6 +906,9 @@ public class CustomOptionHolder
 
         //-------------------------- Neutral Options 20000-29999 -------------------------- //
 
+        specterSpawnRate = Create(50020, Types.Neutral, cs(Specter.color, "SpecterOptions"), rates, null, true);
+        specterResetRole = Create(50021, Types.Neutral, "amnisiacResetRole", true, specterSpawnRate);
+
         survivorSpawnRate = Create(20280, Types.Neutral, cs(Survivor.color, "Survivor"), rates, null, true);
         survivorVestEnable = Create(20281, Types.Neutral, "survivorVestEnable", true, survivorSpawnRate);
         survivorVestNumber = Create(20282, Types.Neutral, "survivorVestNumber", 5f, 1f, 20f, 1f, survivorVestEnable);
@@ -930,7 +939,6 @@ public class CustomOptionHolder
         jackalCanCreateSidekick = Create(20135, Types.Neutral, cs(Jackal.color, "jackalCanCreateSidekick"), false, jackalSpawnRate);
         jackalCreateSidekickCooldown = Create(20136, Types.Neutral, "jackalCreateSidekickCooldown", 25f, 10f, 60f, 2.5f, jackalCanCreateSidekick);
         jackalkillFakeImpostor = Create(20145, Types.Neutral, cs(Palette.ImpostorRed, "jackalkillFakeImpostor"), false, jackalCanCreateSidekick);
-        jackalCanImpostorFindSidekick = Create(20137, Types.Neutral, cs(Palette.ImpostorRed, "jackalCanImpostorFindSidekick"), true, jackalCanCreateSidekick);
         sidekickCanKill = Create(20138, Types.Neutral, "sidekickCanKill", true, jackalCanCreateSidekick);
         sidekickCanUseVents = Create(20139, Types.Neutral, "sidekickCanUseVents", true, jackalCanCreateSidekick);
         sidekickPromotesToJackal = Create(20140, Types.Neutral, "sidekickPromotesToJackal", false, jackalCanCreateSidekick);
@@ -1001,6 +1009,8 @@ public class CustomOptionHolder
         partTimerDeathTurn = Create(20292, Types.Neutral, "partTimerDeathTurn", 2, 1, 6, 1, partTimerSpawnRate);
         partTimerKnowsRole = Create(20293, Types.Neutral, "partTimerIsCheckTargetRole", true, partTimerSpawnRate);
 
+        witnessSpawnRate = Create(20301, Types.Neutral, cs(Witness.color, "Witness"), rates, null, true);
+
         doomsayerSpawnRate = Create(20221, Types.Neutral, cs(Doomsayer.color, "Doomsayer"), rates, null, true);
         doomsayerCooldown = Create(20222, Types.Neutral, "doomsayerCooldown", 20f, 2.5f, 60f, 2.5f, doomsayerSpawnRate);
         doomsayerHasMultipleShotsPerMeeting = Create(20223, Types.Neutral, "doomsayerHasMultipleShotsPerMeeting", true, doomsayerSpawnRate);
@@ -1029,7 +1039,7 @@ public class CustomOptionHolder
 
         //-------------------------- Crewmate Options 30000-39999 -------------------------- //
 
-        ghostEngineerSpawnRate = Create(50010, Types.Crewmate, cs(GhostEngineer.color, "GhostEngineer"), rates, null, true);
+        ghostEngineerSpawnRate = Create(50010, Types.Crewmate, cs(GhostEngineer.color, "GhostEngineerOptions"), rates, null, true);
 
         guesserSpawnRate = Create(30100, Types.Crewmate, cs(Vigilante.color, "Vigilante"), rates, null, true);
         guesserNumberOfShots = Create(30101, Types.Crewmate, "guesserNumberOfShots", 3f, 1f, 15f, 1f, guesserSpawnRate);

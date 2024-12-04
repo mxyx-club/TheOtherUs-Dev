@@ -136,19 +136,21 @@ internal class HudManagerUpdatePatch
             }
         }
 
-        if (Jackal.jackal != null && Jackal.jackal == localPlayer)
+        if (Jackal.jackal != null && Jackal.jackal.Any(x => x == localPlayer))
         {
             // Jackal can see his sidekick
-            setPlayerNameColor(Jackal.jackal, Jackal.color);
-            if (Sidekick.sidekick != null) setPlayerNameColor(Sidekick.sidekick, Jackal.color);
+            foreach(var p in Jackal.jackal)
+                setPlayerNameColor(p, Jackal.color);
+            if (Jackal.sidekick != null) setPlayerNameColor(Jackal.sidekick, Jackal.color);
         }
 
         // No else if here, as a Lover of team Jackal needs the colors
-        if (Sidekick.sidekick != null && Sidekick.sidekick == localPlayer)
+        if (Jackal.sidekick != null && Jackal.sidekick == localPlayer)
         {
             // Sidekick can see the jackal
-            setPlayerNameColor(Sidekick.sidekick, Sidekick.color);
-            if (Jackal.jackal != null) setPlayerNameColor(Jackal.jackal, Jackal.color);
+            setPlayerNameColor(Jackal.sidekick, Jackal.color);
+            foreach (var p in Jackal.jackal)
+                setPlayerNameColor(p, Jackal.color);
         }
 
         if (Pavlovsdogs.pavlovsowner != null && Pavlovsdogs.pavlovsowner == localPlayer)
@@ -218,11 +220,7 @@ internal class HudManagerUpdatePatch
 
         // No else if here, as the Impostors need the Spy name to be colored
         if (Spy.spy != null && localPlayer.Data.Role.IsImpostor) setPlayerNameColor(Spy.spy, Spy.color);
-        if (Sidekick.sidekick != null && Sidekick.wasTeamRed && localPlayer.Data.Role.IsImpostor)
-            setPlayerNameColor(Sidekick.sidekick, Spy.color);
 
-        if (Jackal.jackal != null && Jackal.wasTeamRed && localPlayer.Data.Role.IsImpostor)
-            setPlayerNameColor(Jackal.jackal, Spy.color);
         // Crewmate roles with no changes: Mini
         // Impostor roles with no changes: Morphling, Camouflager, Vampire, Godfather, Eraser, Janitor, Cleaner, Warlock, BountyHunter,  Witch and Mafioso
     }
@@ -339,24 +337,15 @@ internal class HudManagerUpdatePatch
                         player.NameText.text += suffix;
         }
 
-        // Former Thief
-        if (Thief.formerThief != null && (Thief.formerThief == local || local.Data.IsDead))
-        {
-            var suffix = cs(Thief.color, " $");
-            Thief.formerThief.cosmetics.nameText.text += suffix;
-            if (MeetingHud.Instance != null)
-                foreach (var player in MeetingHud.Instance.playerStates)
-                    if (player.TargetPlayerId == Thief.formerThief.PlayerId)
-                        player.NameText.text += suffix;
-        }
-
         // Display lighter / darker color for all alive players
         if (CachedPlayer.LocalPlayer != null && MeetingHud.Instance != null && ModOption.showLighterDarker)
+        {
             foreach (var player in MeetingHud.Instance.playerStates)
             {
                 var target = playerById(player.TargetPlayerId);
                 if (target != null) player.NameText.text += $" ({(isLighterColor(target) ? "浅" : "深")})";
             }
+        }
 
         // Add medic shield info:
         if (MeetingHud.Instance != null && Medic.medic != null && Medic.shielded != null && Medic.shieldVisible(Medic.shielded))
@@ -397,7 +386,7 @@ internal class HudManagerUpdatePatch
             (Mini.mini == Morphling.morphling && Morphling.morphTimer > 0f) ||
             (Mini.mini == Ninja.ninja && Ninja.isInvisble) || SurveillanceMinigamePatch.nightVisionIsActive ||
             (Mini.mini == Swooper.swooper && Swooper.isInvisable) ||
-            (Mini.mini == Jackal.jackal && Jackal.isInvisable) || isActiveCamoComms) return;
+            (Jackal.jackal.Any(x => x == Mini.mini) && Jackal.isInvisable) || isActiveCamoComms) return;
 
         var growingProgress = Mini.growingProgress();
         var scale = (growingProgress * 0.35f) + 0.35f;
@@ -474,6 +463,20 @@ internal class HudManagerUpdatePatch
         __instance.MapButton.HeldButtonSprite.color = Trapper.playersOnMap.Any() ? Trapper.color : Color.white;
     }
 
+    public static void updateGiantSize(HudManager __instance)
+    {
+        if (Giant.giant == null) return;
+        DeadBody[] array = UnityEngine.Object.FindObjectsOfType<DeadBody>();
+        foreach (var body in array.Where(x => x.ParentId == Giant.giant.PlayerId))
+        {
+            try
+            {
+                body.transform.localScale = new Vector3(Giant.size, Giant.size, 1f);
+            }
+            catch { }
+        }
+    }
+
     private static void Postfix(HudManager __instance)
     {
         var player = PlayerControl.LocalPlayer;
@@ -510,6 +513,7 @@ internal class HudManagerUpdatePatch
         // Meeting hide buttons if needed (used for the map usage, because closing the map would show buttons)
         updateSabotageButton(__instance);
         updateUseButton(__instance);
+        updateGiantSize(__instance);
         updateBlindReport();
         updateMapButton(__instance);
         if (!MeetingHud.Instance) __instance.AbilityButton?.Update();

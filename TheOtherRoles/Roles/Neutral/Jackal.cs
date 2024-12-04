@@ -7,11 +7,12 @@ namespace TheOtherRoles.Roles.Neutral;
 
 public class Jackal
 {
-    public static PlayerControl jackal;
+    public static List<PlayerControl> jackal = new();
+    public static PlayerControl sidekick;
 
     public static Color color = new Color32(0, 180, 235, byte.MaxValue);
     public static PlayerControl currentTarget;
-    public static List<PlayerControl> formerJackals = new();
+    public static PlayerControl currentTarget2;
 
     public static float cooldown = 30f;
     public static float createSidekickCooldown = 30f;
@@ -19,12 +20,12 @@ public class Jackal
     public static bool canCreateSidekick = true;
     public static bool jackalPromotedFromSidekickCanCreateSidekick = true;
     public static bool hasImpostorVision;
-    public static bool CanImpostorFindSidekick;
     public static bool canSabotage;
     public static bool killFakeImpostor;
-    public static bool wasTeamRed;
-    public static bool wasImpostor;
-    public static bool wasSpy;
+
+    public static bool sidekickCanUseVents;
+    public static bool sidekickCanKill;
+    public static bool promotesToJackal;
 
     public static float chanceSwoop;
     public static bool canSwoop;
@@ -47,9 +48,10 @@ public class Jackal
 
     public static void clearAndReload()
     {
-        jackal = null;
-        formerJackals.Clear();
+        jackal.Clear();
+        sidekick = null;
         currentTarget = null;
+        currentTarget2 = null;
         isInvisable = false;
         cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
         swoopCooldown = CustomOptionHolder.jackalSwooperCooldown.GetFloat();
@@ -57,12 +59,14 @@ public class Jackal
         createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.GetFloat();
         canUseVents = CustomOptionHolder.jackalCanUseVents.GetBool();
         canSabotage = CustomOptionHolder.jackalCanUseSabo.GetBool();
-        CanImpostorFindSidekick = CustomOptionHolder.jackalCanImpostorFindSidekick.GetBool();
         canCreateSidekick = CustomOptionHolder.jackalCanCreateSidekick.GetBool();
         jackalPromotedFromSidekickCanCreateSidekick = CustomOptionHolder.jackalPromotedFromSidekickCanCreateSidekick.GetBool();
         hasImpostorVision = CustomOptionHolder.jackalAndSidekickHaveImpostorVision.GetBool();
         killFakeImpostor = CustomOptionHolder.jackalkillFakeImpostor.GetBool();
-        wasTeamRed = wasImpostor = wasSpy = false;
         chanceSwoop = CustomOptionHolder.jackalChanceSwoop.GetSelection() / 10f;
+
+        sidekickCanUseVents = CustomOptionHolder.sidekickCanUseVents.GetBool();
+        sidekickCanKill = CustomOptionHolder.sidekickCanKill.GetBool();
+        promotesToJackal = CustomOptionHolder.sidekickPromotesToJackal.GetBool();
     }
 }

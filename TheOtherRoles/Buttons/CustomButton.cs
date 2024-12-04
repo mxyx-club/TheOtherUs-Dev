@@ -148,11 +148,10 @@ public class CustomButton
                 Error($"NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine\n{e}", "CustomButton");
             }
         }
+        var time = Time == -1 ? ModOption.KillCooddown : Time;
+        CachedPlayer.LocalPlayer.PlayerControl.killTimer = time;
     }
 
-    /// <summary>
-    /// ÷ÿ÷√ÕÊº“ª˜…±∞¥≈•cd
-    /// </summary>
     public static void resetKillButton(PlayerControl p, float time = -1)
     {
         if (p.IsDead()) return;

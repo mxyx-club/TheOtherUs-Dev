@@ -124,6 +124,10 @@
         "0": "Modifier Settings",
         "13": "附加能力设置"
     },
+    "ghostSettings": {
+        "0": "Ghost Roles Settings",
+        "13": "幽灵职业设置"
+    },
     "guesserSettings": {
         "0": "Guesser Mode Settings",
         "13": "赌怪模式设置"
@@ -1247,6 +1251,10 @@
         "0": "Vulture Can Use Vents",
         "13": "可使用管道"
     },
+    "SpecterOptions": {
+        "0": "Specter (Ghost)",
+        "13": "怨灵 (幽灵职业)"
+    },
     "jesterCanCallEmergency": {
         "0": "Jester Can Call Emergency Meeting",
         "13": "小丑可召开会议"
@@ -1589,6 +1597,10 @@
     "thiefCanStealWithGuess": {
         "0": "Thief Can Guess To Steal A Role (If Guesser)",
         "13": "身份窃贼可通过猜测窃取身份\n(赌怪模式)"
+    },
+    "GhostEngineerOptions": {
+        "0": "Engineer (Ghost)",
+        "13": "灵魂工程师 (幽灵职业)"
     },
     "guesserNumberOfShots": {
         "0": "Vigilante Number Of Shots",
@@ -3000,6 +3012,10 @@
         "0": "FLASH",
         "13": "闪光弹"
     },
+    "SpecterButton": {
+        "0": "Revive",
+        "13": "复活"
+    },
     "GuessserGMInfo": {
         "0": " (Guesser)",
         "13": " (赌怪)"
@@ -3327,6 +3343,16 @@
     },
     "PursuerShortDesc": {
         "13": "活下去！"
+    },
+    "Witness": {
+        "0": "Witness",
+        "13": "污点证人"
+    },
+    "WitnessIntroDesc": {
+        "13": "那就只剩下……了"
+    },
+    "WitnessShortDesc": {
+        "13": "让大家猜谁是真凶"
     },
     "PartTimer": {
         "0": "PartTimer",
@@ -4000,6 +4026,16 @@
     "GhostEngineerShortDesc": {
         "13": "弥补生前未能修好飞船的遗憾"
     },
+    "Specter": {
+        "0": "Specter",
+        "13": "怨灵"
+    },
+    "SpecterIntroDesc": {
+        "13": "我还不想死"
+    },
+    "SpecterShortDesc": {
+        "13": "我还不想死"
+    },
     "Hunter": {
         "0": "Hunter",
         "13": "猎人"
@@ -4320,5 +4356,11 @@
     },
     "ShifterFullDesc": {
         "13": "分配阵营：船员（可设置为中立交换师）\n\n可以在行动阶段与其他玩家交换主职业，交换时名字下方会有黄字提示，\n会议结束后生效。\n如果交换目标不是船员（可以设置），会议结束时会自杀。\n（交换完毕后此附加能力消失）\n提示：交换师的目的主要是为了继承船员强力职业，\n例如在警长死亡前将身份交换。\n\n注：玩家死亡不会影响交换效果。"
+    },
+    "GhostEngineerFullDesc": {
+        "13": "分配阵营：船员\n\n在死后可以修复一次破坏"
+    },
+    "SpecterFullDesc": {
+        "13": "分配阵营：无阵营中立（豺狼、巴甫洛夫 以及 律师 无法获得）\n\n死亡后可以重新寻找尸体复活，但不能是自己的尸体\n注：复活时会消耗一具该玩家的尸体。"
     }
 }

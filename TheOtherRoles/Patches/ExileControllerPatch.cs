@@ -282,6 +282,7 @@ internal class ExileControllerWrapUpPatch
 
     private static void WrapUpPostfix(GameData.PlayerInfo exiled)
     {
+        if (CachedPlayer.LocalPlayer.IsDead && Specter.player != PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
         // Prosecutor win condition
         if (exiled != null && Executioner.executioner != null && Executioner.target != null &&
             Executioner.target.PlayerId == exiled.PlayerId && !Executioner.executioner.Data.IsDead)
@@ -445,6 +446,11 @@ internal class ExileControllerWrapUpPatch
 
         if (!Yoyo.markStaysOverMeeting)
             Silhouette.clearSilhouettes();
+
+        if (AmongUsClient.Instance.AmHost)
+        {
+            LastImpostor.promoteToLastImpostor();
+        }
     }
 
     [HarmonyPatch(typeof(ExileController), nameof(ExileController.WrapUp))]

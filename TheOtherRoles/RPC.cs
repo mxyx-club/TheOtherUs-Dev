@@ -8,7 +8,6 @@ using Assets.CoreScripts;
 using Hazel;
 using InnerNet;
 using PowerTools;
-using Reactor.Networking.Extensions;
 using Reactor.Utilities;
 using Reactor.Utilities.Extensions;
 using TheOtherRoles.Buttons;
@@ -63,6 +62,7 @@ public enum RoleId
     Executioner,
     Pursuer,
     PartTimer,
+    Witness,
     Doomsayer,
     Arsonist,
     Jackal,
@@ -134,6 +134,7 @@ public enum RoleId
     Shifter,
 
     GhostEngineer = 200,
+    Specter,
 }
 
 public enum CustomRPC
@@ -156,12 +157,10 @@ public enum CustomRPC
     ShareGameMode = 95,
 
     // Role functionality
-    EngineerFixLights = 100,
-    EngineerFixSubmergedOxygen,
-    EngineerUsedRepair,
+    FixLights = 100,
+    FixSubmergedOxygen,
     CleanBody,
     DissectionBody,
-    RandomDeadBodyPosition,
     Mine,
     ShowIndomitableFlash,
     DragBody,
@@ -198,6 +197,7 @@ public enum CustomRPC
     PavlovsCreateDog,
     SidekickPromotes,
     ErasePlayerRoles,
+    ClearGhostRoles,
     SetFutureErased,
     SetFutureReveal,
     SetFutureShifted,
@@ -207,6 +207,7 @@ public enum CustomRPC
     PlaceNinjaTrace,
     PlacePortal,
     AmnisiacTakeRole,
+    SpecterTakeRole,
     MimicMimicRole,
     UsePortal,
     PlaceJackInTheBox,
@@ -252,7 +253,6 @@ public enum CustomRPC
     TriggerTrap,
     PlaceBomb,
     DefuseBomb,
-    //ShareRoom,
     YoyoMarkLocation,
     YoyoBlink,
     BalancerBalance,
@@ -410,7 +410,7 @@ public static class RPCProcedure
                         TimeMaster.timeMaster = player;
                         break;
                     case RoleId.Amnisiac:
-                        Amnisiac.amnisiac = player;
+                        Amnisiac.player.Add(player);
                         break;
                     case RoleId.PartTimer:
                         PartTimer.partTimer = player;
@@ -445,6 +445,9 @@ public static class RPCProcedure
                     case RoleId.Butcher:
                         Butcher.butcher = player;
                         break;
+                    case RoleId.Witness:
+                        Witness.player = player;
+                        break;
                     case RoleId.Hacker:
                         Hacker.hacker = player;
                         break;
@@ -458,10 +461,10 @@ public static class RPCProcedure
                         Snitch.snitch = player;
                         break;
                     case RoleId.Jackal:
-                        Jackal.jackal = player;
+                        Jackal.jackal.Add(player);
                         break;
                     case RoleId.Sidekick:
-                        Sidekick.sidekick = player;
+                        Jackal.sidekick = player;
                         break;
                     case RoleId.Pavlovsowner:
                         Pavlovsdogs.pavlovsowner = player;
@@ -679,6 +682,9 @@ public static class RPCProcedure
             case RoleId.GhostEngineer:
                 GhostEngineer.player = player;
                 break;
+            case RoleId.Specter:
+                Specter.player = player;
+                break;
         }
     }
 
@@ -760,16 +766,6 @@ public static class RPCProcedure
         SubmergedCompatibility.RepairOxygen();
     }
 
-    public static void engineerUsedRepair()
-    {
-        Engineer.remainingFixes--;
-        /*
-        if (Helpers.shouldShowGhostInfo())
-        {
-            Helpers.showFlash(Engineer.color, 0.5f, "Engineer Fix");
-        }*/
-    }
-
     public static void showIndomitableFlash()
     {
         if (Indomitable.indomitable == CachedPlayer.LocalPlayer.PlayerControl) showFlash(Indomitable.color);
@@ -816,10 +812,6 @@ public static class RPCProcedure
             var randomPosition = MapData.MapSpawnPosition().Random();
             array[i].transform.position = randomPosition;
         }
-    }
-
-    public static void RandomDeadBodyPosition(byte parentId, Vector2 position)
-    {
     }
 
     public static void dragBody(byte playerId)
@@ -881,667 +873,6 @@ public static class RPCProcedure
         var target = playerById(targetId);
         if (target == null) return;
         LastImpostor.lastImpostor = target;
-    }
-
-    public static void amnisiacTakeRole(byte targetId)
-    {
-        var target = playerById(targetId);
-        var amnisiac = Amnisiac.amnisiac;
-        if (target == null || amnisiac == null) return;
-        var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
-        switch (roleInfo!.roleId)
-        {
-            case RoleId.Crewmate:
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Impostor:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Jester:
-                if (Amnisiac.resetRole) Jester.clearAndReload();
-                Jester.jester = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.BodyGuard:
-                if (Amnisiac.resetRole) BodyGuard.clearAndReload();
-                BodyGuard.bodyguard = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Werewolf:
-                if (Amnisiac.resetRole) Werewolf.clearAndReload();
-                Werewolf.werewolf = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Prosecutor:
-                Prosecutor.prosecutor = target;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Mayor:
-                if (Amnisiac.resetRole) Mayor.clearAndReload();
-                Mayor.mayor = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Portalmaker:
-                if (Amnisiac.resetRole) Portalmaker.clearAndReload();
-                Portalmaker.portalmaker = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Engineer:
-                if (Amnisiac.resetRole) Engineer.clearAndReload();
-                Engineer.engineer = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Sheriff:
-                // Never reload Sheriff
-                if (Sheriff.formerDeputy != null && Sheriff.formerDeputy == Sheriff.sheriff)
-                {
-                    Sheriff.formerDeputy = null;
-                    Deputy.deputy = amnisiac;
-                }
-                else Sheriff.sheriff = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Deputy:
-                if (Amnisiac.resetRole) Deputy.clearAndReload();
-                Deputy.deputy = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Poucher:
-                if (!Poucher.spawnModifier)
-                {
-                    Helpers.turnToImpostor(Amnisiac.amnisiac);
-                    if (Amnisiac.resetRole) Poucher.clearAndReload();
-                    Poucher.poucher = amnisiac;
-                    Amnisiac.clearAndReload();
-                }
-                break;
-
-            case RoleId.Butcher:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                Butcher.butcher = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Detective:
-                if (Amnisiac.resetRole) Detective.clearAndReload();
-                Detective.detective = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Balancer:
-                if (Amnisiac.resetRole) Balancer.clearAndReload();
-                Balancer.balancer = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.InfoSleuth:
-                InfoSleuth.infoSleuth = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.TimeMaster:
-                if (Amnisiac.resetRole) TimeMaster.clearAndReload();
-                TimeMaster.timeMaster = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Veteran:
-                if (Amnisiac.resetRole) Veteran.clearAndReload();
-                Veteran.veteran = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Medic:
-                if (Amnisiac.resetRole) Medic.clearAndReload();
-                Medic.medic = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Shifter:
-                if (Amnisiac.resetRole) Shifter.clearAndReload();
-                Shifter.shifter = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Swapper:
-                if (Amnisiac.resetRole) Swapper.clearAndReload();
-                Swapper.swapper = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.PartTimer:
-                if (Amnisiac.resetRole) PartTimer.clearAndReload();
-                PartTimer.partTimer = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Seer:
-                if (Amnisiac.resetRole) Seer.clearAndReload();
-                Seer.seer = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Morphling:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Morphling.clearAndReload();
-                Morphling.morphling = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Bomber:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Bomber.clearAndReload();
-                Bomber.bomber = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Yoyo:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Yoyo.clearAndReload();
-                Yoyo.yoyo = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Terrorist:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Terrorist.clearAndReload();
-                Terrorist.terrorist = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Camouflager:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Camouflager.clearAndReload();
-                Camouflager.camouflager = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Hacker:
-                if (Amnisiac.resetRole) Hacker.clearAndReload();
-                Hacker.hacker = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Tracker:
-                if (Amnisiac.resetRole) Tracker.clearAndReload();
-                Tracker.tracker = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Vampire:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Vampire.clearAndReload();
-                Vampire.vampire = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Snitch:
-                if (Amnisiac.resetRole) Snitch.clearAndReload();
-                Snitch.snitch = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Jackal:
-                Jackal.jackal = amnisiac;
-                Jackal.formerJackals.Add(target);
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Sidekick:
-                Jackal.formerJackals.Add(target);
-                if (Amnisiac.resetRole) Sidekick.clearAndReload();
-                Sidekick.sidekick = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Pavlovsowner:
-                Pavlovsdogs.pavlovsdogs.Add(Pavlovsdogs.pavlovsowner);
-                Pavlovsdogs.pavlovsowner = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Pavlovsdogs:
-                Pavlovsdogs.pavlovsdogs.Add(amnisiac);
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Eraser:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Eraser.clearAndReload();
-                Eraser.eraser = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Spy:
-                if (Amnisiac.resetRole) Spy.clearAndReload();
-                Spy.spy = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Trickster:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Trickster.clearAndReload();
-                Trickster.trickster = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Mimic:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Mimic.clearAndReload(false);
-                Mimic.mimic = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Cleaner:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Cleaner.clearAndReload();
-                Cleaner.cleaner = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Warlock:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Warlock.clearAndReload();
-                Warlock.warlock = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Grenadier:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Grenadier.clearAndReload();
-                Grenadier.grenadier = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.SecurityGuard:
-                if (Amnisiac.resetRole) SecurityGuard.clearAndReload();
-                SecurityGuard.securityGuard = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Survivor:
-                Survivor.survivor.Add(amnisiac);
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Arsonist:
-                if (Amnisiac.resetRole) Arsonist.clearAndReload();
-                Arsonist.arsonist = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-
-                if (CachedPlayer.LocalPlayer.PlayerControl == Arsonist.arsonist)
-                {
-                    var playerCounter = 0;
-                    var bottomLeft = new Vector3(
-                        -FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x,
-                        FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y,
-                        FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z);
-                    foreach (PlayerControl p in CachedPlayer.AllPlayers)
-                        if (playerIcons.ContainsKey(p.PlayerId) && p != Arsonist.arsonist)
-                        {
-                            //Arsonist.poolIcons.Add(p);
-                            if (Arsonist.dousedPlayers.Contains(p))
-                                playerIcons[p.PlayerId].setSemiTransparent(false);
-                            else
-                                playerIcons[p.PlayerId].setSemiTransparent(true);
-
-                            playerIcons[p.PlayerId].transform.localPosition = bottomLeft +
-                                                                              new Vector3(-0.25f, -0.25f, 0) +
-                                                                              (Vector3.right * playerCounter++ * 0.35f);
-                            playerIcons[p.PlayerId].transform.localScale = Vector3.one * 0.2f;
-                            playerIcons[p.PlayerId].gameObject.SetActive(true);
-                        }
-                }
-
-                break;
-
-            case RoleId.Assassin:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                // Never Reload Guesser
-                Assassin.assassin.Add(amnisiac);
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Vigilante:
-                // Never Reload Guesser
-                if (Amnisiac.resetRole) Vigilante.clearAndReload();
-                Vigilante.vigilante = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.BountyHunter:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) BountyHunter.clearAndReload();
-                BountyHunter.bountyHunter = amnisiac;
-                Amnisiac.clearAndReload();
-
-                BountyHunter.bountyUpdateTimer = 0f;
-                if (CachedPlayer.LocalPlayer.PlayerControl == BountyHunter.bountyHunter)
-                {
-                    var bottomLeft =
-                        new Vector3(-FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.x,
-                            FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.y,
-                            FastDestroyableSingleton<HudManager>.Instance.UseButton.transform.localPosition.z) +
-                        new Vector3(-0.25f, 1f, 0);
-                    BountyHunter.cooldownText =
-                        Object.Instantiate(FastDestroyableSingleton<HudManager>.Instance.KillButton.cooldownTimerText,
-                            FastDestroyableSingleton<HudManager>.Instance.transform);
-                    BountyHunter.cooldownText.alignment = TextAlignmentOptions.Center;
-                    BountyHunter.cooldownText.transform.localPosition = bottomLeft + new Vector3(0f, -1f, -1f);
-                    BountyHunter.cooldownText.gameObject.SetActive(true);
-
-                    foreach (PlayerControl p in CachedPlayer.AllPlayers)
-                        if (playerIcons.ContainsKey(p.PlayerId))
-                        {
-                            playerIcons[p.PlayerId].setSemiTransparent(false);
-                            playerIcons[p.PlayerId].transform.localPosition = bottomLeft + new Vector3(0f, -1f, 0);
-                            playerIcons[p.PlayerId].transform.localScale = Vector3.one * 0.4f;
-                            playerIcons[p.PlayerId].gameObject.SetActive(false);
-                        }
-                }
-
-                break;
-
-            case RoleId.Vulture:
-                if (Amnisiac.resetRole) Vulture.clearAndReload();
-                Vulture.vulture = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Executioner:
-                Executioner.executioner = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Medium:
-                if (Amnisiac.resetRole) Medium.clearAndReload();
-                Medium.medium = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Lawyer:
-                // Never reset Lawyer
-                Lawyer.lawyer = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Pursuer:
-                if (Amnisiac.resetRole) Pursuer.clearAndReload();
-                Pursuer.pursuer.Add(amnisiac);
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Witch:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Witch.clearAndReload();
-                Witch.witch = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Jumper:
-                if (Amnisiac.resetRole) Jumper.clearAndReload();
-                Jumper.jumper = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Escapist:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Escapist.clearAndReload();
-                Escapist.escapist = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Thief:
-                if (Amnisiac.resetRole) Thief.clearAndReload();
-                Thief.thief = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-
-            case RoleId.Trapper:
-                if (Amnisiac.resetRole) Trapper.clearAndReload();
-                Trapper.trapper = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Juggernaut:
-                if (Amnisiac.resetRole) Juggernaut.clearAndReload();
-                Juggernaut.juggernaut = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-            case RoleId.Doomsayer:
-                if (Amnisiac.resetRole) Doomsayer.clearAndReload();
-                Doomsayer.doomsayer = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-            case RoleId.Swooper:
-                if (Amnisiac.resetRole) Swooper.clearAndReload();
-                Swooper.swooper = amnisiac;
-                Amnisiac.clearAndReload();
-                Amnisiac.amnisiac = target;
-                break;
-            case RoleId.Ninja:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Ninja.clearAndReload();
-                Ninja.ninja = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Akujo:
-                Helpers.turnToImpostor(Akujo.akujo);
-                if (Amnisiac.resetRole) Mimic.clearAndReload();
-                Akujo.akujo = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Blackmailer:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Blackmailer.clearAndReload();
-                Blackmailer.blackmailer = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-
-            case RoleId.Miner:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Miner.clearAndReload();
-                Miner.miner = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Undertaker:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) Undertaker.clearAndReload();
-                Undertaker.undertaker = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Prophet:
-                if (Amnisiac.resetRole) Prophet.clearAndReload();
-                Prophet.prophet = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.EvilTrapper:
-                Helpers.turnToImpostor(Amnisiac.amnisiac);
-                if (Amnisiac.resetRole) EvilTrapper.clearAndReload();
-                EvilTrapper.evilTrapper = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-            case RoleId.Gambler:
-                Gambler.gambler = amnisiac;
-                Amnisiac.clearAndReload();
-                break;
-        }
-    }
-
-    public static void mimicMimicRole(byte targetId)
-    {
-        var target = playerById(targetId);
-        if (target == null || Mimic.mimic == null) return;
-        var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleTeam != RoleType.Modifier);
-        switch (roleInfo!.roleId)
-        {
-            case RoleId.BodyGuard:
-                if (Amnisiac.resetRole) BodyGuard.clearAndReload();
-                BodyGuard.bodyguard = Mimic.mimic;
-                bodyGuardGuardButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Mayor:
-                if (Amnisiac.resetRole) Mayor.clearAndReload();
-                Mayor.mayor = Mimic.mimic;
-                mayorMeetingButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Prosecutor:
-                if (Amnisiac.resetRole) Prosecutor.clearAndReload();
-                Prosecutor.prosecutor = Mimic.mimic;
-                Prosecutor.diesOnIncorrectPros = false;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.InfoSleuth:
-                InfoSleuth.infoSleuth = Mimic.mimic;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Trapper:
-                if (Amnisiac.resetRole) Trapper.clearAndReload();
-                Trapper.trapper = Mimic.mimic;
-                trapperButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Portalmaker:
-                if (Amnisiac.resetRole) Portalmaker.clearAndReload();
-                Portalmaker.portalmaker = Mimic.mimic;
-                portalmakerPlacePortalButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Engineer:
-                if (Amnisiac.resetRole) Engineer.clearAndReload();
-                Engineer.engineer = Mimic.mimic;
-                engineerRepairButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Jumper:
-                if (Amnisiac.resetRole) Jumper.clearAndReload();
-                Jumper.jumper = Mimic.mimic;
-                jumperMarkButton.PositionOffset = CustomButton.ButtonPositions.lowerRowCenter;
-                jumperJumpButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Detective:
-                if (Amnisiac.resetRole) Detective.clearAndReload();
-                Detective.detective = Mimic.mimic;
-                Mimic.hasMimic = true;
-                break;
-            /*
-        case RoleId.NiceGuesser:
-            if (Amnisiac.resetRole) //Guesser.clearAndReload();
-                Guesser.niceGuesser = Mimic.mimic;
-            Mimic.hasMimic = true;
-            break;
-            */
-            case RoleId.TimeMaster:
-                if (Amnisiac.resetRole) TimeMaster.clearAndReload();
-                TimeMaster.timeMaster = Mimic.mimic;
-                timeMasterShieldButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Veteran:
-                if (Amnisiac.resetRole) Veteran.clearAndReload();
-                Veteran.veteran = Mimic.mimic;
-                veteranAlertButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Medic:
-                if (Amnisiac.resetRole) Medic.clearAndReload();
-                Medic.medic = Mimic.mimic;
-                medicShieldButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Swapper:
-                if (Amnisiac.resetRole) Swapper.clearAndReload();
-                Swapper.swapper = Mimic.mimic;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Seer:
-                if (Amnisiac.resetRole) Seer.clearAndReload();
-                Seer.seer = Mimic.mimic;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Hacker:
-                if (Amnisiac.resetRole) Hacker.clearAndReload();
-                Hacker.hacker = Mimic.mimic;
-                hackerAdminTableButton.PositionOffset = CustomButton.ButtonPositions.upperRowFarLeft;
-                hackerVitalsButton.PositionOffset = CustomButton.ButtonPositions.lowerRowFarLeft;
-                hackerButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Tracker:
-                if (Amnisiac.resetRole) Tracker.clearAndReload();
-                Tracker.tracker = Mimic.mimic;
-                trackerTrackPlayerButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.SecurityGuard:
-                if (Amnisiac.resetRole) SecurityGuard.clearAndReload();
-                SecurityGuard.securityGuard = Mimic.mimic;
-                securityGuardButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                securityGuardCamButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Medium:
-                if (Amnisiac.resetRole) Medium.clearAndReload();
-                Medium.medium = Mimic.mimic;
-                mediumButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Balancer:
-                if (Amnisiac.resetRole) Balancer.clearAndReload();
-                Balancer.balancer = Mimic.mimic;
-                Mimic.hasMimic = true;
-                break;
-
-            case RoleId.Prophet:
-                if (Amnisiac.resetRole) Prophet.clearAndReload();
-                Prophet.prophet = Mimic.mimic;
-                prophetButton.PositionOffset = CustomButton.ButtonPositions.upperRowLeft;
-                Mimic.hasMimic = true;
-                break;
-        }
     }
 
     public static void turnToImpostor(byte targetId)
@@ -1832,34 +1163,11 @@ public static class RPCProcedure
             }
         }
 
-        if (Jackal.killFakeImpostor && target.Data.Role.IsImpostor)
-        {
-            //uncheckedMurderPlayer(Jackal.jackal.PlayerId, player.PlayerId, 1);
-            Jackal.jackal.MurderPlayer(target, MurderResultFlags.Succeeded);
-            OverrideDeathReasonAndKiller(target, CustomDeathReason.FakeSK, Jackal.jackal);
-            return;
-        }
-
-        var wasSpy = Spy.spy != null && target == Spy.spy;
-        var wasImpostor = target.Data.Role.IsImpostor; // This can only be reached if impostors can be sidekicked.
         FastDestroyableSingleton<RoleManager>.Instance.SetRole(target, RoleTypes.Crewmate);
-        if (target == Lawyer.lawyer && Lawyer.target != null)
-        {
-            var playerInfoTransform = Lawyer.target.cosmetics.nameText.transform.parent.FindChild("Info");
-            var playerInfo = playerInfoTransform?.GetComponent<TextMeshPro>();
-            if (playerInfo != null) playerInfo.text = "";
-        }
 
         erasePlayerRoles(target.PlayerId);
-        Sidekick.sidekick = target;
-        if (target.PlayerId == CachedPlayer.LocalPlayer.PlayerId)
-            CachedPlayer.LocalPlayer.PlayerControl.moveable = true;
-        if ((wasSpy || wasImpostor) && !Jackal.CanImpostorFindSidekick)
-        {
-            Sidekick.wasTeamRed = true;
-            Sidekick.wasSpy = wasSpy;
-            Sidekick.wasImpostor = wasImpostor;
-        }
+        Jackal.sidekick = target;
+
         if (target == CachedPlayer.LocalPlayer.PlayerControl) SoundEffectsManager.play("jackalSidekick");
         if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(targetId))
             setGuesserGm(targetId);
@@ -1867,26 +1175,16 @@ public static class RPCProcedure
         Jackal.canCreateSidekick = false;
     }
 
-    public static void sidekickPromotes()
+    public static void sidekickPromotes(byte playerId)
     {
-        removeCurrentJackal();
-        Jackal.jackal = Sidekick.sidekick;
-        Jackal.canCreateSidekick = Jackal.jackalPromotedFromSidekickCanCreateSidekick;
-        Jackal.wasTeamRed = Sidekick.wasTeamRed;
-        Jackal.wasSpy = Sidekick.wasSpy;
-        Jackal.wasImpostor = Sidekick.wasImpostor;
-        Sidekick.clearAndReload();
-        return;
-    }
-
-    public static void removeCurrentJackal()
-    {
-        if (Jackal.jackal != null && !Jackal.formerJackals.Any(x => x.PlayerId == Jackal.jackal.PlayerId))
-            Jackal.formerJackals.Add(Jackal.jackal);
-        Jackal.jackal = null;
-        Jackal.currentTarget = null;
-        Jackal.cooldown = CustomOptionHolder.jackalKillCooldown.GetFloat();
-        Jackal.createSidekickCooldown = CustomOptionHolder.jackalCreateSidekickCooldown.GetFloat();
+        if (Jackal.jackal.All(x => x.IsDead()))
+        {
+            var player = playerById(playerId);
+            Jackal.jackal.Add(player);
+            Jackal.sidekick = null;
+            Jackal.canCreateSidekick = Jackal.jackalPromotedFromSidekickCanCreateSidekick;
+            return;
+        }
     }
 
     public static void jackalCanSwooper(bool chance)
@@ -1939,8 +1237,6 @@ public static class RPCProcedure
         if (player == null) return;
 
         // Crewmate roles
-        if (Assassin.assassin.Any(x => x.PlayerId == player.PlayerId))
-            Assassin.assassin.RemoveAll(x => x.PlayerId == player.PlayerId);
         if (player == Swooper.swooper) Swooper.clearAndReload();
         if (player == Mayor.mayor) Mayor.clearAndReload();
         if (player == Prosecutor.prosecutor) Prosecutor.clearAndReload();
@@ -1952,7 +1248,6 @@ public static class RPCProcedure
         if (player == Deputy.deputy) Deputy.deputy = null;
         if (player == Detective.detective) Detective.clearAndReload();
         if (player == TimeMaster.timeMaster) TimeMaster.clearAndReload();
-        if (player == Amnisiac.amnisiac) Amnisiac.clearAndReload();
         if (player == Veteran.veteran) Veteran.clearAndReload();
         if (player == Medic.medic) Medic.clearAndReload();
         if (player == Seer.seer) Seer.clearAndReload();
@@ -2000,15 +1295,15 @@ public static class RPCProcedure
         if (player == Miner.miner) Miner.clearAndReload();
         if (player == Arsonist.arsonist) Arsonist.clearAndReload();
         if (Guesser.isGuesser(player.PlayerId)) Guesser.clear(player.PlayerId);
-        if (player == Jackal.jackal)
+
+        if (Jackal.jackal.Any(x => x == player))
         {
-            Jackal.jackal = null;
-            sidekickPromotes();
+            Jackal.jackal.RemoveAll(x => x == player);
+            if (Jackal.sidekick.IsAlive()) sidekickPromotes(Jackal.sidekick.PlayerId);
         }
 
-        if (player == Shifter.shifter) Shifter.clearAndReload();
         if (player == Pavlovsdogs.pavlovsowner) Pavlovsdogs.pavlovsowner = null;
-        if (player == Sidekick.sidekick) Sidekick.clearAndReload();
+        if (player == Jackal.sidekick) Jackal.sidekick = null;
         if (player == BountyHunter.bountyHunter) BountyHunter.clearAndReload();
         if (player == Vulture.vulture) Vulture.clearAndReload();
         if (player == Executioner.executioner) Executioner.clearAndReload();
@@ -2018,34 +1313,31 @@ public static class RPCProcedure
         if (player == Doomsayer.doomsayer) Doomsayer.clearAndReload();
         if (player == Akujo.akujo) Akujo.clearAndReload();
         if (player == PartTimer.partTimer) PartTimer.clearAndReload();
-        if (player == Specoality.specoality) Specoality.clearAndReload();
 
-        if (Pavlovsdogs.pavlovsdogs.Any(x => x.PlayerId == player.PlayerId))
-            Pavlovsdogs.pavlovsdogs.RemoveAll(x => x.PlayerId == player.PlayerId);
-        if (Pursuer.pursuer.Any(x => x.PlayerId == player.PlayerId))
-            Pursuer.pursuer.RemoveAll(x => x.PlayerId == player.PlayerId);
-        if (Survivor.survivor.Any(x => x.PlayerId == player.PlayerId))
-            Survivor.survivor.RemoveAll(x => x.PlayerId == player.PlayerId);
+        if (player == Cursed.cursed) Cursed.clearAndReload();
+        if (player == Shifter.shifter) Shifter.clearAndReload();
+
+        Assassin.assassin.RemoveAll(x => x.PlayerId == player.PlayerId);
+        Amnisiac.player.RemoveAll(x => x.PlayerId == playerId);
+        Pavlovsdogs.pavlovsdogs.RemoveAll(x => x.PlayerId == player.PlayerId);
+        Pursuer.pursuer.RemoveAll(x => x.PlayerId == player.PlayerId);
+        Survivor.survivor.RemoveAll(x => x.PlayerId == player.PlayerId);
 
         // Modifier
         if (!ignoreModifier)
         {
-            if (player == Lovers.lover1 || player == Lovers.lover2)
-                Lovers.clearAndReload(); // The whole Lover couple is being erased
-            if (Bait.bait.Any(x => x.PlayerId == player.PlayerId))
-                Bait.bait.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Bloody.bloody.Any(x => x.PlayerId == player.PlayerId))
-                Bloody.bloody.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (AntiTeleport.antiTeleport.Any(x => x.PlayerId == player.PlayerId))
-                AntiTeleport.antiTeleport.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Sunglasses.sunglasses.Any(x => x.PlayerId == player.PlayerId))
-                Sunglasses.sunglasses.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Torch.torch.Any(x => x.PlayerId == player.PlayerId))
-                Torch.torch.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Flash.flash.Any(x => x.PlayerId == player.PlayerId))
-                Flash.flash.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Multitasker.multitasker.Any(x => x.PlayerId == player.PlayerId))
-                Multitasker.multitasker.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Bait.bait.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Bloody.bloody.RemoveAll(x => x.PlayerId == player.PlayerId);
+            AntiTeleport.antiTeleport.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Sunglasses.sunglasses.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Torch.torch.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Flash.flash.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Multitasker.multitasker.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Vip.vip.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Invert.invert.RemoveAll(x => x.PlayerId == player.PlayerId);
+            Chameleon.chameleon.RemoveAll(x => x.PlayerId == player.PlayerId);
+            if (player == Lovers.lover1 || player == Lovers.lover2) Lovers.clearAndReload(); // The whole Lover couple is being erased
+            if (player == Specoality.specoality) Specoality.clearAndReload();
             if (player == Tiebreaker.tiebreaker) Tiebreaker.clearAndReload();
             if (player == Mini.mini) Mini.clearAndReload();
             if (player == Aftermath.aftermath) Aftermath.clearAndReload();
@@ -2059,13 +1351,15 @@ public static class RPCProcedure
             if (player == Tunneler.tunneler) Tunneler.clearAndReload();
             if (player == Slueth.slueth) Slueth.clearAndReload();
             if (player == Blind.blind) Blind.clearAndReload();
-            if (player == Cursed.cursed) Cursed.clearAndReload();
-            if (Vip.vip.Any(x => x.PlayerId == player.PlayerId)) Vip.vip.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Invert.invert.Any(x => x.PlayerId == player.PlayerId))
-                Invert.invert.RemoveAll(x => x.PlayerId == player.PlayerId);
-            if (Chameleon.chameleon.Any(x => x.PlayerId == player.PlayerId))
-                Chameleon.chameleon.RemoveAll(x => x.PlayerId == player.PlayerId);
         }
+    }
+
+    public static void clearGhostRoles(byte playerId)
+    {
+        var player = playerById(playerId);
+
+        if (player == GhostEngineer.player) GhostEngineer.ClearAndReload();
+        if (player == Specter.player) Specter.ClearAndReload();
     }
 
     public static void infoSleuthTarget(byte playerId)
@@ -2353,7 +1647,7 @@ public static class RPCProcedure
         }
     }
 
-    public static void Mine(int ventId, PlayerControl role, byte[] buff, float zAxis)
+    public static void Mine(int ventId, byte[] buff, float zAxis)
     {
         var position = Vector3.zero;
         position.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
@@ -2446,8 +1740,8 @@ public static class RPCProcedure
 
         target.setLook("", 6, "", "", "", "");
         var color = Color.clear;
-        var canSee = Jackal.jackal == CachedPlayer.LocalPlayer.PlayerControl ||
-                     Sidekick.sidekick == CachedPlayer.LocalPlayer.PlayerControl ||
+        var canSee = Jackal.jackal.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) ||
+                     Jackal.sidekick == CachedPlayer.LocalPlayer.PlayerControl ||
                      CachedPlayer.LocalPlayer.Data.IsDead;
         if (canSee) color.a = 0.1f;
         target.cosmetics.currentBodySprite.BodySprite.color = color;
@@ -2469,7 +1763,7 @@ public static class RPCProcedure
         var pos = Vector3.zero;
         pos.x = BitConverter.ToSingle(buff, 0 * sizeof(float));
         pos.y = BitConverter.ToSingle(buff, 1 * sizeof(float)) - 0.2f;
-        KillTrap trap = new(pos);
+        _ = new KillTrap(pos);
     }
 
     public static void clearTrap()
@@ -2685,7 +1979,7 @@ public static class RPCProcedure
         {
             var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
             if (Thief.thief.IsAlive() && Thief.tiefCanKill(dyingTarget, guesser))
-                thiefStealsRole(dyingTarget.PlayerId);
+                Thief.StealsRole(dyingTarget.PlayerId);
         }
 
         if ((Akujo.akujo != null && dyingTarget == Akujo.akujo) || (Akujo.honmei != null && dyingTarget == Akujo.honmei))
@@ -2911,116 +2205,6 @@ public static class RPCProcedure
         }
     }
 
-    public static void thiefStealsRole(byte playerId)
-    {
-        var target = playerById(playerId);
-        var thief = Thief.thief;
-        if (target == null) return;
-        if (target == Sheriff.sheriff) Sheriff.sheriff = thief;
-        if (target == Deputy.deputy) Deputy.deputy = thief;
-        if (target == Veteran.veteran) Veteran.veteran = thief;
-        if (target == Jackal.jackal)
-        {
-            Jackal.jackal = thief;
-            Jackal.formerJackals.Add(target);
-        }
-
-        if (target == Sidekick.sidekick)
-        {
-            Sidekick.sidekick = thief;
-            Jackal.formerJackals.Add(target);
-            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodeSidekickIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
-                setGuesserGm(thief.PlayerId);
-        }
-        if (target == Pavlovsdogs.pavlovsowner)
-        {
-            Pavlovsdogs.pavlovsdogs.Add(target);
-            Pavlovsdogs.pavlovsowner = thief;
-            if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(thief.PlayerId))
-                setGuesserGm(thief.PlayerId);
-        }
-        if (Pavlovsdogs.pavlovsdogs.Any(x => x == target))
-        {
-            Pavlovsdogs.pavlovsdogs.Add(thief);
-        }
-        if (target == Poucher.poucher && !Poucher.spawnModifier) Poucher.poucher = thief;
-        if (target == Butcher.butcher) Butcher.butcher = thief;
-        if (target == Morphling.morphling) Morphling.morphling = thief;
-        if (target == Camouflager.camouflager) Camouflager.camouflager = thief;
-        if (target == Vampire.vampire) Vampire.vampire = thief;
-        if (target == Eraser.eraser) Eraser.eraser = thief;
-        if (target == Trickster.trickster) Trickster.trickster = thief;
-        if (target == Gambler.gambler) Gambler.gambler = thief;
-        if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
-        if (target == Warlock.warlock) Warlock.warlock = thief;
-        if (target == Grenadier.grenadier) Grenadier.grenadier = thief;
-        if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
-        if (target == Witch.witch)
-        {
-            Witch.witch = thief;
-            if (MeetingHud.Instance)
-                if (Witch.witchVoteSavesTargets) // In a meeting, if the thief guesses the witch, all targets are saved or no target is saved.
-                    Witch.futureSpelled = new List<PlayerControl>();
-                else // If thief kills witch during the round, remove the thief from the list of spelled people, keep the rest
-                    Witch.futureSpelled.RemoveAll(x => x.PlayerId == thief.PlayerId);
-        }
-
-        if (target == Ninja.ninja) Ninja.ninja = thief;
-        if (target == Escapist.escapist) Escapist.escapist = thief;
-        if (target == Terrorist.terrorist) Terrorist.terrorist = thief;
-        if (target == Bomber.bomber) Bomber.bomber = thief;
-        if (target == Miner.miner) Miner.miner = thief;
-        if (target == Undertaker.undertaker) Undertaker.undertaker = thief;
-        if (target == Mimic.mimic)
-        {
-            Mimic.mimic = thief;
-            Mimic.hasMimic = false;
-        }
-        if (target == Yoyo.yoyo)
-        {
-            Yoyo.yoyo = thief;
-            Yoyo.markedLocation = null;
-        }
-        if (target.Data.Role.IsImpostor)
-        {
-            RoleManager.Instance.SetRole(Thief.thief, RoleTypes.Impostor);
-            FastDestroyableSingleton<HudManager>.Instance.KillButton.SetCoolDown(Thief.thief.killTimer,
-                GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown);
-        }
-
-        if (target == Werewolf.werewolf)
-        {
-            Survivor.survivor.Add(target);
-            Werewolf.werewolf = thief;
-        }
-        if (target == Arsonist.arsonist)
-        {
-            Survivor.survivor.Add(target);
-            Arsonist.arsonist = thief;
-        }
-        if (target == Juggernaut.juggernaut)
-        {
-            Survivor.survivor.Add(target);
-            Juggernaut.juggernaut = thief;
-        }
-        if (target == Swooper.swooper)
-        {
-            Survivor.survivor.Add(target);
-            Swooper.swooper = thief;
-        }
-
-        if (target == Deputy.deputy) Deputy.deputy = thief;
-        if (target == Veteran.veteran) Veteran.veteran = thief;
-        if (target == Blackmailer.blackmailer) Blackmailer.blackmailer = thief;
-        if (target == EvilTrapper.evilTrapper) EvilTrapper.evilTrapper = thief;
-
-        if (Lawyer.lawyer != null && target == Lawyer.target)
-            Lawyer.target = thief;
-        if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
-        Thief.clearAndReload();
-        Thief.formerThief = thief; // After clearAndReload, else it would get reset...
-    }
-
     public static void setTrap(byte[] buff)
     {
         if (Trapper.trapper == null) return;
@@ -3110,13 +2294,6 @@ public static class RPCProcedure
         terroristButton.isEffectActive = false;
         terroristButton.actionButton.cooldownTimerText.color = Palette.EnabledColor;
     }
-    /*
-    public static void shareRoom(byte playerId, byte roomId)
-    {
-        if (Snitch.playerRoomMap.ContainsKey(playerId)) Snitch.playerRoomMap[playerId] = roomId;
-        else Snitch.playerRoomMap.Add(playerId, roomId);
-    }
-    */
 }
 
 [HarmonyPatch(typeof(PlayerControl), nameof(PlayerControl.HandleRpc))]
@@ -3230,14 +2407,11 @@ internal class RPCHandlerPatch
 
             // Role functionality
 
-            case CustomRPC.EngineerFixLights:
+            case CustomRPC.FixLights:
                 RPCProcedure.FixLights();
                 break;
-            case CustomRPC.EngineerFixSubmergedOxygen:
+            case CustomRPC.FixSubmergedOxygen:
                 RPCProcedure.FixSubmergedOxygen();
-                break;
-            case CustomRPC.EngineerUsedRepair:
-                RPCProcedure.engineerUsedRepair();
                 break;
 
             case CustomRPC.UseCameraTime:
@@ -3254,10 +2428,6 @@ internal class RPCHandlerPatch
 
             case CustomRPC.DissectionBody:
                 RPCProcedure.dissectionBody(reader.ReadByte(), reader.ReadByte());
-                break;
-
-            case CustomRPC.RandomDeadBodyPosition:
-                RPCProcedure.RandomDeadBodyPosition(reader.ReadByte(), reader.ReadVector2());
                 break;
 
             case CustomRPC.BlackmailPlayer:
@@ -3285,7 +2455,11 @@ internal class RPCHandlerPatch
                 break;
 
             case CustomRPC.AmnisiacTakeRole:
-                RPCProcedure.amnisiacTakeRole(reader.ReadByte());
+                Amnisiac.TakeRole(reader.ReadByte(), reader.ReadByte());
+                break;
+
+            case CustomRPC.SpecterTakeRole:
+                Specter.TakeRole(reader.ReadByte());
                 break;
 
             case CustomRPC.ImpostorPromotesToLastImpostor:
@@ -3293,7 +2467,7 @@ internal class RPCHandlerPatch
                 break;
 
             case CustomRPC.MimicMimicRole:
-                RPCProcedure.mimicMimicRole(reader.ReadByte());
+                Mimic.MimicRole(reader.ReadByte());
                 break;
 
             case CustomRPC.ShowIndomitableFlash:
@@ -3381,13 +2555,17 @@ internal class RPCHandlerPatch
                 break;
 
             case CustomRPC.SidekickPromotes:
-                RPCProcedure.sidekickPromotes();
+                RPCProcedure.sidekickPromotes(reader.ReadByte());
                 break;
 
             case CustomRPC.ErasePlayerRoles:
                 var eraseTarget = reader.ReadByte();
                 RPCProcedure.erasePlayerRoles(eraseTarget);
                 Eraser.alreadyErased.Add(eraseTarget);
+                break;
+
+            case CustomRPC.ClearGhostRoles:
+                RPCProcedure.clearGhostRoles(reader.ReadByte());
                 break;
 
             case CustomRPC.SetFutureErased:
@@ -3523,10 +2701,9 @@ internal class RPCHandlerPatch
 
             case CustomRPC.Mine:
                 var newVentId = reader.ReadInt32();
-                var role = playerById(reader.ReadByte());
                 var pos = reader.ReadBytesAndSize();
                 var zAxis = reader.ReadSingle();
-                RPCProcedure.Mine(newVentId, role, pos, zAxis);
+                RPCProcedure.Mine(newVentId, pos, zAxis);
                 break;
 
             case CustomRPC.TurnToImpostor:
@@ -3535,7 +2712,7 @@ internal class RPCHandlerPatch
 
             case CustomRPC.ThiefStealsRole:
                 var thiefTargetId = reader.ReadByte();
-                RPCProcedure.thiefStealsRole(thiefTargetId);
+                Thief.StealsRole(thiefTargetId);
                 break;
 
             case CustomRPC.SetTrap:
@@ -3583,13 +2760,6 @@ internal class RPCHandlerPatch
             case CustomRPC.ShareGhostInfo:
                 RPCProcedure.receiveGhostInfo(reader.ReadByte(), reader);
                 break;
-            /*
-            case CustomRPC.ShareRoom:
-                var roomPlayer = reader.ReadByte();
-                var roomId = reader.ReadByte();
-                RPCProcedure.shareRoom(roomPlayer, roomId);
-                break;
-            */
             case CustomRPC.MayorMeeting:
                 if (AmongUsClient.Instance.AmHost)
                 {

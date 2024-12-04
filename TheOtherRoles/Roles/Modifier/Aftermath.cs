@@ -153,7 +153,7 @@ public class Aftermath
             writer.WriteBytesAndSize(buff);
             writer.Write(0.01f);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            Mine(id, Miner.miner, buff, 0.01f);
+            Mine(id, buff, 0.01f);
             minerMineButton.Timer = minerMineButton.MaxTimer;
         }
         else if (Escapist.escapist == killer)
@@ -368,14 +368,14 @@ public class Aftermath
             setSwoop(Swooper.swooper.PlayerId, byte.MinValue);
             swooperSwoopButton.Timer = swooperSwoopButton.MaxTimer + Swooper.duration;
         }
-        else if (Jackal.jackal == killer && Jackal.canSwoop)
+        else if (Jackal.jackal.Any(x => x == killer) && Jackal.canSwoop)
         {
             var invisibleWriter = AmongUsClient.Instance.StartRpcImmediately(killer.NetId,
                 (byte)CustomRPC.SetJackalSwoop, SendOption.Reliable);
             invisibleWriter.Write(killer.PlayerId);
             invisibleWriter.Write(byte.MinValue);
             AmongUsClient.Instance.FinishRpcImmediately(invisibleWriter);
-            setJackalSwoop(Jackal.jackal.PlayerId, byte.MinValue);
+            setJackalSwoop(killer.PlayerId, byte.MinValue);
             jackalSwoopButton.Timer = jackalSwoopButton.MaxTimer + Jackal.duration;
         }
     }

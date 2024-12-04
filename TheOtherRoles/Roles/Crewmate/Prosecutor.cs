@@ -200,17 +200,16 @@ public class ExilePros
 {
     public static void ExileControllerPostfix(ExileController __instance)
     {
-        if (Prosecutor.prosecutor != null)
+        if (Prosecutor.prosecutor != null && Prosecutor.ProsecuteThisMeeting)
         {
-            if (Prosecutor.ProsecuteThisMeeting)
+            var exiled = __instance.exiled?.Object;
+            if (exiled != null && exiled == exiled.isCrew() && Prosecutor.diesOnIncorrectPros)
             {
-                var exiled = __instance.exiled?.Object;
-                if (exiled != null && exiled != (exiled.Data.Role.IsImpostor || isKillerNeutral(exiled) || isEvilNeutral(exiled)) && Prosecutor.diesOnIncorrectPros)
-                    Prosecutor.prosecutor.Exiled();
-                if (exiled == null)
-                    Prosecutor.Prosecuted = false;
-                Prosecutor.ProsecuteThisMeeting = false;
+                Prosecutor.prosecutor.Exiled();
             }
+
+            if (exiled == null) Prosecutor.Prosecuted = false;
+            Prosecutor.ProsecuteThisMeeting = false;
         }
     }
 

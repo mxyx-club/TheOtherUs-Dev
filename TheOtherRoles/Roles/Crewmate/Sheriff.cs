@@ -40,8 +40,8 @@ public static class Sheriff
     {
         return (target != Mini.mini || Mini.isGrownUp()) &&
                (target.Data.Role.IsImpostor ||
-                Jackal.jackal == target ||
-                Sidekick.sidekick == target ||
+                Jackal.jackal.Any(x => x == target) ||
+                Jackal.sidekick == target ||
                 Juggernaut.juggernaut == target ||
                 Werewolf.werewolf == target ||
                 Swooper.swooper == target ||
@@ -50,15 +50,15 @@ public static class Sheriff
                 (spyCanDieToSheriff && Spy.spy == target) ||
                 (canKillNeutrals &&
                     (Akujo.akujo == target || isKillerNeutral(target) ||
-                        (Survivor.survivor.Contains(target) && canKillSurvivor) ||
+                        (Survivor.survivor.Any(p => p == target) && canKillSurvivor) ||
                         (Jester.jester == target && canKillJester) ||
                         (Vulture.vulture == target && canKillVulture) ||
                         (Thief.thief == target && canKillThief) ||
-                        (Amnisiac.amnisiac == target && canKillAmnesiac) ||
+                        (Amnisiac.player.Any(p => p == target) && canKillAmnesiac) ||
                         (PartTimer.partTimer == target && canKillPartTimer) ||
                         (Lawyer.lawyer == target && canKillLawyer) ||
                         (Executioner.executioner == target && canKillExecutioner) ||
-                        (Pursuer.pursuer.Contains(target) && canKillPursuer) ||
+                        (Pursuer.pursuer.Any(p => p == target) && canKillPursuer) ||
                         (Doomsayer.doomsayer == target && canKillDoomsayer))));
     }
 

@@ -33,7 +33,7 @@ public static class Lovers
 
     public static PlayerControl otherLover(PlayerControl oneLover)
     {
-        if (!existingAndAlive()) return null;
+        if (!existing()) return null;
         if (oneLover == lover1) return lover2;
         if (oneLover == lover2) return lover1;
         return null;

@@ -44,7 +44,7 @@ public static class HauntMenuMinigamePatch
         if (__instance.filterMode == HauntMenuMinigame.HauntFilters.Impostor)
         {
             var info = RoleInfo.getRoleInfoForPlayer(pc, false);
-            __result = (pc.Data.Role.IsImpostor || info.Any(x => x.roleTeam == RoleType.Neutral)) && !pc.Data.IsDead;
+            __result = (pc.Data.Role.IsImpostor || info.Any(x => x.roleType == RoleType.Neutral)) && !pc.Data.IsDead;
         }
     }
 
@@ -87,19 +87,26 @@ public static class HauntMenuMinigamePatch
     [HarmonyPatch(typeof(AbilityButton), nameof(AbilityButton.Update))]
     public static void showOrHideAbilityButtonPostfix(AbilityButton __instance)
     {
-        var isGameMode = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
-        if (CachedPlayer.LocalPlayer.Data.IsDead && CanSeeRoleInfo && (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() || isGameMode))
+        var isHideNSeek = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
+
+        // player has haunt button.
+        var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
+        var numberOfLeftTasks = playerTotal - playerCompleted;
+
+        if (!InGame || InMeeting || !CanSeeRoleInfo)
         {
-            // player has haunt button.
-            var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
-            var numberOfLeftTasks = playerTotal - playerCompleted;
-            if (numberOfLeftTasks <= 0 || isGameMode)
-                __instance.Show();
-            else
-                __instance.Hide();
+            HudManager.Instance.AbilityButton?.gameObject.SetActive(false);
+            return;
         }
+        else if (CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool() && PlayerControl.LocalPlayer.isCrew() && numberOfLeftTasks > 0)
+        {
+            HudManager.Instance.AbilityButton.gameObject.SetActive(false);
+            return;
+        }
+        HudManager.Instance.AbilityButton.gameObject.SetActive(PlayerControl.LocalPlayer.IsDead() || isHideNSeek);
     }
 }
+
 [HarmonyPatch(typeof(HauntMenuMinigame), nameof(HauntMenuMinigame.Start))]
 public static class AddNeutralHauntPatch
 {

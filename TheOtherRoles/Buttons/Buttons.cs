@@ -27,6 +27,7 @@ internal static class HudManagerStartPatch
     private static CustomButton deputyHandcuffButton;
     public static CustomButton timeMasterShieldButton;
     private static CustomButton amnisiacRememberButton;
+    private static CustomButton specterRememberButton;
     public static CustomButton veteranAlertButton;
     public static CustomButton medicShieldButton;
     private static CustomButton shifterShiftButton;
@@ -166,7 +167,7 @@ internal static class HudManagerStartPatch
         garlicButton.MaxTimer = defaultMaxTimer;
         jackalKillButton.MaxTimer = Jackal.cooldown;
         werewolfKillButton.MaxTimer = Werewolf.killCooldown;
-        sidekickKillButton.MaxTimer = Sidekick.cooldown;
+        sidekickKillButton.MaxTimer = Jackal.cooldown;
         jackalSidekickButton.MaxTimer = Jackal.createSidekickCooldown;
         eraserButton.MaxTimer = Eraser.cooldown;
         placeJackInTheBoxButton.MaxTimer = Trickster.placeBoxCooldown;
@@ -179,6 +180,7 @@ internal static class HudManagerStartPatch
         arsonistButton.MaxTimer = Arsonist.cooldown;
         vultureEatButton.MaxTimer = Vulture.cooldown;
         amnisiacRememberButton.MaxTimer = defaultMaxTimer;
+        specterRememberButton.MaxTimer = 10f;
         grenadierFlashButton.MaxTimer = Grenadier.cooldown;
         bomberGiveButton.MaxTimer = 0f;
         bomberGiveButton.Timer = 0f;
@@ -447,15 +449,10 @@ internal static class HudManagerStartPatch
         engineerRepairButton = new CustomButton(
             () =>
             {
-                engineerRepairButton.Timer = 0f;
-                var usedRepairWriter = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerUsedRepair);
-                usedRepairWriter.EndRPC();
-                RPCProcedure.engineerUsedRepair();
-                SoundEffectsManager.play("engineerRepair");
                 foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
                     if (task.TaskType == TaskTypes.FixLights)
                     {
-                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.EngineerFixLights);
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.FixLights);
                         writer.EndRPC();
                         RPCProcedure.FixLights();
                     }
@@ -484,10 +481,13 @@ internal static class HudManagerStartPatch
                     }
                     else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
                     {
-                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixSubmergedOxygen);
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.FixSubmergedOxygen);
                         writer.EndRPC();
                         RPCProcedure.FixSubmergedOxygen();
                     }
+                SoundEffectsManager.play("engineerRepair");
+                Engineer.remainingFixes--;
+                engineerRepairButton.Timer = 0f;
             },
             () =>
             {
@@ -496,14 +496,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                var sabotageActive = false;
-                foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
-                    if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
-                        task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic ||
-                        task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
-                        || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
-                        sabotageActive = true;
-                return sabotageActive && Engineer.remainingFixes > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+                return isSabotageActive() && Engineer.remainingFixes > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () =>
             {
@@ -519,12 +512,10 @@ internal static class HudManagerStartPatch
         ghostEngineerButton = new CustomButton(
             () =>
             {
-                ghostEngineerButton.Timer = 0f;
-                SoundEffectsManager.play("engineerRepair");
                 foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
                     if (task.TaskType == TaskTypes.FixLights)
                     {
-                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixLights);
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.FixLights);
                         writer.EndRPC();
                         RPCProcedure.FixLights();
                     }
@@ -553,26 +544,22 @@ internal static class HudManagerStartPatch
                     }
                     else if (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask)
                     {
-                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.EngineerFixSubmergedOxygen);
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.FixSubmergedOxygen);
                         writer.EndRPC();
                         RPCProcedure.FixSubmergedOxygen();
                     }
+                GhostEngineer.Fixes = true;
+                ghostEngineerButton.Timer = 0f;
+                SoundEffectsManager.play("engineerRepair");
             },
             () =>
             {
                 return GhostEngineer.player != null && GhostEngineer.player == CachedPlayer.LocalPlayer.PlayerControl &&
-                       !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead;
+                       !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead && !GhostEngineer.Fixes;
             },
             () =>
             {
-                var sabotageActive = false;
-                foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
-                    if (task.TaskType == TaskTypes.FixLights || task.TaskType == TaskTypes.RestoreOxy ||
-                        task.TaskType == TaskTypes.ResetReactor || task.TaskType == TaskTypes.ResetSeismic ||
-                        task.TaskType == TaskTypes.FixComms || task.TaskType == TaskTypes.StopCharles
-                        || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
-                        sabotageActive = true;
-                return sabotageActive && Engineer.remainingFixes > 0 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+                return isSabotageActive() && GhostEngineer.Fixes && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () => { },
             Engineer.buttonSprite,
@@ -1889,6 +1876,17 @@ internal static class HudManagerStartPatch
             () =>
             {
                 if (checkAndDoVetKill(Jackal.currentTarget)) return;
+                var target = Jackal.currentTarget;
+
+                if (Jackal.killFakeImpostor && target.Data.Role.IsImpostor)
+                {
+                    //uncheckedMurderPlayer(Jackal.jackal.PlayerId, player.PlayerId, 1);
+                    checkMurderAttemptAndKill(PlayerControl.LocalPlayer, target);
+                    GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.FakeSK, PlayerControl.LocalPlayer);
+                    jackalSidekickButton.Timer = jackalSidekickButton.MaxTimer;
+                    return;
+                }
+
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.JackalCreatesSidekick, SendOption.Reliable);
                 writer.Write(Jackal.currentTarget.PlayerId);
@@ -1900,12 +1898,12 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Jackal.canCreateSidekick && Jackal.jackal != null &&
-                       Jackal.jackal == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead;
+                return Jackal.canCreateSidekick && Jackal.jackal.Any(x => x.IsAlive() && x == CachedPlayer.LocalPlayer.PlayerControl);
             },
             () =>
             {
-                showTargetNameOnButton(Jackal.currentTarget, jackalSidekickButton, GetString("jackalSidekickText")); // Show now text since the button already says sidekick
+                // Show now text since the button already says sidekick
+                showTargetNameOnButton(Jackal.currentTarget, jackalSidekickButton, GetString("jackalSidekickText"));
                 return Jackal.canCreateSidekick && Jackal.currentTarget != null &&
                        CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
@@ -1921,15 +1919,14 @@ internal static class HudManagerStartPatch
             () =>
             {
                 if (checkAndDoVetKill(Jackal.currentTarget)) return;
-                if (checkMurderAttemptAndKill(Jackal.jackal, Jackal.currentTarget) ==
+                if (checkMurderAttemptAndKill(CachedPlayer.LocalPlayer.PlayerControl, Jackal.currentTarget) ==
                     MurderAttemptResult.SuppressKill) return;
 
                 jackalKillButton.Timer = jackalKillButton.MaxTimer;
-                Jackal.currentTarget = null;
             },
             () =>
             {
-                return Jackal.jackal != null && Jackal.jackal == CachedPlayer.LocalPlayer.PlayerControl &&
+                return Jackal.jackal != null && Jackal.jackal.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
@@ -1950,15 +1947,15 @@ internal static class HudManagerStartPatch
             { /* On Use */
                 var invisibleWriter = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.SetJackalSwoop, SendOption.Reliable, -1);
-                invisibleWriter.Write(Jackal.jackal.PlayerId);
+                invisibleWriter.Write(CachedPlayer.LocalPlayer.PlayerControl.PlayerId);
                 invisibleWriter.Write(byte.MinValue);
                 AmongUsClient.Instance.FinishRpcImmediately(invisibleWriter);
-                RPCProcedure.setJackalSwoop(Jackal.jackal.PlayerId, byte.MinValue);
+                RPCProcedure.setJackalSwoop(CachedPlayer.LocalPlayer.PlayerControl.PlayerId, byte.MinValue);
             },
             () =>
             {   /* Can See */
                 return Jackal.jackal != null && Jackal.canSwoop &&
-                       Jackal.jackal == CachedPlayer.LocalPlayer.PlayerControl && !CachedPlayer.LocalPlayer.Data.IsDead;
+                       Jackal.jackal.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) && !CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
             {   /* On Click */
@@ -1985,22 +1982,22 @@ internal static class HudManagerStartPatch
         sidekickKillButton = new CustomButton(
             () =>
             {
-                if (checkAndDoVetKill(Sidekick.currentTarget)) return;
-                if (checkMurderAttemptAndKill(Sidekick.sidekick, Sidekick.currentTarget) ==
+                if (checkAndDoVetKill(Jackal.currentTarget2)) return;
+                if (checkMurderAttemptAndKill(Jackal.sidekick, Jackal.currentTarget2) ==
                     MurderAttemptResult.SuppressKill) return;
                 sidekickKillButton.Timer = sidekickKillButton.MaxTimer;
-                Sidekick.currentTarget = null;
+                Jackal.currentTarget2 = null;
             },
             () =>
             {
-                return Sidekick.canKill && Sidekick.sidekick != null &&
-                       Sidekick.sidekick == CachedPlayer.LocalPlayer.PlayerControl &&
+                return Jackal.sidekickCanKill && Jackal.sidekick != null &&
+                       Jackal.sidekick == CachedPlayer.LocalPlayer.PlayerControl &&
                        !CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
             {
-                showTargetNameOnButton(Sidekick.currentTarget, sidekickKillButton, GetString("killButtonText"));
-                return Sidekick.currentTarget && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+                showTargetNameOnButton(Jackal.currentTarget2, sidekickKillButton, GetString("killButtonText"));
+                return Jackal.currentTarget2 && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () => { sidekickKillButton.Timer = sidekickKillButton.MaxTimer; },
             __instance.KillButton.graphic.sprite,
@@ -2170,7 +2167,7 @@ internal static class HudManagerStartPatch
 
                 writer.Write(0.01f);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.Mine(id, Miner.miner, buff, 0.01f);
+                RPCProcedure.Mine(id, buff, 0.01f);
             },
             () =>
             {
@@ -3217,7 +3214,7 @@ internal static class HudManagerStartPatch
                                     SendOption.Reliable);
                                 writer.Write(playerInfo.PlayerId);
                                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                                RPCProcedure.amnisiacTakeRole(playerInfo.PlayerId);
+                                Amnisiac.TakeRole(playerInfo.PlayerId, PlayerControl.LocalPlayer.PlayerId);
                                 break;
                             }
                         }
@@ -3225,7 +3222,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Amnisiac.amnisiac != null && Amnisiac.amnisiac == CachedPlayer.LocalPlayer.PlayerControl &&
+                return Amnisiac.player != null && Amnisiac.player.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
@@ -3239,6 +3236,65 @@ internal static class HudManagerStartPatch
             __instance,
             abilityInput.keyCode,
             buttonText: GetString("RememberText")
+        );
+
+        specterRememberButton = new CustomButton(
+            () => { },
+            () =>
+            {
+                return Specter.player != null && Specter.player == CachedPlayer.LocalPlayer.PlayerControl &&
+                       CachedPlayer.LocalPlayer.Data.IsDead & Specter.remember;
+            },
+            () =>
+            {
+                var array = Physics2D.OverlapCircleAll(CachedPlayer.LocalPlayer.PlayerControl.GetTruePosition(),
+                      CachedPlayer.LocalPlayer.PlayerControl.MaxReportDistance * 0.36f,
+                      Constants.PlayersOnlyMask).Where(collider => collider.tag == "DeadBody")
+                 .Select(collider => collider.GetComponent<DeadBody>())
+                 .Where(deadBody => deadBody != null);
+
+                return array.Any(db => db.ParentId != CachedPlayer.LocalId) && PlayerControl.LocalPlayer.CanMove;
+            },
+            () =>
+            {
+                Specter.remember = true;
+                specterRememberButton.Timer = 10f;
+            },
+            Amnisiac.buttonSprite,
+            ButtonPositions.upperRowCenter,
+            __instance,
+            abilityInput.keyCode,
+            true,
+            2f,
+            () =>
+            {
+                foreach (var collider2D in Physics2D.OverlapCircleAll(CachedPlayer.LocalPlayer.PlayerControl.GetTruePosition(),
+                             CachedPlayer.LocalPlayer.PlayerControl.MaxReportDistance, Constants.PlayersOnlyMask))
+                    if (collider2D.tag == "DeadBody")
+                    {
+                        var component = collider2D.GetComponent<DeadBody>();
+                        if (component && !component.Reported)
+                        {
+                            var truePosition = CachedPlayer.LocalPlayer.PlayerControl.GetTruePosition();
+                            var truePosition2 = component.TruePosition;
+                            if (Vector2.Distance(truePosition2, truePosition) <=
+                                CachedPlayer.LocalPlayer.PlayerControl.MaxReportDistance &&
+                                CachedPlayer.LocalPlayer.PlayerControl.CanMove &&
+                                !PhysicsHelpers.AnythingBetween(truePosition, truePosition2,
+                                    Constants.ShipAndObjectsMask, false))
+                            {
+                                var playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
+                                PlayerControl.LocalPlayer.transform.position = component.transform.position;
+                                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.SpecterTakeRole);
+                                writer.Write(playerInfo.PlayerId);
+                                writer.EndRPC();
+                                Specter.TakeRole(playerInfo.PlayerId);
+                                break;
+                            }
+                        }
+                    }
+            },
+            buttonText: GetString("SpecterButton")
         );
 
         // Medium button
@@ -3901,12 +3957,11 @@ internal static class HudManagerStartPatch
                     if (Terrorist.selfExplosion)
                     {
                         var loacl = Terrorist.terrorist.PlayerId;
-                        var writer1 = AmongUsClient.Instance.StartRpcImmediately(Terrorist.terrorist.NetId,
-                            (byte)CustomRPC.UncheckedMurderPlayer, SendOption.Reliable);
+                        var writer1 = StartRPC(Terrorist.terrorist, CustomRPC.UncheckedMurderPlayer);
                         writer1.Write(loacl);
                         writer1.Write(loacl);
                         writer1.Write(byte.MaxValue);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer1);
+                        writer1.EndRPC();
                         RPCProcedure.uncheckedMurderPlayer(loacl, loacl, byte.MaxValue);
                     }
 
@@ -4006,13 +4061,18 @@ internal static class HudManagerStartPatch
                     Thief.thief.clearAllTasks();
                 }
 
+                if (result is MurderAttemptResult.ReverseKill or MurderAttemptResult.BodyGuardKill)
+                {
+                    checkMurderAttemptAndKill(CachedPlayer.LocalPlayer.PlayerControl, target);
+                }
+
                 // Steal role if survived.
                 if (!Thief.thief.Data.IsDead && result == MurderAttemptResult.PerformKill)
                 {
                     var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.ThiefStealsRole);
                     writer.Write(target.PlayerId);
                     writer.EndRPC();
-                    RPCProcedure.thiefStealsRole(target.PlayerId);
+                    Thief.StealsRole(target.PlayerId);
                 }
 
                 // Kill the victim (after becoming their role - so that no win is triggered for other teams)

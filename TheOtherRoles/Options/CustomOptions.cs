@@ -366,7 +366,7 @@ internal class GameOptionsMenuStartPatch
         copyButton.transform.localPosition += Vector3.down * 0.8f;
         var copyButtonPassive = copyButton.GetComponent<PassiveButton>();
         var copyButtonRenderer = copyButton.GetComponent<SpriteRenderer>();
-        copyButtonRenderer.sprite = UnityHelper.loadSpriteFromResources("TheOtherRoles.Resources.CopyButton.png", 175f);
+        copyButtonRenderer.sprite = new ResourceSprite("TheOtherRoles.Resources.CopyButton.png", 175f);
         copyButtonPassive.OnClick.RemoveAllListeners();
         copyButtonPassive.OnClick = new Button.ButtonClickedEvent();
         copyButtonPassive.OnClick.AddListener((Action)(() =>
@@ -1151,9 +1151,9 @@ internal class GameOptionsDataPatch
                 if (option.id == 30170) //Deputy
                     sb.AppendLine($"- {cs(Deputy.color, "Deputy".Translate())}: {option.getString()}");
                 else if (option.id == 20142)
-                    sb.AppendLine($"- {cs(Sidekick.color, "jackalSwoopChance".Translate())}: {option.getString()}");
+                    sb.AppendLine($"- {cs(Jackal.color, "jackalSwoopChance".Translate())}: {option.getString()}");
                 else if (option.id == 20135) //Sidekick
-                    sb.AppendLine($"- {cs(Sidekick.color, "Sidekick".Translate())}: {option.getString()}");
+                    sb.AppendLine($"- {cs(Jackal.color, "Sidekick".Translate())}: {option.getString()}");
             }
 
         if (headerOnly) return sb.ToString();

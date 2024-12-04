@@ -147,6 +147,7 @@ internal class RoleManagerSelectRolesPatch
         neutralSettings.Add((byte)RoleId.Jester, CustomOptionHolder.jesterSpawnRate.GetSelection());
         neutralSettings.Add((byte)RoleId.Lawyer, CustomOptionHolder.lawyerSpawnRate.GetSelection());
         neutralSettings.Add((byte)RoleId.Executioner, CustomOptionHolder.executionerSpawnRate.GetSelection());
+        neutralSettings.Add((byte)RoleId.Witness, CustomOptionHolder.witnessSpawnRate.GetSelection());
         neutralSettings.Add((byte)RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.GetSelection());
         neutralSettings.Add((byte)RoleId.Doomsayer, CustomOptionHolder.doomsayerSpawnRate.GetSelection());
         neutralSettings.Add((byte)RoleId.Akujo, CustomOptionHolder.akujoSpawnRate.GetSelection());
@@ -439,7 +440,7 @@ internal class RoleManagerSelectRolesPatch
             // Lawyer
             foreach (PlayerControl p in CachedPlayer.AllPlayers)
                 if (!p.Data.IsDead && !p.Data.Disconnected && p != Lovers.lover1 && p != Lovers.lover2 &&
-                    (p.Data.Role.IsImpostor || p == Swooper.swooper || p == Jackal.jackal || p == Juggernaut.juggernaut ||
+                    (p.Data.Role.IsImpostor || p == Swooper.swooper || Jackal.jackal.Any(x => x == p) || p == Juggernaut.juggernaut ||
                      p == Werewolf.werewolf || (Lawyer.targetCanBeJester && p == Jester.jester)))
                     possibleTargets.Add(p);
 
@@ -646,8 +647,11 @@ internal class RoleManagerSelectRolesPatch
     {
         var IndexList = new Queue<PlayerControl>();
 
-        if (Jackal.jackal != null && forceJackal)
-            IndexList.Enqueue(Jackal.jackal);
+        if (forceJackal)
+        {
+            foreach (var jackalPlayer in Jackal.jackal)
+                if (jackalPlayer != null) IndexList.Enqueue(jackalPlayer);
+        }
 
         if (Pavlovsdogs.pavlovsowner != null && forcePavlovsowner)
             IndexList.Enqueue(Pavlovsdogs.pavlovsowner);
@@ -826,8 +830,8 @@ internal class RoleManagerSelectRolesPatch
             if (Shifter.shiftALLNeutra)
             {
                 shifterCrewPlayer.RemoveAll(x => x.Data.Role.IsImpostor
-                    || x == Jackal.jackal
-                    || x == Sidekick.sidekick
+                    || Jackal.jackal.Any(p => p == x)
+                    || x == Jackal.sidekick
                     || x == Lawyer.lawyer
                     || x == Pavlovsdogs.pavlovsowner);
             }
