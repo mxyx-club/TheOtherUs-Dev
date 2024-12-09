@@ -1,5 +1,3 @@
-using TheOtherRoles.Roles.Ghost;
-using TheOtherRoles.Roles.Neutral;
 using UnityEngine;
 using static TheOtherRoles.Options.CustomOption;
 using Types = TheOtherRoles.Options.CustomOption.CustomOptionType;
@@ -231,6 +229,7 @@ public class CustomOptionHolder
 
     public static CustomOption specterSpawnRate;
     public static CustomOption specterResetRole;
+    public static CustomOption specterAfterMeeting;
 
     public static CustomOption sheriffSpawnRate;
     public static CustomOption sheriffMisfireKills;
@@ -388,6 +387,9 @@ public class CustomOptionHolder
     public static CustomOption executionerOnTargetDead;
 
     public static CustomOption witnessSpawnRate;
+    public static CustomOption witnessMarkTimer;
+    public static CustomOption witnessWinCount;
+    public static CustomOption witnessMeetingDie;
 
     public static CustomOption balancerSpawnRate;
     public static CustomOption balancerCount;
@@ -908,6 +910,7 @@ public class CustomOptionHolder
 
         specterSpawnRate = Create(50020, Types.Neutral, cs(Specter.color, "SpecterOptions"), rates, null, true);
         specterResetRole = Create(50021, Types.Neutral, "amnisiacResetRole", true, specterSpawnRate);
+        specterAfterMeeting = Create(50022, Types.Neutral, "specterAfterMeeting", false, specterSpawnRate);
 
         survivorSpawnRate = Create(20280, Types.Neutral, cs(Survivor.color, "Survivor"), rates, null, true);
         survivorVestEnable = Create(20281, Types.Neutral, "survivorVestEnable", true, survivorSpawnRate);
@@ -927,6 +930,16 @@ public class CustomOptionHolder
         jesterCanCallEmergency = Create(20101, Types.Neutral, "jesterCanCallEmergency", true, jesterSpawnRate);
         jesterCanVent = Create(20102, Types.Neutral, "jesterCanVent", true, jesterSpawnRate);
         jesterHasImpostorVision = Create(20103, Types.Neutral, "jesterHasImpostorVision", true, jesterSpawnRate);
+
+        partTimerSpawnRate = Create(20290, Types.Neutral, cs(PartTimer.color, "PartTimer"), rates, null, true);
+        partTimerCooldown = Create(20291, Types.Neutral, "partTimerCooldown", 20f, 2.5f, 60f, 2.5f, partTimerSpawnRate);
+        partTimerDeathTurn = Create(20292, Types.Neutral, "partTimerDeathTurn", 2, 1, 6, 1, partTimerSpawnRate);
+        partTimerKnowsRole = Create(20293, Types.Neutral, "partTimerIsCheckTargetRole", true, partTimerSpawnRate);
+
+        witnessSpawnRate = Create(20301, Types.Neutral, cs(Witness.color, "Witness"), rates, null, true);
+        witnessMarkTimer = Create(20302, Types.Neutral, "witnessMarkTimer", 30, 20, 90, 5, witnessSpawnRate);
+        witnessWinCount = Create(20303, Types.Neutral, "witnessWinCount", 3, 1, 6, 1, witnessSpawnRate);
+        witnessMeetingDie = Create(20304, Types.Neutral, "witnessMeetingDie", true, witnessSpawnRate);
 
         jackalSpawnRate = Create(20130, Types.Neutral, cs(Jackal.color, "Jackal"), rates, null, true);
         jackalChanceSwoop = Create(20142, Types.Neutral, cs(Swooper.color, "jackalChanceSwoop"), rates, jackalSpawnRate);
@@ -1003,13 +1016,6 @@ public class CustomOptionHolder
         executionerCanCallEmergency = Create(20191, Types.Neutral, "executionerCanCallEmergency", true, executionerSpawnRate);
         executionerPromotesToLawyer = Create(20192, Types.Neutral, "executionerPromotesToLawyer", true, executionerSpawnRate);
         //executionerOnTargetDead = Create(20193, Types.Neutral, "目标死亡后变为", [cs(Pursuer.color, "Pursuer"), cs(Jester.color, "Jester"), cs(Amnisiac.color, "Amnisiac"), "Crewmate"], executionerSpawnRate);
-
-        partTimerSpawnRate = Create(20290, Types.Neutral, cs(PartTimer.color, "PartTimer"), rates, null, true);
-        partTimerCooldown = Create(20291, Types.Neutral, "partTimerCooldown", 20f, 2.5f, 60f, 2.5f, partTimerSpawnRate);
-        partTimerDeathTurn = Create(20292, Types.Neutral, "partTimerDeathTurn", 2, 1, 6, 1, partTimerSpawnRate);
-        partTimerKnowsRole = Create(20293, Types.Neutral, "partTimerIsCheckTargetRole", true, partTimerSpawnRate);
-
-        witnessSpawnRate = Create(20301, Types.Neutral, cs(Witness.color, "Witness"), rates, null, true);
 
         doomsayerSpawnRate = Create(20221, Types.Neutral, cs(Doomsayer.color, "Doomsayer"), rates, null, true);
         doomsayerCooldown = Create(20222, Types.Neutral, "doomsayerCooldown", 20f, 2.5f, 60f, 2.5f, doomsayerSpawnRate);

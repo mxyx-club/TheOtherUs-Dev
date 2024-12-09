@@ -8,7 +8,18 @@ namespace TheOtherRoles.Roles;
 
 public static class RoleHelpers
 {
-    public static bool CanSeeRoleInfo;
+    private static bool _CanSeeRoleInfo;
+    public static bool CanSeeRoleInfo
+    {
+        get => _CanSeeRoleInfo;
+        set
+        {
+            if (PlayerControl.LocalPlayer == Specter.player) _CanSeeRoleInfo = false;
+            else if (Specter.player.isLover() && Lovers.otherLover(Specter.player) == PlayerControl.LocalPlayer) _CanSeeRoleInfo = false;
+            else _CanSeeRoleInfo = value;
+        }
+    }
+
     public static bool CanMultipleShots(PlayerControl dyingTarget)
     {
         if (dyingTarget == CachedPlayer.LocalPlayer.PlayerControl)
@@ -115,6 +126,7 @@ public static class RoleHelpers
             { RoleId.Undertaker, CustomOptionHolder.undertakerSpawnRate.GetSelection() },
             { RoleId.Vampire, CustomOptionHolder.vampireSpawnRate.GetSelection() },
             { RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.GetSelection() },
+            { RoleId.Witness, CustomOptionHolder.witnessSpawnRate.GetSelection() },
             { RoleId.Witch, CustomOptionHolder.witchSpawnRate.GetSelection() },
             { RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection() },
             { RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.GetSelection() },
@@ -251,6 +263,7 @@ public static class RoleHelpers
         Survivor.clearAndReload();
         PartTimer.clearAndReload();
         Grenadier.clearAndReload();
+        Witness.ClearAndReload();
 
         // Modifier
         Assassin.clearAndReload();
@@ -302,15 +315,11 @@ public static class RoleHelpers
 
         public static bool otherNeutral(PlayerControl player)
         {
-            if (isNeutral(player) &&
-                       player != Jackal.sidekick &&
-                       player != Pavlovsdogs.pavlovsowner &&
-                       player != Akujo.akujo &&
-                       player != Lawyer.lawyer &&
-                       !Pavlovsdogs.pavlovsdogs.Contains(player) &&
-                       !Jackal.jackal.Contains(player) &&
-                       (player != PartTimer.partTimer || PartTimer.target != null))
+            if (isNeutral(player) && player != Lawyer.lawyer &&
+               !Jackal.jackal.Contains(player) && player != Jackal.sidekick &&
+               player != Pavlovsdogs.pavlovsowner && !Pavlovsdogs.pavlovsdogs.Contains(player))
                 return true;
+            if (PartTimer.partTimer == player && PartTimer.target == null) return true;
             return false;
         }
 

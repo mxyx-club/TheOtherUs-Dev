@@ -235,6 +235,9 @@ public enum CustomRPC
     InfoSleuthTarget,
     InfoSleuthNoTarget,
     GrenadierFlash,
+    WitnessReport,
+    WitnessSetTarget,
+    WitnessWin,
 
     TrapperKill,
     PlaceTrap,
@@ -1226,6 +1229,7 @@ public static class RPCProcedure
         if (player == CachedPlayer.LocalPlayer.PlayerControl) SoundEffectsManager.play("jackalSidekick");
         if (HandleGuesser.isGuesserGm && CustomOptionHolder.guesserGamemodePavlovsdogIsAlwaysGuesser.GetBool() && !HandleGuesser.isGuesser(targetId))
             setGuesserGm(targetId);
+        Pavlovsdogs.createDogNum -= 1;
     }
 
     /// <summary>
@@ -1302,7 +1306,11 @@ public static class RPCProcedure
             if (Jackal.sidekick.IsAlive()) sidekickPromotes(Jackal.sidekick.PlayerId);
         }
 
-        if (player == Pavlovsdogs.pavlovsowner) Pavlovsdogs.pavlovsowner = null;
+        if (player == Pavlovsdogs.pavlovsowner)
+        {
+            Pavlovsdogs.createDogNum = CustomOptionHolder.pavlovsownerCreateDogNum.GetInt();
+            Pavlovsdogs.pavlovsowner = null;
+        }
         if (player == Jackal.sidekick) Jackal.sidekick = null;
         if (player == BountyHunter.bountyHunter) BountyHunter.clearAndReload();
         if (player == Vulture.vulture) Vulture.clearAndReload();
@@ -1312,6 +1320,7 @@ public static class RPCProcedure
         if (player == Juggernaut.juggernaut) Juggernaut.clearAndReload();
         if (player == Doomsayer.doomsayer) Doomsayer.clearAndReload();
         if (player == Akujo.akujo) Akujo.clearAndReload();
+        if (player == Witness.player) Witness.ClearAndReload();
         if (player == PartTimer.partTimer) PartTimer.clearAndReload();
 
         if (player == Cursed.cursed) Cursed.clearAndReload();
@@ -2788,6 +2797,16 @@ internal class RPCHandlerPatch
                 break;
             case CustomRPC.GrenadierFlash:
                 RPCProcedure.grenadierFlash(reader.ReadBoolean());
+                break;
+            case CustomRPC.WitnessReport:
+                Witness.WitnessReport(reader.ReadByte());
+                break;
+            case CustomRPC.WitnessSetTarget:
+                Witness.target = playerById(reader.ReadByte());
+                break;
+            case CustomRPC.WitnessWin:
+                Witness.triggerWitnessWin = true;
+                Message("WitnessWin!");
                 break;
             case CustomRPC.YoyoBlink:
                 RPCProcedure.yoyoBlink(reader.ReadByte() == byte.MaxValue, reader.ReadBytesAndSize());

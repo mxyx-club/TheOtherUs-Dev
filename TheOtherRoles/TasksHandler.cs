@@ -11,8 +11,7 @@ public static class TasksHandler
         var TotalTasks = 0;
         var CompletedTasks = 0;
         if (!playerInfo.Disconnected && playerInfo.Tasks != null &&
-            playerInfo.Object &&
-            playerInfo.Role && playerInfo.Role.TasksCountTowardProgress &&
+            playerInfo.Object && playerInfo.Role && playerInfo.Role.TasksCountTowardProgress &&
             !playerInfo.Object.hasFakeTasks() && !playerInfo.Role.IsImpostor)
             foreach (var playerInfoTask in playerInfo.Tasks.GetFastEnumerator())
             {
@@ -31,6 +30,7 @@ public static class TasksHandler
         {
             return !(playerInfo.Object && playerInfo.Object.hasAliveKillingLover())
                 && playerInfo.PlayerId != Thief.thief?.PlayerId
+                && playerInfo.PlayerId != Specter.player?.PlayerId
                 && !Amnisiac.player.Any(x => x.PlayerId == playerInfo.PlayerId)
                 && playerInfo.PlayerId != Akujo.honmei?.PlayerId;
         }

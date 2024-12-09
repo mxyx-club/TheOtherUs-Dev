@@ -99,4 +99,13 @@ internal static class GameHistory
 
         return DeadPlayers.Count(dp => dp.KillerIfExisting == killer && dp.Player != killer);
     }
+
+    public static PlayerControl GetLastKiller()
+    {
+        var db = DeadPlayers.Where(dp => dp.Player != dp.KillerIfExisting && dp.KillerIfExisting.IsAlive())?
+            .OrderByDescending(dp => dp.TimeOfDeath)
+            .FirstOrDefault().KillerIfExisting;
+        Message($"GetLastKiller {db?.Data?.PlayerName ?? ""}");
+        return db;
+    }
 }

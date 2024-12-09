@@ -160,8 +160,8 @@ public static class Thief
         if (Lawyer.lawyer != null && target == Lawyer.target)
             Lawyer.target = thief;
         if (Thief.thief == PlayerControl.LocalPlayer) CustomButton.ResetAllCooldowns();
-        Thief.clearAndReload();
-        Thief.formerThief = thief; // After clearAndReload, else it would get reset...
+        clearAndReload();
+        formerThief = thief; // After clearAndReload, else it would get reset...
     }
 
 }

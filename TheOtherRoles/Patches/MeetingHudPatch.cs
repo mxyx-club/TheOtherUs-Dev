@@ -175,7 +175,7 @@ internal class MeetingHudPatch
                 checkbox.transform.position = template.transform.position;
                 checkbox.transform.localPosition = new Vector3(-0.95f, 0.03f, -1.3f);
                 if ((HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerId))
-                    || (CachedPlayer.LocalPlayer.PlayerId == Mimic.mimic.PlayerId))
+                    || (Mimic.mimic?.PlayerId == CachedPlayer.LocalPlayer.PlayerId))
                     checkbox.transform.localPosition = new Vector3(-0.5f, 0.03f, -1.3f);
                 var renderer = checkbox.GetComponent<SpriteRenderer>();
                 renderer.sprite = Swapper.spriteCheck;
@@ -296,28 +296,37 @@ internal class MeetingHudPatch
             return;
 
         var meetingInfoText = "";
-        int numGuesses = HandleGuesser.isGuesser(CachedPlayer.LocalPlayer.PlayerControl.PlayerId)
-            ? HandleGuesser.remainingShots(CachedPlayer.LocalPlayer.PlayerControl.PlayerId) : 0;
+        int numGuesses = HandleGuesser.isGuesser(PlayerControl.LocalPlayer.PlayerId)
+            ? HandleGuesser.remainingShots(PlayerControl.LocalPlayer.PlayerId) : 0;
         if (numGuesses > 0)
         {
             meetingInfoText = string.Format(GetString("guesserGuessesLeft"), numGuesses);
         }
 
-        if (CachedPlayer.LocalPlayer.PlayerControl == Akujo.akujo && Akujo.timeLeft > 0)
+        if (PlayerControl.LocalPlayer == Akujo.akujo && (Akujo.honmei == null || Akujo.keeps.Count < 1) && Akujo.timeLeft > 0)
         {
             meetingInfoText = string.Format(GetString("akujoTimeRemaining"), $"{TimeSpan.FromSeconds(Akujo.timeLeft):mm\\:ss}");
         }
-        else if (CachedPlayer.LocalPlayer.PlayerControl == Doomsayer.doomsayer)
+        else if (PlayerControl.LocalPlayer == Doomsayer.doomsayer)
         {
             meetingInfoText = string.Format(GetString("DoomsayerKilledToWin"), Doomsayer.killToWin - Doomsayer.killedToWin);
         }
-        else if (CachedPlayer.LocalPlayer.PlayerControl == Swapper.swapper)
+        else if (PlayerControl.LocalPlayer == Swapper.swapper)
         {
             meetingInfoText = string.Format(GetString("SwapperCharges"), Swapper.charges);
         }
-        else if (CachedPlayer.LocalPlayer.PlayerControl == PartTimer.partTimer && PartTimer.target == null)
+        else if (PlayerControl.LocalPlayer == PartTimer.partTimer && PartTimer.target == null)
         {
             meetingInfoText = string.Format(GetString("PartTimerMeetingInfo"), Swapper.charges);
+        }
+        else if (PlayerControl.LocalPlayer == Witness.player)
+        {
+            if (Witness.timeLeft > 0 && Witness.killerTarget == null)
+                meetingInfoText = string.Format(GetString("WitnessTimerLeft2"), $"{TimeSpan.FromSeconds(Witness.timeLeft):mm\\:ss}");
+            else if (Witness.timeLeft > 0 && Witness.target == null)
+                meetingInfoText = string.Format(GetString("WitnessTimerLeft"), $"{TimeSpan.FromSeconds(Witness.timeLeft):mm\\:ss}");
+            else
+                meetingInfoText = string.Format(GetString("WitnessWinLeft"), $"{Witness.exileToWin - Witness.exiledCount}");
         }
 
         if (meetingInfoText == "") return;
@@ -524,6 +533,7 @@ internal class MeetingHudPatch
 
             __instance.StartCoroutine(Effects.Bloop(index * 0.3f, transform));
             parent.GetComponent<VoteSpreader>().AddVote(spriteRenderer);
+
             return false;
         }
     }
@@ -910,7 +920,7 @@ internal class MeetingHudPatch
         {
             Message("会议开始");
             shookAlready = false;
-            if (CachedPlayer.LocalPlayer.IsDead && Specter.player != PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
+            if (CachedPlayer.LocalPlayer.IsDead) CanSeeRoleInfo = true;
             // Remove first kill shield
             firstKillPlayer = null;
 
@@ -955,6 +965,28 @@ internal class MeetingHudPatch
             {
                 Balancer.Balancer_Patch.MeetingHudStartPostfix(__instance);
             }
+
+            if (Witness.player.IsAlive() && Witness.killerTarget == null) Witness.WitnessReport(byte.MaxValue);
+
+            foreach (var playerState in Instance?.playerStates ?? Enumerable.Empty<PlayerVoteArea>())
+            {
+                var meetingInfoTransform = playerState.NameText.transform.parent.Find("WitnessInfo");
+                if (meetingInfoTransform != null)
+                {
+                    Object.Destroy(meetingInfoTransform.gameObject);
+                }
+            }
+            _ = new LateTask(() =>
+            {
+                foreach (var playerState in Instance?.playerStates ?? Enumerable.Empty<PlayerVoteArea>())
+                {
+                    var meetingInfoTransform = playerState.NameText.transform.parent.Find("WitnessInfo");
+                    if (meetingInfoTransform != null)
+                    {
+                        Object.Destroy(meetingInfoTransform.gameObject);
+                    }
+                }
+            }, 6f);
         }
     }
 }

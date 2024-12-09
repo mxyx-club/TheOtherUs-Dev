@@ -8,7 +8,7 @@ using UnityEngine;
 namespace TheOtherRoles.Patches;
 
 [HarmonyPatch]
-public static class HauntMenuMinigamePatch
+public static class HauntMenuPatch
 {
     // Show the role name instead of just Crewmate / Impostor
     [HarmonyPostfix]
@@ -89,6 +89,8 @@ public static class HauntMenuMinigamePatch
     {
         var isHideNSeek = GameOptionsManager.Instance.currentGameOptions.GameMode == GameModes.HideNSeek;
 
+        if (isHideNSeek) HudManager.Instance.AbilityButton.gameObject.SetActive(PlayerControl.LocalPlayer.IsDead());
+
         // player has haunt button.
         var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
         var numberOfLeftTasks = playerTotal - playerCompleted;
@@ -103,7 +105,7 @@ public static class HauntMenuMinigamePatch
             HudManager.Instance.AbilityButton.gameObject.SetActive(false);
             return;
         }
-        HudManager.Instance.AbilityButton.gameObject.SetActive(PlayerControl.LocalPlayer.IsDead() || isHideNSeek);
+        HudManager.Instance.AbilityButton.gameObject.SetActive(PlayerControl.LocalPlayer.IsDead());
     }
 }
 

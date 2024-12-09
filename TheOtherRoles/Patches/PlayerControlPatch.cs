@@ -387,7 +387,7 @@ public static class PlayerControlFixedUpdatePatch
     private static void sidekickCheckPromotion()
     {
         // If LocalPlayer is Sidekick, the Jackal is disconnected and Sidekick promotion is enabled, then trigger promotion
-        if (Jackal.sidekick.IsDead()|| !Jackal.promotesToJackal || Jackal.sidekick != CachedPlayer.LocalPlayer.PlayerControl) return;
+        if (Jackal.sidekick.IsDead() || !Jackal.promotesToJackal || Jackal.sidekick != CachedPlayer.LocalPlayer.PlayerControl) return;
         if (Jackal.jackal.Count > 0 && Jackal.jackal.All(x => x.IsDead()))
         {
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
@@ -790,7 +790,7 @@ public static class PlayerControlFixedUpdatePatch
                 {
                     meetingInfo = Object.Instantiate(playerVoteArea.NameText, playerVoteArea.NameText.transform.parent);
                     meetingInfo.transform.localPosition += Vector3.down * 0.2f;
-                    meetingInfo.fontSize *= 0.60f;
+                    meetingInfo.fontSize *= 0.64f;
                     meetingInfo.gameObject.name = "Info";
                 }
 
@@ -823,7 +823,7 @@ public static class PlayerControlFixedUpdatePatch
                 }
                 else if (local.IsAlive() && Mayor.mayor == p && Mayor.Revealed)
                 {
-                    meetingInfoText = "Mayor".Translate();
+                    meetingInfoText = cs(Mayor.color, "Mayor".Translate());
                 }
                 else if (canSeeRole)
                 {
@@ -853,6 +853,45 @@ public static class PlayerControlFixedUpdatePatch
                     var playerInfo = playerInfoTransform?.GetComponent<TextMeshPro>();
                     if (playerInfo != null) playerInfo.text = "";
                 }
+            }
+        }
+    }
+
+    public static void WitnessUpdate()
+    {
+        if (Witness.player.IsDead() && !InMeeting) return;
+
+        if (MeetingHud.Instance)
+        {
+            if (Witness.target != null)
+            {
+                setInfo(Witness.target.PlayerId, cs(Color.red, "该玩家被标记为凶手"));
+            }
+            else if (PlayerControl.LocalPlayer == Witness.player && Witness.killerTarget != null)
+            {
+                setInfo(Witness.killerTarget.PlayerId, cs(Color.red, "该玩家可能为凶手"));
+            }
+        }
+
+        void setInfo(int targetPlayerId, string infoText)
+        {
+            var pva = MeetingHud.Instance?.playerStates?.FirstOrDefault(x => x.TargetPlayerId == targetPlayerId);
+            if (pva == null) return;
+
+            var meetingInfoTransform = pva.NameText.transform.parent.FindChild("WitnessInfo");
+            var meetingInfo = meetingInfoTransform != null ? meetingInfoTransform.GetComponent<TextMeshPro>() : null;
+
+            if (meetingInfo == null)
+            {
+                meetingInfo = Object.Instantiate(pva.NameText, pva.NameText.transform.parent);
+                meetingInfo.transform.localPosition += Vector3.up * 0.2f;
+                meetingInfo.fontSize *= 0.72f;
+                meetingInfo.gameObject.name = "WitnessInfo";
+            }
+
+            if (meetingInfo != null)
+            {
+                meetingInfo.text = MeetingHud.Instance.state == MeetingHud.VoteStates.Results ? "" : infoText;
             }
         }
     }
@@ -1172,35 +1211,42 @@ public static class PlayerControlFixedUpdatePatch
 
     private static void amnisiacUpdate()
     {
-        if (Amnisiac.player.Count < 1 || Amnisiac.player.Any(x => x.PlayerId != CachedPlayer.LocalId)
-           || Amnisiac.localArrows == null || !Amnisiac.showArrows) return;
-        if (Amnisiac.player.Any(x => x.PlayerId == CachedPlayer.LocalId))
+        if (Amnisiac.player?.Count == 0 || Amnisiac.localArrows == null || !Amnisiac.showArrows || InMeeting) return;
+
+        foreach (var p in Amnisiac.player.ToList())
         {
-            foreach (var arrow in Amnisiac.localArrows) Object.Destroy(arrow.arrow);
-            Amnisiac.localArrows = [];
-            return;
+            if (p.Data.IsDead)
+            {
+                foreach (var arrow in Amnisiac.localArrows)
+                    Object.Destroy(arrow.arrow);
+                Amnisiac.localArrows.Clear();
+            }
         }
-
-        DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
-        var arrowUpdate = Amnisiac.localArrows.Count != deadBodies.Length;
-        var index = 0;
-
-        if (arrowUpdate)
+        if (Amnisiac.player.Any(x => x.PlayerId == CachedPlayer.LocalId && x.IsAlive()))
         {
-            foreach (var arrow in Amnisiac.localArrows) Object.Destroy(arrow.arrow);
-            Amnisiac.localArrows = [];
-        }
+            DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
+            bool arrowUpdate = Amnisiac.localArrows.Count != deadBodies.Length;
+            int index = 0;
 
-        foreach (var db in deadBodies)
-        {
             if (arrowUpdate)
             {
-                Amnisiac.localArrows.Add(new Arrow(Color.blue));
-                Amnisiac.localArrows[index].arrow.SetActive(true);
+                foreach (var arrow in Amnisiac.localArrows)
+                    Object.Destroy(arrow.arrow);
+
+                Amnisiac.localArrows.Clear();
             }
 
-            Amnisiac.localArrows[index]?.Update(db.transform.position);
-            index++;
+            foreach (var db in deadBodies)
+            {
+                if (arrowUpdate)
+                {
+                    Amnisiac.localArrows.Add(new Arrow(Amnisiac.color));
+                    Amnisiac.localArrows[index].arrow.SetActive(true);
+                }
+
+                Amnisiac.localArrows[index]?.Update(db.transform.position);
+                index++;
+            }
         }
     }
 
@@ -1838,6 +1884,8 @@ public static class PlayerControlFixedUpdatePatch
             deputyCheckPromotion();
             // Check for sidekick promotion on Jackal disconnect
             sidekickCheckPromotion();
+            // Witness
+            WitnessUpdate();
             // SecurityGuard
             securityGuardSetTarget();
             securityGuardUpdate();
@@ -1937,7 +1985,9 @@ internal class PlayerControlRevivePatch
 {
     public static void Postfix(PlayerControl __instance)
     {
-        CanSeeRoleInfo = false;
+        if (PlayerControl.LocalPlayer == __instance) CanSeeRoleInfo = false;
+
+        if (__instance == Specter.player) Specter.player.clearAllTasks();
 
         RPCProcedure.clearGhostRoles(__instance.PlayerId);
 
@@ -1946,14 +1996,9 @@ internal class PlayerControlRevivePatch
             Lovers.otherLover(__instance)?.Revive();
         }
 
-        if (Akujo.akujo?.Data?.IsDead == true && Akujo.honmei?.Data?.IsDead == true)
+        if (Akujo.isAkujoTeam(__instance) && Akujo.otherLover(__instance)?.IsDead() == true)
         {
-            var target = __instance == Akujo.akujo ? Akujo.honmei : __instance == Akujo.honmei ? Akujo.akujo : null;
-
-            if (target?.Data.IsDead == true)
-            {
-                target.Revive();
-            }
+            Akujo.otherLover(__instance)?.Revive();
         }
 
         DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
@@ -1981,6 +2026,7 @@ internal class BodyReportPatch
 
     private static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] GameData.PlayerInfo target)
     {
+        Message($"报告玩家 {__instance.Data.PlayerName} 被报告尸体 {target?.PlayerName}", "CmdReportDeadBody");
         // Medic or Detective report
         var isMedicReport = Medic.medic != null && Medic.medic == CachedPlayer.LocalPlayer.PlayerControl &&
                             __instance.PlayerId == Medic.medic.PlayerId;
@@ -2034,23 +2080,28 @@ internal class BodyReportPatch
                 {
                     if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
                     {
-                        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(
-                            CachedPlayer.LocalPlayer.PlayerControl, msg);
+                        FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, msg);
 
                         // Ghost Info
-                        var writer = AmongUsClient.Instance.StartRpcImmediately(
-                            CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.ShareGhostInfo,
-                            SendOption.Reliable);
+                        var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.ShareGhostInfo);
                         writer.Write(CachedPlayer.LocalPlayer.PlayerId);
                         writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
                         writer.Write(msg);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer);
+                        writer.EndRPC();
                     }
 
                     if (msg.Contains("who", StringComparison.OrdinalIgnoreCase))
                         FastDestroyableSingleton<UnityTelemetry>.Instance.SendWho();
                 }
             }
+        }
+
+        if (Witness.player.IsAlive())
+        {
+            var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessReport);
+            writer.Write(target?.PlayerId ?? byte.MaxValue);
+            writer.EndRPC();
+            Witness.WitnessReport(target?.PlayerId ?? byte.MaxValue);
         }
 
         if (isSluethReport)
@@ -2380,7 +2431,7 @@ public static class ExilePlayerPatch
         var deadPlayer = new DeadPlayer(__instance, DateTime.UtcNow, CustomDeathReason.Exile, null);
         DeadPlayers.Add(deadPlayer);
 
-        if (__instance == PlayerControl.LocalPlayer && Specter.player != PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
+        if (__instance == PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
 
         // Remove fake tasks when player dies
         if (__instance.hasFakeTasks() || __instance == Pursuer.pursuer.Contains(__instance) || __instance == Thief.thief)

@@ -3,8 +3,8 @@ using TheOtherRoles.Objects;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
-using Object = UnityEngine.Object;
 using static TheOtherRoles.Options.ModOption;
+using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Roles.Neutral;
 

@@ -14,7 +14,7 @@ public class Specter
     public static void ClearAndReload()
     {
         player = null;
-        remember = false;
+        remember = !CustomOptionHolder.specterAfterMeeting.GetBool();
         resetRole = CustomOptionHolder.specterResetRole.GetBool();
     }
 
@@ -319,7 +319,7 @@ public class Specter
                     Balancer.balancer = local;
                     break;
             }
-        if (local != null) RPCProcedure.clearGhostRoles(local.PlayerId);
+        RPCProcedure.clearGhostRoles(local.PlayerId);
         local.Revive();
     }
 }

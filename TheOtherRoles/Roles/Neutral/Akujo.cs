@@ -30,6 +30,19 @@ public static class Akujo
         return honmei != null && !honmei.Data.Disconnected && honmei.isKiller();
     }
 
+    public static bool isAkujoTeam(PlayerControl player)
+    {
+        return player != null && (player == akujo || player == honmei);
+    }
+
+    public static PlayerControl otherLover(PlayerControl player)
+    {
+        if (akujo == null || honmei == null) return null;
+        if (player == akujo) return honmei;
+        if (player == honmei) return akujo;
+        return null;
+    }
+
     public static void breakLovers(PlayerControl lover)
     {
         if ((Lovers.lover1 != null && lover == Lovers.lover1) || (Lovers.lover2 != null && lover == Lovers.lover2))

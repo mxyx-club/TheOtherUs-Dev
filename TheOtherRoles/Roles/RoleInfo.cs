@@ -55,6 +55,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
     public static RoleInfo partTimer = new("PartTimer", PartTimer.color, RoleId.PartTimer, RoleType.Neutral);
     public static RoleInfo jackal = new("Jackal", Jackal.color, RoleId.Jackal, RoleType.Neutral);
     public static RoleInfo sidekick = new("Sidekick", Jackal.color, RoleId.Sidekick, RoleType.Neutral);
+    public static RoleInfo witness = new("Witness", Witness.color, RoleId.Witness, RoleType.Neutral);
     public static RoleInfo pavlovsowner = new("Pavlovsowner", Pavlovsdogs.color, RoleId.Pavlovsowner, RoleType.Neutral);
     public static RoleInfo pavlovsdogs = new("Pavlovsdogs", Pavlovsdogs.color, RoleId.Pavlovsdogs, RoleType.Neutral);
     public static RoleInfo swooper = new("Swooper", Swooper.color, RoleId.Swooper, RoleType.Neutral);
@@ -161,6 +162,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         executioner,
         pursuer,
         partTimer,
+        witness,
         doomsayer,
         arsonist,
         jackal,
@@ -337,6 +339,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         if (p == Prophet.prophet) infos.Add(prophet);
         if (p == InfoSleuth.infoSleuth) infos.Add(infoSleuth);
         if (p == Jumper.jumper) infos.Add(jumper);
+        if (p == Witness.player) infos.Add(witness);
         if (p == Thief.thief) infos.Add(thief);
         if (p == Juggernaut.juggernaut) infos.Add(juggernaut);
         if (p == Doomsayer.doomsayer) infos.Add(doomsayer);

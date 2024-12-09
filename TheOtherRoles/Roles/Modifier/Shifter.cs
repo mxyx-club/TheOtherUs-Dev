@@ -20,7 +20,7 @@ public static class Shifter
             return player != null && (
                        player == Jackal.sidekick ||
                        player == Pavlovsdogs.pavlovsowner ||
-                       Jackal.jackal.Any(x => x == player) || 
+                       Jackal.jackal.Any(x => x == player) ||
                        Pavlovsdogs.pavlovsdogs.Any(x => x == player) ||
                        player == Akujo.akujo ||
                        player == Lawyer.lawyer);

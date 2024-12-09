@@ -11,15 +11,20 @@
 
 # The Other Us - Edited
 
-<p align="center">若在游玩过程中发现了bug或有一些建议，欢迎提出ISSUE、PR或加入模组交流群：<a href="https://qm.qq.com/q/MlhqY3QcYU">961341019</a></p>
+<p align="center">若在游玩过程中发现了bug或有一些建议，欢迎提出ISSUE、PR或加入模组交流群 >>> <a href="https://qm.qq.com/q/MlhqY3QcYU">961341019</a></p>
+
+<p align="center">职业相关Wiki请移步至我的个人博客 >>> <a href="https://www.mxyx.club/archives/theotherus">[沫夏悠轩の聚会 - 模组职业介绍]</p>
 
 ## 模组下载
 
 | 游戏版本            | 模组版本 | 发布日期  | 链接                                                         |
 | ------------------- | -------- | --------- | ------------------------------------------------------------ |
 | 2024.8.13 ~ 2024.10.29 | v2.0.0.0 | 即将推出     |         |
-| 2024.3.5 ~ 2024.6.4    | v1.1.0.0 | 即将推出     |         |
-| 2024.3.5 ~ 2024.6.4 | v1.0.9.0 | 2024.11.5  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.0TheOtherUs.zip) |
+| 2024.3.5 ~ 2024.6.4 | v1.1.0.4 | 2024.12.9  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.1.0.4/TheOtherUs-Lite.zip) |
+| 2024.3.5 ~ 2024.6.4 | v1.0.9.8 | 2024.11.26  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.8/TheOtherUs.zip) |
+| 2024.3.5 ~ 2024.6.4 | v1.0.9.4 | 2024.11.16  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.4/TheOtherUs.zip) |
+| 2024.3.5 ~ 2024.6.4 | v1.0.9.3 | 2024.11.15  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.3/TheOtherUs.zip) |
+| 2024.3.5 ~ 2024.6.4 | v1.0.9.0 | 2024.11.5  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.0/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.8.7 | 2024.10.24 | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.8.7/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.8.6 | 2024.10.18 | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.8.6/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.7.7 | 2024.9.16  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.7.7/TheOtherUs.zip) |

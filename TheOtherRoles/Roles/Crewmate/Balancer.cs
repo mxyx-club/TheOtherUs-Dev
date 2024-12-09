@@ -362,28 +362,22 @@ public class Balancer
         return obj;
     }
 
-
-    /*[HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.UpdateButtons))]
+    [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.UpdateButtons))]
     public class Balancer_updatepatch
     {
         [HarmonyPostfix]
         internal static void UpdateButtonsPostfix(MeetingHud __instance)
         {
-            if (PlayerControl.LocalPlayer.IsDead())
+            if (PlayerControl.LocalPlayer.IsDead() || targetplayerright != null)
             {
-                __instance.playerStates.ForEach(x => { if (x.transform.FindChild("BalancerButton") != null) Object.Destroy(x.transform.FindChild("SoothSayerButton").gameObject); });
-            }
-            if (currentAbilityUser != null)
-            {
-                foreach (PlayerVoteArea area in MeetingHud.Instance.playerStates)
+                __instance.playerStates.ForEach(x =>
                 {
-                    if (area.TargetPlayerId != targetplayerleft.PlayerId &&
-                        area.TargetPlayerId != targetplayerright.PlayerId)
-                        area.gameObject.SetActive(false);
-                }
+                    var icon = x.transform.FindChild("BalancerButton");
+                    if (icon != null) Object.Destroy(icon.gameObject);
+                });
             }
         }
-    }*/
+    }
 
     public static class Balancer_Patch
     {

@@ -19,6 +19,7 @@ internal enum CustomGameOverReason
     TeamPavlovsWin,
     MiniLose,
     JesterWin,
+    WitnessWin,
     ArsonistWin,
     VultureWin,
     LawyerSoloWin,
@@ -41,6 +42,7 @@ internal enum WinCondition
     LoversSoloWin,
     JesterWin,
     JackalWin,
+    WitnessWin,
     PavlovsWin,
     SwooperWin,
     ArsonistWin,
@@ -180,6 +182,7 @@ public class OnGameEndPatch
         var everyoneDead = AdditionalTempData.playerRoles.All(x => !x.IsAlive);
         var miniLose = Mini.mini != null && gameOverReason == (GameOverReason)CustomGameOverReason.MiniLose;
         var jesterWin = Jester.jester != null && gameOverReason == (GameOverReason)CustomGameOverReason.JesterWin;
+        var witnessWin = Witness.player != null && gameOverReason == (GameOverReason)CustomGameOverReason.WitnessWin;
         var impostorWin = gameOverReason is GameOverReason.ImpostorByKill or GameOverReason.ImpostorBySabotage or GameOverReason.ImpostorByVote;
         var werewolfWin = gameOverReason == (GameOverReason)CustomGameOverReason.WerewolfWin && Werewolf.werewolf.IsAlive();
         var juggernautWin = gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin && Juggernaut.juggernaut.IsAlive();
@@ -233,6 +236,15 @@ public class OnGameEndPatch
             var wpd = new WinningPlayerData(Jester.jester.Data);
             TempData.winners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.JesterWin;
+        }
+
+        // Witness win
+        else if (witnessWin)
+        {
+            TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+            var wpd = new WinningPlayerData(Witness.player.Data);
+            TempData.winners.Add(wpd);
+            AdditionalTempData.winCondition = WinCondition.WitnessWin;
         }
 
         // Arsonist win
@@ -493,7 +505,7 @@ public class OnGameEndPatch
             TempData.winners.Add(new WinningPlayerData(PartTimer.partTimer.Data));
             AdditionalTempData.additionalWinConditions.Add(WinCondition.AdditionalPartTimerWin);
         }
-        Message($"游戏结束{AdditionalTempData.winCondition}");
+        Message($"游戏结束 {AdditionalTempData.winCondition}");
         // Reset Settings
         RPCProcedure.resetVariables();
     }
@@ -599,6 +611,11 @@ public class EndGameManagerSetUpPatch
                 textRenderer.text = "月下狼人获胜！";
                 textRenderer.color = Werewolf.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Werewolf.color);
+                break;
+            case WinCondition.WitnessWin:
+                textRenderer.text = "真相只有一个！";
+                textRenderer.color = Witness.color;
+                __instance.BackgroundBar.material.SetColor("_Color", Witness.color);
                 break;
             case WinCondition.JuggernautWin:
                 textRenderer.text = "天启获胜";
@@ -753,6 +770,7 @@ internal class CheckEndCriteriaPatch
         if (CheckAndEndGameForMiniLose(__instance)) return false;
         if (CheckAndEndGameForJesterWin(__instance)) return false;
         if (CheckAndEndGameForDoomsayerWin(__instance)) return false;
+        if (CheckAndEndGameForWitnessWin(__instance)) return false;
         if (CheckAndEndGameForVultureWin(__instance)) return false;
         if (CheckAndEndGameForSabotageWin(__instance)) return false;
         if (CheckAndEndGameForExecutionerWin(__instance)) return false;
@@ -783,6 +801,17 @@ internal class CheckEndCriteriaPatch
         {
             //__instance.enabled = false;
             GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.JesterWin, false);
+            return true;
+        }
+        return false;
+    }
+
+    private static bool CheckAndEndGameForWitnessWin(ShipStatus __instance)
+    {
+        if (Witness.triggerWitnessWin)
+        {
+            //__instance.enabled = false;
+            GameManager.Instance.RpcEndGame((GameOverReason)CustomGameOverReason.WitnessWin, false);
             return true;
         }
         return false;

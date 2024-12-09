@@ -89,7 +89,6 @@ public static class Helpers
     /// </summary>
     public static bool hasFakeTasks(this PlayerControl player)
     {
-        if (player == Specter.player) return false;
         return player == Werewolf.werewolf ||
                player == Doomsayer.doomsayer ||
                player == Juggernaut.juggernaut ||
@@ -98,6 +97,7 @@ public static class Helpers
                player == Witness.player ||
                player == PartTimer.partTimer ||
                player == Akujo.akujo ||
+               player == Specter.player ||
                player == Swooper.swooper ||
                player == Lawyer.lawyer ||
                player == Executioner.executioner ||

@@ -18,7 +18,6 @@ internal static class HudManagerStartPatch
 {
     private static bool initialized;
 
-    private static readonly float defaultMaxTimer = 0.5f;
     private static readonly float multiplier = Mini.mini != null && CachedPlayer.LocalPlayer.PlayerControl == Mini.mini
         ? Mini.isGrownUp() ? 0.66f : 2f : 1f;
     public static CustomButton ghostEngineerButton;
@@ -42,7 +41,6 @@ internal static class HudManagerStartPatch
     private static CustomButton usePortalButton;
     private static CustomButton portalmakerMoveToPortalButton;
     public static CustomButton hackerButton;
-    //private static CustomButton changeChatButton;
     public static CustomButton hackerVitalsButton;
     public static CustomButton hackerAdminTableButton;
     public static CustomButton trackerTrackPlayerButton;
@@ -117,6 +115,7 @@ internal static class HudManagerStartPatch
     public static TMP_Text portalmakerButtonText1;
     public static TMP_Text portalmakerButtonText2;
     public static TMP_Text PavlovsdogKillSelfText;
+    public static TMP_Text PavlovsdogCreateNumText;
     public static TMP_Text akujoTimeRemainingText;
     public static TMP_Text akujoBackupLeftText;
 
@@ -135,18 +134,19 @@ internal static class HudManagerStartPatch
         yoyoButton.MaxTimer = Yoyo.markCooldown;
         yoyoAdminTableButton.MaxTimer = Yoyo.adminCooldown;
         yoyoAdminTableButton.EffectDuration = 10f;
-        engineerRepairButton.MaxTimer = defaultMaxTimer;
-        ghostEngineerButton.MaxTimer = defaultMaxTimer;
+        engineerRepairButton.MaxTimer = 0f;
+        ghostEngineerButton.Timer = ghostEngineerButton.MaxTimer = 0f;
+        specterRememberButton.MaxTimer = 15f;
         sheriffKillButton.MaxTimer = Sheriff.cooldown;
         deputyHandcuffButton.MaxTimer = Deputy.handcuffCooldown;
         timeMasterShieldButton.MaxTimer = TimeMaster.cooldown;
         veteranAlertButton.MaxTimer = Veteran.cooldown;
         survivorVestButton.MaxTimer = Survivor.vestCooldown;
         survivorBlanksButton.MaxTimer = Survivor.blanksCooldown;
-        medicShieldButton.MaxTimer = defaultMaxTimer;
-        shifterShiftButton.MaxTimer = defaultMaxTimer;
-        disperserDisperseButton.MaxTimer = defaultMaxTimer;
-        buttonBarryButton.MaxTimer = defaultMaxTimer;
+        medicShieldButton.MaxTimer = 0f;
+        shifterShiftButton.MaxTimer = 0f;
+        disperserDisperseButton.MaxTimer = 0f;
+        buttonBarryButton.MaxTimer = 0f;
         morphlingButton.MaxTimer = Morphling.cooldown;
         butcherDissectionButton.MaxTimer = Butcher.dissectionCooldown;
         bomberBombButton.MaxTimer = Bomber.cooldown;
@@ -158,13 +158,13 @@ internal static class HudManagerStartPatch
         hackerVitalsButton.MaxTimer = Hacker.cooldown;
         hackerAdminTableButton.MaxTimer = Hacker.cooldown;
         vampireKillButton.MaxTimer = Vampire.cooldown;
-        trackerTrackPlayerButton.MaxTimer = defaultMaxTimer;
+        trackerTrackPlayerButton.MaxTimer = 0f;
         jumperMarkButton.MaxTimer = Jumper.JumpTime;
         jumperJumpButton.MaxTimer = Jumper.JumpTime;
         escapistMarkButton.MaxTimer = Escapist.EscapeTime;
         escapistEscapeButton.MaxTimer = Escapist.EscapeTime;
-        bodyGuardGuardButton.MaxTimer = defaultMaxTimer;
-        garlicButton.MaxTimer = defaultMaxTimer;
+        bodyGuardGuardButton.MaxTimer = 0f;
+        garlicButton.MaxTimer = 0f;
         jackalKillButton.MaxTimer = Jackal.cooldown;
         werewolfKillButton.MaxTimer = Werewolf.killCooldown;
         sidekickKillButton.MaxTimer = Jackal.cooldown;
@@ -173,17 +173,15 @@ internal static class HudManagerStartPatch
         placeJackInTheBoxButton.MaxTimer = Trickster.placeBoxCooldown;
         lightsOutButton.MaxTimer = Trickster.lightsOutCooldown;
         cleanerCleanButton.MaxTimer = Cleaner.cooldown;
-        undertakerDragButton.MaxTimer = defaultMaxTimer;
+        undertakerDragButton.MaxTimer = 0f;
         warlockCurseButton.MaxTimer = Warlock.cooldown;
         securityGuardButton.MaxTimer = SecurityGuard.cooldown;
         securityGuardCamButton.MaxTimer = SecurityGuard.cooldown;
         arsonistButton.MaxTimer = Arsonist.cooldown;
         vultureEatButton.MaxTimer = Vulture.cooldown;
-        amnisiacRememberButton.MaxTimer = defaultMaxTimer;
-        specterRememberButton.MaxTimer = 10f;
+        amnisiacRememberButton.MaxTimer = 0f;
         grenadierFlashButton.MaxTimer = Grenadier.cooldown;
-        bomberGiveButton.MaxTimer = 0f;
-        bomberGiveButton.Timer = 0f;
+        bomberGiveButton.MaxTimer = bomberGiveButton.Timer = 0f;
         partTimerButton.MaxTimer = PartTimer.cooldown;
         mediumButton.MaxTimer = Medium.cooldown;
         pursuerButton.MaxTimer = Pursuer.cooldown;
@@ -205,17 +203,16 @@ internal static class HudManagerStartPatch
         evilTrapperSetTrapButton.MaxTimer = EvilTrapper.cooldown;
 
         doomsayerButton.MaxTimer = Doomsayer.cooldown;
-        akujoHonmeiButton.MaxTimer = defaultMaxTimer;
-        akujoBackupButton.MaxTimer = defaultMaxTimer;
+        akujoHonmeiButton.MaxTimer = 0f;
+        akujoBackupButton.MaxTimer = 0f;
 
         pavlovsdogsKillButton.MaxTimer = Pavlovsdogs.cooldown;
         pavlovsownerCreateDogButton.MaxTimer = Pavlovsdogs.createDogCooldown;
 
-        mayorMeetingButton.MaxTimer = defaultMaxTimer;
+        mayorMeetingButton.MaxTimer = 0f;
         trapperButton.MaxTimer = Trapper.cooldown;
         terroristButton.MaxTimer = Terrorist.bombCooldown;
-        defuseButton.MaxTimer = defaultMaxTimer;
-        defuseButton.Timer = defaultMaxTimer;
+        defuseButton.MaxTimer = defuseButton.Timer = 0f;
 
         butcherDissectionButton.EffectDuration = Butcher.dissectionDuration;
         timeMasterShieldButton.EffectDuration = TimeMaster.shieldDuration;
@@ -239,10 +236,7 @@ internal static class HudManagerStartPatch
         securityGuardCamButton.EffectDuration = SecurityGuard.duration;
         defuseButton.EffectDuration = Terrorist.defuseDuration;
         terroristButton.EffectDuration = Terrorist.destructionTime + Terrorist.bombActiveAfter;
-        // Already set the timer to the max, as the button is enabled during the game and not available at the start
-        lightsOutButton.Timer = lightsOutButton.MaxTimer;
-        zoomOutButton.MaxTimer = 0f;
-        //changeChatButton.MaxTimer = 0f;
+        zoomOutButton.MaxTimer = zoomOutButton.Timer = 0f;
     }
 
     public static void showTargetNameOnButton(PlayerControl target, CustomButton button, string defaultText)
@@ -275,7 +269,6 @@ internal static class HudManagerStartPatch
         replacementHandcuffedButton.Timer = replacementHandcuffedButton.EffectDuration;
         replacementHandcuffedButton.actionButton.cooldownTimerText.color = new Color(0F, 0.8F, 0F);
         replacementHandcuffedButton.isEffectActive = true;
-        replacementHandcuffedButton.hotkey = KeyCode.V;
         if (deputyHandcuffedButtons.ContainsKey(CachedPlayer.LocalPlayer.PlayerId))
             deputyHandcuffedButtons[CachedPlayer.LocalPlayer.PlayerId].Add(replacementHandcuffedButton);
         else
@@ -555,15 +548,15 @@ internal static class HudManagerStartPatch
             () =>
             {
                 return GhostEngineer.player != null && GhostEngineer.player == CachedPlayer.LocalPlayer.PlayerControl &&
-                       !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead && !GhostEngineer.Fixes;
+                       !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
             {
-                return isSabotageActive() && GhostEngineer.Fixes && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
+                return isSabotageActive() && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () => { },
             Engineer.buttonSprite,
-            ButtonPositions.upperRowRight,
+            ButtonPositions.upperRowCenter,
             __instance,
             abilityInput.keyCode,
             buttonText: GetString("RepairText")
@@ -2118,7 +2111,6 @@ internal static class HudManagerStartPatch
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
                 RPCProcedure.pavlovsCreateDog(Pavlovsdogs.currentTarget.PlayerId);
                 SoundEffectsManager.play("jackalSidekick");
-                Pavlovsdogs.createDogNum -= 1;
 
                 _ = new LateTask(LastImpostor.promoteToLastImpostor, 0.5f);
 
@@ -2133,6 +2125,9 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
+                if (PavlovsdogCreateNumText != null)
+                    PavlovsdogCreateNumText.text = $"{Pavlovsdogs.createDogNum}";
+
                 showTargetNameOnButton(Pavlovsdogs.currentTarget, pavlovsownerCreateDogButton, GetString("pavlovsCreateDogText"));
                 // Show now text since the button already says sidekick
                 return Pavlovsdogs.currentTarget != null && CachedPlayer.LocalPlayer.PlayerControl.CanMove;
@@ -2143,6 +2138,14 @@ internal static class HudManagerStartPatch
             __instance,
             abilityInput.keyCode
         );
+
+        PavlovsdogCreateNumText = Object.Instantiate(pavlovsownerCreateDogButton.actionButton.cooldownTimerText,
+            pavlovsownerCreateDogButton.actionButton.cooldownTimerText.transform.parent);
+        PavlovsdogCreateNumText.text = "";
+        PavlovsdogCreateNumText.enableWordWrapping = false;
+        PavlovsdogCreateNumText.transform.localScale = Vector3.one * 0.5f;
+        PavlovsdogCreateNumText.transform.localPosition += new Vector3(-0.05f, 0.55f, -1f);
+
 
         minerMineButton = new CustomButton(
             () =>
@@ -3209,11 +3212,10 @@ internal static class HudManagerStartPatch
                             {
                                 var playerInfo = GameData.Instance.GetPlayerById(component.ParentId);
 
-                                var writer = AmongUsClient.Instance.StartRpcImmediately(
-                                    CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.AmnisiacTakeRole,
-                                    SendOption.Reliable);
+                                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.AmnisiacTakeRole);
                                 writer.Write(playerInfo.PlayerId);
-                                AmongUsClient.Instance.FinishRpcImmediately(writer);
+                                writer.Write(PlayerControl.LocalPlayer.PlayerId);
+                                writer.EndRPC();
                                 Amnisiac.TakeRole(playerInfo.PlayerId, PlayerControl.LocalPlayer.PlayerId);
                                 break;
                             }
@@ -3265,7 +3267,7 @@ internal static class HudManagerStartPatch
             __instance,
             abilityInput.keyCode,
             true,
-            2f,
+            1.5f,
             () =>
             {
                 foreach (var collider2D in Physics2D.OverlapCircleAll(CachedPlayer.LocalPlayer.PlayerControl.GetTruePosition(),

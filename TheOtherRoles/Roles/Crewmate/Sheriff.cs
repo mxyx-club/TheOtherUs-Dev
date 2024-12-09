@@ -53,7 +53,7 @@ public static class Sheriff
                         (Survivor.survivor.Any(p => p == target) && canKillSurvivor) ||
                         (Jester.jester == target && canKillJester) ||
                         (Vulture.vulture == target && canKillVulture) ||
-                        (Thief.thief == target && canKillThief) ||
+                        (Thief.thief == target && canKillThief) || Witness.player == target ||
                         (Amnisiac.player.Any(p => p == target) && canKillAmnesiac) ||
                         (PartTimer.partTimer == target && canKillPartTimer) ||
                         (Lawyer.lawyer == target && canKillLawyer) ||

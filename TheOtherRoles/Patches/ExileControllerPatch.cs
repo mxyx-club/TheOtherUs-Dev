@@ -282,7 +282,7 @@ internal class ExileControllerWrapUpPatch
 
     private static void WrapUpPostfix(GameData.PlayerInfo exiled)
     {
-        if (CachedPlayer.LocalPlayer.IsDead && Specter.player != PlayerControl.LocalPlayer) CanSeeRoleInfo = true;
+        if (CachedPlayer.LocalPlayer.IsDead) CanSeeRoleInfo = true;
         // Prosecutor win condition
         if (exiled != null && Executioner.executioner != null && Executioner.target != null &&
             Executioner.target.PlayerId == exiled.PlayerId && !Executioner.executioner.Data.IsDead)
@@ -305,12 +305,32 @@ internal class ExileControllerWrapUpPatch
         }
         else if (Executioner.executioner != null && Executioner.executioner == CachedPlayer.LocalPlayer.PlayerControl && Executioner.target.IsDead())
         {
-
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.executionerPromotesRole();
         }
+        else if (Witness.player == CachedPlayer.LocalPlayer.PlayerControl && Witness.target != null && Witness.killerTarget != null)
+        {
+            bool targetIsKillerAndNotExiled = Witness.target == Witness.killerTarget && (exiled?.Object == null || Witness.target != exiled?.Object);
+            bool targetIsExiledAndNotKiller = (Witness.target == exiled?.Object || (Witness.meetingDie && Witness.target.IsDead()))
+                                           && Witness.target != Witness.killerTarget;
+
+            if (targetIsKillerAndNotExiled || targetIsExiledAndNotKiller)
+            {
+                Witness.exiledCount++;
+            }
+
+            if (Witness.exiledCount == Witness.exileToWin)
+            {
+                Witness.triggerWitnessWin = true;
+                Message("WitnessWin!");
+                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessWin);
+                writer.EndRPC();
+            }
+        }
+        Witness.target = null;
+        Witness.killerTarget = null;
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();

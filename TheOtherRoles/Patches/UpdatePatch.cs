@@ -139,7 +139,7 @@ internal class HudManagerUpdatePatch
         if (Jackal.jackal != null && Jackal.jackal.Any(x => x == localPlayer))
         {
             // Jackal can see his sidekick
-            foreach(var p in Jackal.jackal)
+            foreach (var p in Jackal.jackal)
                 setPlayerNameColor(p, Jackal.color);
             if (Jackal.sidekick != null) setPlayerNameColor(Jackal.sidekick, Jackal.color);
         }

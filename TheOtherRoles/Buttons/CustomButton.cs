@@ -70,7 +70,7 @@ public class CustomButton
         button.OnClick = new Button.ButtonClickedEvent();
         button.OnClick.AddListener((UnityAction)onClickEvent);
 
-        Timer = ModOption.ButtonCooldown + 8.5f;
+        Timer = 10.5f;
         SetHotKeyGuide();
         setActive(false);
     }
@@ -134,12 +134,14 @@ public class CustomButton
 
     public static void ResetAllCooldowns(float Time = -1)
     {
+        var time = Time == -1 ? ModOption.KillCooddown : Time;
+        CachedPlayer.LocalPlayer.PlayerControl.killTimer = time;
         foreach (var t in buttons)
         {
             var maxTime = Time == -1 ? t.MaxTimer : Time;
             try
             {
-                t.Timer = maxTime;
+                t.Timer = t.MaxTimer == 0 ? 0 : maxTime;
                 t.DeputyTimer = maxTime;
                 t.Update();
             }
@@ -148,8 +150,6 @@ public class CustomButton
                 Error($"NullReferenceException from MeetingEndedUpdate().HasButton(), if theres only one warning its fine\n{e}", "CustomButton");
             }
         }
-        var time = Time == -1 ? ModOption.KillCooddown : Time;
-        CachedPlayer.LocalPlayer.PlayerControl.killTimer = time;
     }
 
     public static void resetKillButton(PlayerControl p, float time = -1)
