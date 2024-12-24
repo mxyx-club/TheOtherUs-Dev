@@ -14,7 +14,7 @@ public class KeyboardHandler
 {
     //private static readonly string passwordHash = "d1f51dfdfd8d38027fd2ca9dfeb299399b5bdee58e6c0b3b5e9a45cd4e502848";
     private static readonly Random random = new((int)DateTime.Now.Ticks);
-    private static readonly List<PlayerControl> bots = [];
+    private static readonly List<PlayerControl> bots = new();
 
     private static void Postfix(KeyboardJoystick __instance)
     {

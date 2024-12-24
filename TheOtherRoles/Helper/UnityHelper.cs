@@ -19,7 +19,7 @@ public static class UnityHelper
     public static bool IsCustomServer => CurrentServer.TranslateName
         is StringNames.NoTranslation || CurrentServer.TranslateName != StringNames.ServerAS && CurrentServer.TranslateName != StringNames.ServerEU && CurrentServer.TranslateName != StringNames.ServerNA;
 
-    public static readonly List<Sprite> CacheSprite = [];
+    public static readonly List<Sprite> CacheSprite = new();
 
     public static T Dont<T>(this T obj) where T : Object
     {

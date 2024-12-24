@@ -177,7 +177,7 @@ internal static class HudManagerStartPatch
         warlockCurseButton.MaxTimer = Warlock.cooldown;
         securityGuardButton.MaxTimer = SecurityGuard.cooldown;
         securityGuardCamButton.MaxTimer = SecurityGuard.cooldown;
-        arsonistButton.MaxTimer = Arsonist.cooldown;
+        arsonistButton.MaxTimer = arsonistKillButton.MaxTimer = Arsonist.cooldown;
         vultureEatButton.MaxTimer = Vulture.cooldown;
         amnisiacRememberButton.MaxTimer = 0f;
         grenadierFlashButton.MaxTimer = Grenadier.cooldown;
@@ -422,7 +422,8 @@ internal static class HudManagerStartPatch
             () => { toggleZoom(); },
             () =>
             {
-                if (!PlayerControl.LocalPlayer.IsDead() || CachedPlayer.LocalPlayer.Data.Role.IsImpostor && !CustomOptionHolder.deadImpsBlockSabotage.GetBool()) return false;
+                if (!CanSeeRoleInfo) return false;
+                if (PlayerControl.LocalPlayer.IsAlive()) return false;
                 var (playerCompleted, playerTotal) = TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data);
                 var numberOfLeftTasks = playerTotal - playerCompleted;
                 return numberOfLeftTasks <= 0 || !CustomOptionHolder.finishTasksBeforeHauntingOrZoomingOut.GetBool();
@@ -558,7 +559,7 @@ internal static class HudManagerStartPatch
             Engineer.buttonSprite,
             ButtonPositions.upperRowCenter,
             __instance,
-            abilityInput.keyCode,
+            secondaryAbilityInput.keyCode,
             buttonText: GetString("RepairText")
         );
 
@@ -675,7 +676,7 @@ internal static class HudManagerStartPatch
             },
             () => { deputyHandcuffButton.Timer = deputyHandcuffButton.MaxTimer; },
             Deputy.buttonSprite,
-            ButtonPositions.lowerRowRight,
+            ButtonPositions.upperRowCenter,
             __instance,
             abilityInput.keyCode
         );
@@ -839,7 +840,7 @@ internal static class HudManagerStartPatch
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
                 writer.Write(Doomsayer.doomsayer.PlayerId);
-                writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
+                writer.Write((byte)RPCProcedure.GhostInfoTypes.GhostChat);
                 writer.Write(msg);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
             }
@@ -1153,7 +1154,7 @@ internal static class HudManagerStartPatch
             {
                 if (Morphling.sampledTarget == null) showTargetNameOnButton(Morphling.currentTarget, morphlingButton, GetString("SampleText"));
                 return (Morphling.currentTarget || Morphling.sampledTarget) && !isActiveCamoComms &&
-                       CachedPlayer.LocalPlayer.PlayerControl.CanMove && !MushroomSabotageActive();
+                       CachedPlayer.LocalPlayer.PlayerControl.CanMove && !MushroomSabotageActive;
             },
             () =>
             {
@@ -2329,6 +2330,12 @@ internal static class HudManagerStartPatch
             () =>
             {
                 /* On Click */
+
+                foreach (var task in CachedPlayer.LocalPlayer.PlayerControl.myTasks.GetFastEnumerator())
+                    if (task.TaskType == TaskTypes.RestoreOxy || task.TaskType == TaskTypes.ResetReactor
+                        || task.TaskType == TaskTypes.ResetSeismic || task.TaskType == TaskTypes.StopCharles
+                        || (SubmergedCompatibility.IsSubmerged && task.TaskType == SubmergedCompatibility.RetrieveOxygenMask))
+                        return false;
                 return CachedPlayer.LocalPlayer.PlayerControl.CanMove;
             },
             () =>
@@ -3082,7 +3089,7 @@ internal static class HudManagerStartPatch
                 if (Arsonist.douseTarget != null) Arsonist.dousedPlayers.Add(Arsonist.douseTarget);
 
                 arsonistButton.Timer = arsonistButton.MaxTimer;
-                arsonistKillButton.Timer = arsonistButton.MaxTimer;
+                arsonistKillButton.Timer = arsonistKillButton.MaxTimer == 0 ? 2.5f : arsonistKillButton.MaxTimer;
                 foreach (var p in Arsonist.dousedPlayers)
                     if (ModOption.playerIcons.ContainsKey(p.PlayerId))
                         ModOption.playerIcons[p.PlayerId].setSemiTransparent(false);
@@ -3114,20 +3121,19 @@ internal static class HudManagerStartPatch
             () =>
             {
                 return Arsonist.arsonist != null && Arsonist.arsonist == CachedPlayer.LocalPlayer.PlayerControl &&
-                       CachedPlayer.LocalPlayer.IsAlive && Arsonist.dousedPlayers != null && Arsonist.dousedPlayers.Count > 0;
+                       CachedPlayer.LocalPlayer.IsAlive && Arsonist.dousedPlayers.Count > 0;
             },
             () =>
             {
                 showTargetNameOnButton(Arsonist.currentTarget2, arsonistKillButton, GetString("IgniteText"));
-                return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Arsonist.currentTarget2 != null && Arsonist.dousedPlayers.Any(p => p == Arsonist.currentTarget2);
+                return PlayerControl.LocalPlayer.CanMove && Arsonist.currentTarget2 != null && Arsonist.dousedPlayers.Contains(Arsonist.currentTarget2);
             },
             () =>
             {
-                var alivePlayersList = PlayerControl.AllPlayerControls.ToArray().Where(pc => !pc.Data.IsDead);
-                var count = alivePlayersList.Count(pc => pc.isKiller());
+                var count = PlayerControl.AllPlayerControls.ToList().Count(p => p.IsAlive() && p.isKiller() && p != Arsonist.arsonist);
 
-                if (count < 1 && Arsonist.igniteCooldownRemoved) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
-                else arsonistKillButton.Timer = arsonistKillButton.MaxTimer;
+                if (count == 0 && Arsonist.igniteCooldownRemoved) arsonistKillButton.Timer = arsonistKillButton.MaxTimer = 0f;
+                else arsonistKillButton.Timer = arsonistKillButton.MaxTimer = arsonistButton.MaxTimer;
             },
             Arsonist.igniteSprite,
             ButtonPositions.upperRowCenter,
@@ -3265,7 +3271,7 @@ internal static class HudManagerStartPatch
             Amnisiac.buttonSprite,
             ButtonPositions.upperRowCenter,
             __instance,
-            abilityInput.keyCode,
+            secondaryAbilityInput.keyCode,
             true,
             1.5f,
             () =>
@@ -3349,7 +3355,7 @@ internal static class HudManagerStartPatch
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
                 writer.Write(Medium.target.Player.PlayerId);
-                writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
+                writer.Write((byte)RPCProcedure.GhostInfoTypes.GhostChat);
                 writer.Write(msg);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
 
@@ -3560,19 +3566,17 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                showTargetNameOnButton(Witch.currentTarget, witchSpellButton, "");
+                showTargetNameOnButton(Witch.currentTarget, witchSpellButton, GetString("WitchText"));
                 if (witchSpellButton.isEffectActive && Witch.spellCastingTarget != Witch.currentTarget)
                 {
                     Witch.spellCastingTarget = null;
                     witchSpellButton.Timer = 0f;
                     witchSpellButton.isEffectActive = false;
                 }
-
                 return CachedPlayer.LocalPlayer.PlayerControl.CanMove && Witch.currentTarget != null;
             },
             () =>
             {
-                showTargetNameOnButton(null, witchSpellButton, GetString("WitchText"));
                 witchSpellButton.Timer = witchSpellButton.MaxTimer;
                 witchSpellButton.isEffectActive = false;
                 Witch.spellCastingTarget = null;

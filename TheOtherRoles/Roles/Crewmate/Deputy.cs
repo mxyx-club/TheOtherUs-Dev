@@ -12,14 +12,14 @@ public static class Deputy
     public static Color color = Sheriff.color;
 
     public static PlayerControl currentTarget;
-    public static List<byte> handcuffedPlayers = [];
+    public static List<byte> handcuffedPlayers = new();
     public static int promotesToSheriff; // No: 0, Immediately: 1, After Meeting: 2
     public static bool keepsHandcuffsOnPromotion;
     public static float handcuffDuration;
     public static float remainingHandcuffs;
     public static float handcuffCooldown;
     public static bool knowsSheriff;
-    public static Dictionary<byte, float> handcuffedKnows = [];
+    public static Dictionary<byte, float> handcuffedKnows = new();
 
     public static ResourceSprite buttonSprite = new("DeputyHandcuffButton.png");
     public static ResourceSprite handcuffedSprite = new("DeputyHandcuffed.png");
@@ -56,8 +56,8 @@ public static class Deputy
     {
         if (resetCuffs)
         {
-            handcuffedPlayers = [];
-            handcuffedKnows = [];
+            handcuffedPlayers = new();
+            handcuffedKnows = new();
             HudManagerStartPatch.setAllButtonsHandcuffedStatus(false, true);
         }
         deputy = null;

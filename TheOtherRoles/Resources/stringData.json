@@ -156,7 +156,7 @@
         "0": "Modifiers",
         "13": "附加能力"
     },
-    "GhostRoleText": {
+    "GhostRolesText": {
         "0": "GhostRole",
         "13": "幽灵职业"
     },
@@ -492,6 +492,12 @@
     "FungleReactorTimeLimit": {
         "0": "The Fungle : Reactor Duration Time",
         "13": "The Fungle 核反应堆破坏持续时间"
+    },
+    "guessReVote": {
+        "13": "赌怪猜测时返还所有投票"
+    },
+    "guessExtendmeetingTime": {
+        "13": "赌怪猜测时延长会议时间"
     },
     "enableMiraModify": {
         "0": "Mira",
@@ -2262,6 +2268,9 @@
         "0": "Vision With Torch",
         "13": "火炬的视野倍率"
     },
+    "modifierSpecoalityIsGlobal": {
+        "13": "更改为公共附加能力\n(仅赌怪模式生效)"
+    },
     "modifierLastImpostorDeduce": {
         "13": "绝境者击杀冷却减少"
     },
@@ -2504,7 +2513,7 @@
     },
     "WitnessTimerLeft2": {
         "0": "{0}",
-        "13": "凶手可能已死亡 {0}"
+        "13": "没有适合的杀手目标 {0}"
     },
     "WitnessWinLeft": {
         "0": "{0}",
@@ -2525,6 +2534,72 @@
     "BalancerTitleTextYouVoteEither": {
         "0": "Which way do you want to vote it?",
         "13": "要投给谁？"
+    },
+    "CanceledEnd": {
+        "13": "房主强制结束游戏"
+    },
+    "EveryoneDied": {
+        "13": "无人生还"
+    },
+    "JesterWin": {
+        "13": "听我说谢谢你"
+    },
+    "DoomsayerWin": {
+        "13": "末日预言家获胜!"
+    },
+    "ArsonistWin": {
+        "13": "用火焰净化一切!"
+    },
+    "VultureWin": {
+        "13": "吃饱饱!"
+    },
+    "LawyerSoloWin": {
+        "13": "律师单独获胜!"
+    },
+    "WerewolfWin": {
+        "13": "月下狼人获胜!"
+    },
+    "WitnessWin": {
+        "13": "真相只有一个!"
+    },
+    "JuggernautWin": {
+        "13": "天启获胜!"
+    },
+    "SwooperWin": {
+        "13": "隐身人获胜!"
+    },
+    "ExecutionerWin": {
+        "13": "小嘴叭叭!"
+    },
+    "LoversTeamWin": {
+        "13": "船员和恋人获胜"
+    },
+    "LoversSoloWin": {
+        "13": "与你的爱恋心意合一~"
+    },
+    "JackalWin": {
+        "13": "豺狼的全家福.jpg"
+    },
+    "PavlovsWin": {
+        "13": "这是乖狗狗的奖励哦"
+    },
+    "AkujoSoloWin": {
+        "13": "请给我扭曲你人生的权利!"
+    },
+    "AkujoTeamWin": {
+        "13": "我只是加入你们不是拆散你们!"
+    },
+    "MiniLose": {
+        "13": "他就只是个孩子啊!"
+    },
+    "LawyerStolenWin": {
+        "13": "律师代替客户胜利"
+    },
+    "LawyerBonusWin": {
+        "13": "律师和客户胜利"
+    },
+    "PartTimerWin": {
+        "13": "打工仔跟随胜利"
     },
     "colorSalmon": {
         "0": "Salmon",
@@ -4103,7 +4178,7 @@
         "13": "给其他人一个炸弹，炸弹将在几秒后激活。\n拿到炸弹的玩家需要在一定时间内且进会议前将炸弹传递给他人，\n否则自己死亡。\n根据房间设置：炸弹可以传递回炸弹狂手中"
     },
     "PoucherFullDesc": {
-        "13": "可以得知被你击杀的玩家身份。"
+        "13": "可以得知被你击杀的玩家身份。\n\n注：附加能力的入殓师与主职业的入殓师冲突，\n当附加能力的入殓师开启时，自动禁用主职业的入殓师"
     },
     "ButcherFullDesc": {
         "13": "击杀其他玩家后可以使用肢解技能。\n肢解后会在其它位置出现数个该玩家的尸体。\n\n注：该技能每回合只能使用一次，且每位玩家看到的被肢解尸体位置都不一致。\n但肢解前的尸体仍会留在原地。"
@@ -4202,7 +4277,7 @@
         "13": "拥有隐形和击杀的能力，并且隐身时拥有更快的移动速度！\n需要将所有玩家击杀才能胜利。"
     },
     "ArsonistFullDesc": {
-        "13": "可以给玩家涂油，随时可以在已涂油的目标附近点火。\n点火时会同时击杀所有已涂了油的玩家！\n\n根据设置，在仅剩纵火狂一名杀手玩家时可以移除会议后点火冷却。"
+        "13": "可以给玩家涂油，随时可以在已涂油的目标附近点火。\n点火时会同时击杀所有已涂了油的玩家！（无视各种保护强制击杀）\n\n根据设置，在仅剩纵火狂一名杀手玩家时可以在会议结束后移除点火的冷却。"
     },
     "WerewolfFullDesc": {
         "13": "月下狼人可以使用技能进入一段时间的狂暴状态。\n狂暴状态下，击杀CD为3秒。"

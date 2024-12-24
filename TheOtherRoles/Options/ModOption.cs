@@ -83,8 +83,8 @@ internal class ModOption
     public static void clearAndReloadMapOptions()
     {
         meetingsCount = 0;
-        camerasToAdd = [];
-        ventsToSeal = [];
+        camerasToAdd = new();
+        ventsToSeal = new();
         playerIcons = new Dictionary<byte, PoolablePlayer>();
 
         maxNumberOfMeetings = CustomOptionHolder.maxNumberOfMeetings.GetInt();

@@ -6,7 +6,6 @@ namespace TheOtherRoles.Modules;
 
 public class TaskQueue
 {
-    private static readonly List<TaskQueue> queues = [];
 #nullable enable
     public static TaskQueue? MainQueue { get; private set; }
 #nullable disable

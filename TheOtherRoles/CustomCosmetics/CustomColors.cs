@@ -9,7 +9,7 @@ namespace TheOtherRoles.CustomCosmetics;
 
 public class CustomColors
 {
-    protected static Dictionary<int, string> ColorStrings = [];
+    protected static Dictionary<int, string> ColorStrings = new();
     public static List<int> lighterColors = [3, 4, 5, 7, 10, 11, 13, 14, 17];
     public static uint pickableColors = (uint)Palette.ColorNames.Length;
 

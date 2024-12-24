@@ -4,9 +4,9 @@ using UnityEngine;
 namespace TheOtherRoles.Roles.Neutral;
 public class Survivor
 {
-    public static List<PlayerControl> survivor = [];
+    public static List<PlayerControl> survivor = new();
     public static PlayerControl target;
-    public static List<PlayerControl> blankedList = [];
+    public static List<PlayerControl> blankedList = new();
     public static Color color = new Color32(255, 230, 77, byte.MaxValue);
     public static ResourceSprite VestButtonSprite = new("TheOtherRoles.Resources.Vest.png");
 

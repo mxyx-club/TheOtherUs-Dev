@@ -17,7 +17,7 @@ public static class Ninja
     public static float invisibleDuration = 5f;
 
     public static float invisibleTimer;
-    public static bool isInvisble;
+    public static bool isInvisable;
     public static ResourceSprite markButtonSprite = new("NinjaMarkButton.png");
     public static ResourceSprite killButtonSprite = new("NinjaAssassinateButton.png");
     public static Arrow arrow = new(Color.black);
@@ -31,7 +31,7 @@ public static class Ninja
         traceTime = CustomOptionHolder.ninjaTraceTime.GetFloat();
         invisibleDuration = CustomOptionHolder.ninjaInvisibleDuration.GetFloat();
         invisibleTimer = 0f;
-        isInvisble = false;
+        isInvisable = false;
         if (arrow?.arrow != null) Object.Destroy(arrow.arrow);
         arrow = new Arrow(Color.black);
         arrow.arrow?.SetActive(false);

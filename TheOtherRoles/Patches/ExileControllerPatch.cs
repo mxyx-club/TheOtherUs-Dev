@@ -80,19 +80,6 @@ internal class ExileControllerBeginPatch
 
         if (Medic.usedShield) Medic.meetingAfterShielding = true; // Has to be after the setting of the shield
 
-        // Shifter shift
-        if (Shifter.shifter != null && AmongUsClient.Instance.AmHost && Shifter.futureShift != null)
-        {
-            // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
-            var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                (byte)CustomRPC.ShifterShift, SendOption.Reliable);
-            writer.Write(Shifter.futureShift.PlayerId);
-            AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.shifterShift(Shifter.futureShift.PlayerId);
-        }
-
-        Shifter.futureShift = null;
-
         if (PartTimer.partTimer != null && PartTimer.partTimer.IsAlive())
         {
             if (PartTimer.deathTurn <= 0 && PartTimer.target == null) PartTimer.partTimer.Exiled();
@@ -106,83 +93,11 @@ internal class ExileControllerBeginPatch
             Butcher.canDissection = true;
         }
 
-        // Eraser erase
-        if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null)
-        {
-            // We need to send the RPC from the host here, to make sure that the order of shifting and erasing is correct (for that reason the futureShifted and futureErased are being synced)
-            var rasePlayerList = new List<PlayerControl>(Eraser.futureErased);
-            foreach (var target in rasePlayerList)
-            {
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.ErasePlayerRoles, SendOption.Reliable);
-                writer.Write(target.PlayerId);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.erasePlayerRoles(target.PlayerId);
-                Eraser.alreadyErased.Add(target.PlayerId);
-            }
-        }
-        Eraser.futureErased = new List<PlayerControl>();
-
         // Trickster boxes
         if (Trickster.trickster != null && JackInTheBox.hasJackInTheBoxLimitReached()) JackInTheBox.convertToVents();
 
         // Activate portals.
         Portal.meetingEndsUpdate();
-
-        // Witch execute casted spells
-        if (Witch.witch != null && Witch.futureSpelled != null && AmongUsClient.Instance.AmHost)
-        {
-            var exiledIsWitch = exiled != null && exiled.PlayerId == Witch.witch.PlayerId;
-            var witchDiesWithExiledLover = exiled != null && Lovers.existing() && Lovers.bothDie &&
-                                           (Lovers.lover1.PlayerId == Witch.witch.PlayerId ||
-                                            Lovers.lover2.PlayerId == Witch.witch.PlayerId) &&
-                                           (exiled.PlayerId == Lovers.lover1.PlayerId ||
-                                            exiled.PlayerId == Lovers.lover2.PlayerId);
-
-            if ((witchDiesWithExiledLover || exiledIsWitch) && Witch.witchVoteSavesTargets)
-                Witch.futureSpelled = new List<PlayerControl>();
-            foreach (var target in Witch.futureSpelled)
-            {
-                if (target != null && !target.Data.IsDead && checkMuderAttempt(Witch.witch, target, true) ==
-                    MurderAttemptResult.PerformKill)
-                {
-                    if (target == Lawyer.target && Lawyer.lawyer != null)
-                    {
-                        var writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                            (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer2);
-                        RPCProcedure.lawyerPromotesToPursuer();
-                    }
-
-                    if (target == Executioner.target && Executioner.executioner != null)
-                    {
-                        var writer2 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                            (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
-                        AmongUsClient.Instance.FinishRpcImmediately(writer2);
-                        RPCProcedure.executionerPromotesRole();
-                    }
-
-                    var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                        (byte)CustomRPC.UncheckedExilePlayer, SendOption.Reliable);
-                    writer.Write(target.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.uncheckedExilePlayer(target.PlayerId);
-
-                    var writer3 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                        (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
-                    writer3.Write(CachedPlayer.LocalPlayer.PlayerId);
-                    writer3.Write((byte)RPCProcedure.GhostInfoTypes.DeathReasonAndKiller);
-                    writer3.Write(target.PlayerId);
-                    writer3.Write((byte)CustomDeathReason.WitchExile);
-                    writer3.Write(Witch.witch.PlayerId);
-                    AmongUsClient.Instance.FinishRpcImmediately(writer3);
-
-                    GameHistory.OverrideDeathReasonAndKiller(target, CustomDeathReason.WitchExile, Witch.witch);
-                }
-            }
-        }
-
-        Witch.futureSpelled = new List<PlayerControl>();
 
         // SecurityGuard vents and cameras
         var allCameras = MapUtilities.CachedShipStatus.AllCameras.ToList();
@@ -261,7 +176,7 @@ internal class ExileControllerWrapUpPatch
     public static void Prefix(GameObject obj)
     {
         // Nightvision:
-        if (obj != null && obj.name != null && obj.name.Contains("FungleSecurity"))
+        if (obj?.name != null && obj.name.Contains("FungleSecurity"))
         {
             SurveillanceMinigamePatch.resetNightVision();
             return;
@@ -271,6 +186,7 @@ internal class ExileControllerWrapUpPatch
         if (!SubmergedCompatibility.IsSubmerged) return;
         if (obj.name.Contains("ExileCutscene"))
         {
+            Message("Object.Destroy", "WrapUpPostfix");
             WrapUpPostfix(ExileControllerBeginPatch.lastExiled);
         }
         else if (obj.name.Contains("SpawnInMinigame"))
@@ -282,6 +198,7 @@ internal class ExileControllerWrapUpPatch
 
     private static void WrapUpPostfix(GameData.PlayerInfo exiled)
     {
+        Message("驱逐结束");
         if (CachedPlayer.LocalPlayer.IsDead) CanSeeRoleInfo = true;
         // Prosecutor win condition
         if (exiled != null && Executioner.executioner != null && Executioner.target != null &&
@@ -308,10 +225,11 @@ internal class ExileControllerWrapUpPatch
             var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                 (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
             AmongUsClient.Instance.FinishRpcImmediately(writer);
-            RPCProcedure.executionerPromotesRole();
+            Executioner.PromotesRole();
         }
         else if (Witness.player == CachedPlayer.LocalPlayer.PlayerControl && Witness.target != null && Witness.killerTarget != null)
         {
+            bool skip = exiled == null;
             bool targetIsKillerAndNotExiled = Witness.target == Witness.killerTarget && (exiled?.Object == null || Witness.target != exiled?.Object);
             bool targetIsExiledAndNotKiller = (Witness.target == exiled?.Object || (Witness.meetingDie && Witness.target.IsDead()))
                                            && Witness.target != Witness.killerTarget;
@@ -323,14 +241,12 @@ internal class ExileControllerWrapUpPatch
 
             if (Witness.exiledCount == Witness.exileToWin)
             {
-                Witness.triggerWitnessWin = true;
-                Message("WitnessWin!");
                 var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessWin);
                 writer.EndRPC();
+                Witness.triggerWitnessWin = true;
             }
         }
-        Witness.target = null;
-        Witness.killerTarget = null;
+        Witness.target = Witness.killerTarget = null;
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();
@@ -421,6 +337,70 @@ internal class ExileControllerWrapUpPatch
         if (BountyHunter.bountyHunter != null && BountyHunter.bountyHunter == CachedPlayer.LocalPlayer.PlayerControl)
             BountyHunter.bountyUpdateTimer = 0f;
 
+        // Eraser erase
+        if (Eraser.eraser != null && AmongUsClient.Instance.AmHost && Eraser.futureErased != null)
+        {
+            var rasePlayerList = new List<PlayerControl>(Eraser.futureErased);
+            foreach (var target in rasePlayerList)
+            {
+                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl.NetId, CustomRPC.ErasePlayerRoles);
+                writer.Write(target.PlayerId);
+                writer.EndRPC();
+                RPCProcedure.erasePlayerRoles(target.PlayerId);
+                Eraser.alreadyErased.Add(target.PlayerId);
+            }
+        }
+        Eraser.futureErased = new List<PlayerControl>();
+
+        // Shifter shift
+        if (Shifter.shifter != null && AmongUsClient.Instance.AmHost && Shifter.futureShift != null)
+        {
+            var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.ShifterShift);
+            writer.Write(Shifter.futureShift.PlayerId);
+            writer.EndRPC();
+            RPCProcedure.shifterShift(Shifter.futureShift.PlayerId);
+        }
+
+        Shifter.futureShift = null;
+
+        // Witch execute casted spells
+        if (Witch.witch != null && Witch.futureSpelled != null && AmongUsClient.Instance.AmHost)
+        {
+            var partner = exiled?.Object?.getPartner();
+
+            var exiledIsWitch = exiled?.PlayerId == Witch.witch.PlayerId;
+            var witchDiesWithExiledLover = partner?.PlayerId == Witch.witch.PlayerId || exiled?.PlayerId == Witch.witch.PlayerId;
+
+            if (((witchDiesWithExiledLover || exiledIsWitch) && Witch.witchVoteSavesTargets) || Witch.witchWasGuessed)
+                Witch.futureSpelled = new List<PlayerControl>();
+
+            foreach (var target in Witch.futureSpelled.Where(x => x.IsAlive()))
+            {
+                if (Lawyer.lawyer != null && target == Lawyer.target)
+                {
+                    var writer2 = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.LawyerPromotesToPursuer);
+                    writer2.EndRPC();
+                    Lawyer.PromotesToPursuer();
+                }
+
+                if (Executioner.executioner.IsAlive() && target == Executioner.target)
+                {
+                    var writer2 = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.ExecutionerPromotesRole);
+                    writer2.EndRPC();
+                    Executioner.PromotesRole();
+                }
+
+                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.UncheckedExilePlayer);
+                writer.Write(target.PlayerId);
+                writer.EndRPC();
+                RPCProcedure.uncheckedExilePlayer(target.PlayerId);
+
+                GameHistory.RpcOverrideDeathReasonAndKiller(target, CustomDeathReason.WitchExile, Witch.witch);
+            }
+        }
+
+        Witch.futureSpelled = new List<PlayerControl>();
+
         // Medium spawn souls
         if (Medium.medium != null && CachedPlayer.LocalPlayer.PlayerControl == Medium.medium)
         {
@@ -454,6 +434,33 @@ internal class ExileControllerWrapUpPatch
 
         if (CustomOptionHolder.randomGameStartPosition.GetBool()) MapData.RandomSpawnPlayers();
 
+        if (InfoSleuth.infoSleuth != null && InfoSleuth.target != null && InfoSleuth.infoSleuth == PlayerControl.LocalPlayer)
+        {
+            string msg;
+            var random = rnd.Next(2);
+            var isNotCrew = isNeutral(InfoSleuth.target) || InfoSleuth.target.isImpostor();
+            var team = "的阵营是 " + teamString(InfoSleuth.target);
+            var info = InfoSleuth.infoType switch
+            {
+                0 => isNotCrew ? "不是船员" : "是船员",
+                1 => team,
+                _ => random == 0 ? isNotCrew ? "不是船员" : "是船员" : team,
+            };
+
+            msg = $"{InfoSleuth.target.Data.PlayerName} {info}";
+
+            FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{msg}");
+            var writer = StartRPC(PlayerControl.LocalPlayer, CustomRPC.ShareGhostInfo);
+            writer.Write(InfoSleuth.infoSleuth.PlayerId);
+            writer.Write((byte)RPCProcedure.GhostInfoTypes.GhostChat);
+            writer.Write(msg);
+            writer.EndRPC();
+
+            var writer1 = StartRPC(PlayerControl.LocalPlayer, CustomRPC.InfoSleuthNoTarget);
+            writer1.EndRPC();
+            RPCProcedure.infoSleuthNoTarget();
+        }
+
         // Invert add meeting
         if (Invert.meetings > 0) Invert.meetings--;
 
@@ -478,6 +485,7 @@ internal class ExileControllerWrapUpPatch
     {
         public static void Postfix(ExileController __instance)
         {
+            Message("ExileController.WrapUp", "WrapUpPostfix");
             WrapUpPostfix(__instance.exiled);
         }
     }
@@ -487,6 +495,7 @@ internal class ExileControllerWrapUpPatch
     {
         public static void Postfix(AirshipExileController __instance)
         {
+            Message("AirshipExileController.WrapUpAndSpawn", "WrapUpPostfix");
             WrapUpPostfix(__instance.exiled);
         }
 

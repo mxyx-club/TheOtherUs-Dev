@@ -135,7 +135,7 @@ public static class StartOptionMenuPatch
         //平奈賃曰絞化示正件
         GameObject TextObject;
 
-        List<ToggleButtonBehaviour> allKeyBindingButtons = [];
+        List<ToggleButtonBehaviour> allKeyBindingButtons = new();
         int selectedKeyBinding = -1;
 
         GameObject defaultButton = Object.Instantiate(applyButtonTemplate, null);

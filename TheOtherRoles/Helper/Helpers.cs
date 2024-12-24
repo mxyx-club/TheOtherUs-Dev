@@ -44,7 +44,7 @@ public enum RoleType
     Impostor,
     Neutral,
     Modifier,
-    GhostRole,
+    Ghost,
     Special,
 }
 
@@ -52,16 +52,6 @@ public enum CustomGamemodes
 {
     Classic,
     Guesser,
-}
-
-public enum LogLevel
-{
-    Message,
-    Error,
-    Warning,
-    Fatal,
-    Info,
-    Debug
 }
 
 public static class Helpers
@@ -78,9 +68,9 @@ public static class Helpers
     public static bool isAirship => GameOptionsManager.Instance.CurrentGameOptions.MapId == 4;
     public static bool isFungle => GameOptionsManager.Instance.CurrentGameOptions.MapId == 5;
 
-    public static readonly System.Random rnd = new((int)DateTime.Now.Ticks);
+    public static System.Random rnd => new(Guid.NewGuid().GetHashCode());
 
-    public static PlayerControl GetHostPlayer => GameData.Instance.GetHost().Object;
+    public static PlayerControl HostPlayer => GameData.Instance.GetHost().Object;
     public static bool isUsingTransportation(this PlayerControl pc) => pc.inMovingPlat || pc.onLadder;
 
 
@@ -386,6 +376,8 @@ public static class Helpers
 
     public static float sabotageTimer => ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>().Timer;
 
+    public static bool MushroomSabotageActive => PlayerControl.LocalPlayer.myTasks.ToArray().Any(x => x.TaskType == TaskTypes.MushroomMixupSabotage);
+
     public static bool canUseSabotage()
     {
         var sabSystem = ShipStatus.Instance.Systems[SystemTypes.Sabotage].CastFast<SabotageSystemType>();
@@ -473,7 +465,9 @@ public static class Helpers
             // set to default if trickster ability is active
             else if (Trickster.trickster != null && Trickster.lightsOutTimer > 0f) text = defaultText;
             // set to morphed player
-            else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0) text = Morphling.morphTarget.Data.PlayerName;
+            else if (Morphling.morphling != null && Morphling.morphTarget != null && target == Morphling.morphling && Morphling.morphTimer > 0)
+                text = Morphling.morphTarget.Data.PlayerName;
+            else if (target == Ninja.ninja && Ninja.isInvisable) text = defaultText;
             else if (target == Swooper.swooper && Swooper.isInvisable) text = defaultText;
             else if (Jackal.jackal.Any(p => p == target) && Jackal.isInvisable) text = defaultText;
             //else if (target == PhantomRole.phantomRole) text = defaultText;
@@ -507,12 +501,6 @@ public static class Helpers
     {
         var indexData = UnityEngine.Random.Range(0, list.Count);
         return indexData;
-    }
-
-    public static T GetRandom<T>(this Il2CppSystem.Collections.Generic.List<T> list)
-    {
-        var indexData = UnityEngine.Random.Range(0, list.Count);
-        return list[indexData];
     }
 
     public static void ForEach<T>(this Il2CppArrayBase<T> list, Action<T> func)
@@ -630,7 +618,7 @@ public static class Helpers
         var allRoleInfo = new List<RoleInfo>();
         foreach (var role in RoleInfo.allRoleInfos)
         {
-            if (role.roleType is RoleType.Modifier or RoleType.GhostRole or RoleType.Special) continue;
+            if (role.roleType is RoleType.Modifier or RoleType.Ghost or RoleType.Special) continue;
             allRoleInfo.Add(role);
         }
         return allRoleInfo;
@@ -754,32 +742,13 @@ public static class Helpers
     {
         return team switch
         {
-            RoleType.Crewmate => Color.white,
+            RoleType.Crewmate => Palette.CrewmateBlue,
             RoleType.Impostor => Palette.ImpostorRed,
             RoleType.Neutral => Color.gray,
             RoleType.Modifier => Color.yellow,
-            RoleType.GhostRole => new Color32(159, 127, 209, byte.MaxValue),
+            RoleType.Ghost => new Color32(159, 127, 209, byte.MaxValue),
             _ => Palette.White
         };
-    }
-
-    public static int totalCounts(this TextMeshPro[] text)
-    {
-        if (text == null) return 0;
-        int count = 0;
-        foreach (var self in text)
-            if (self.text != "") count++;
-        return count;
-    }
-
-    public static bool IsAlive(this GameData.PlayerInfo player)
-    {
-        return player != null && !player.Disconnected && !player.IsDead;
-    }
-
-    public static bool IsDead(this GameData.PlayerInfo player)
-    {
-        return player == null || player.Disconnected || player.IsDead;
     }
 
     public static bool IsAlive(this PlayerControl player)
@@ -826,7 +795,7 @@ public static class Helpers
 
     public static bool shouldShowGhostInfo()
     {
-        return (CachedPlayer.LocalPlayer.PlayerControl != null && CachedPlayer.LocalPlayer.PlayerControl.Data.IsDead) ||
+        return (PlayerControl.LocalPlayer.IsDead() && CanSeeRoleInfo) ||
                AmongUsClient.Instance.GameState == InnerNetClient.GameStates.Ended;
     }
 
@@ -878,12 +847,6 @@ public static class Helpers
     public static string GithubUrl(this string url)
     {
         return IsCN() && !url.Contains("ghp.ci") ? "https://ghp.ci/" + url : url;
-    }
-
-    public static bool MushroomSabotageActive()
-    {
-        return CachedPlayer.LocalPlayer.PlayerControl.myTasks.ToArray()
-            .Any(x => x.TaskType == TaskTypes.MushroomMixupSabotage);
     }
 
     public static void setSemiTransparent(this PoolablePlayer player, bool value, float alpha = 0.25f)
@@ -938,10 +901,10 @@ public static class Helpers
     public static bool hidePlayerName(PlayerControl source, PlayerControl target)
     {
         var localPlayer = PlayerControl.LocalPlayer;
-        if (Camouflager.camouflageTimer > 0f || MushroomSabotageActive() || isCamoComms)
+        if (Camouflager.camouflageTimer > 0f || MushroomSabotageActive || isCamoComms)
             return true; // No names are visible
         if (SurveillanceMinigamePatch.nightVisionIsActive) return true;
-        if (Ninja.isInvisble && Ninja.ninja == target) return true;
+        if (Ninja.isInvisable && Ninja.ninja == target) return true;
         if (Jackal.isInvisable && Jackal.jackal.Any(p => p == target)) return true;
         if (Swooper.isInvisable && Swooper.swooper == target) return true;
         if (ModOption.hideOutOfSightNametags && InGame && source.IsAlive() && !isFungle
@@ -970,7 +933,7 @@ public static class Helpers
 
     public static void setDefaultLook(this PlayerControl target, bool enforceNightVisionUpdate = true)
     {
-        if (MushroomSabotageActive())
+        if (MushroomSabotageActive)
         {
             var instance = ShipStatus.Instance.CastFast<FungleShipStatus>().specialSabotage;
             var condensedOutfit = instance.currentMixups[target.PlayerId];
@@ -1364,9 +1327,9 @@ public static class Helpers
         return !(player == null) && (player == Lovers.lover1 || player == Lovers.lover2);
     }
 
-    public static PlayerControl getChatPartner(this PlayerControl player)
+    public static PlayerControl getPartner(this PlayerControl player)
     {
-        return player.isLover() ? player.getPartner() : null;
+        return Akujo.otherLover(player) ?? (Lovers.bothDie ? Lovers.otherLover(player) : null);
     }
 
     public static void toggleZoom(bool reset = false)

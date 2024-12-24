@@ -198,20 +198,11 @@ public class OnGameEndPatch
         var vultureWin = Vulture.vulture != null && gameOverReason == (GameOverReason)CustomGameOverReason.VultureWin;
         var executionerWin = Executioner.executioner != null && gameOverReason == (GameOverReason)CustomGameOverReason.ExecutionerWin;
         var lawyerSoloWin = Lawyer.lawyer != null && gameOverReason == (GameOverReason)CustomGameOverReason.LawyerSoloWin;
-        var akujoWin = false;
-        if (Akujo.honmeiOptimizeWin)
-        {
-            akujoWin = (Akujo.akujo != null
-                && gameOverReason == (GameOverReason)CustomGameOverReason.AkujoWin
-                    && Akujo.honmei != null && !Akujo.honmei.Data.IsDead && !Akujo.akujo.Data.IsDead)
-                || (GameManager.Instance.DidHumansWin(gameOverReason)
-                && !Akujo.existingWithKiller() && Akujo.honmei != null && !Akujo.honmei.Data.IsDead && !Akujo.akujo.Data.IsDead);
-        }
-        else
-        {
-            akujoWin = Akujo.akujo != null && gameOverReason == (GameOverReason)CustomGameOverReason.AkujoWin && Akujo.honmei != null && !Akujo.honmei.Data.IsDead && !Akujo.akujo.Data.IsDead;
-        }
-
+        var akujoWin = Akujo.akujo.IsAlive() && Akujo.honmei.IsAlive() &&
+            (Akujo.honmeiOptimizeWin
+                ? !Akujo.existingWithKiller() &&
+                  (gameOverReason == (GameOverReason)CustomGameOverReason.AkujoWin || GameManager.Instance.DidHumansWin(gameOverReason))
+                : gameOverReason == (GameOverReason)CustomGameOverReason.AkujoWin);
         bool isPursurerLose = jesterWin || arsonistWin || miniLose || isCanceled || executionerWin;
 
         // Mini lose
@@ -405,32 +396,21 @@ public class OnGameEndPatch
         // Akujo win
         else if (akujoWin)
         {
-            if (Akujo.honmeiOptimizeWin)
+            if (Akujo.honmeiOptimizeWin && !Akujo.existingWithKiller())
             {
-                if (!Akujo.existingWithKiller())
+                AdditionalTempData.winCondition = WinCondition.AkujoTeamWin;
+                TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
+                foreach (PlayerControl p in CachedPlayer.AllPlayers)
                 {
-                    AdditionalTempData.winCondition = WinCondition.AkujoTeamWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    foreach (PlayerControl p in CachedPlayer.AllPlayers)
-                    {
-                        if (p == null) continue;
-                        if (p == Akujo.akujo || p == Akujo.honmei)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-                        else if (Pursuer.pursuer.Contains(p) && !p.Data.IsDead)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-                        else if (Survivor.survivor.Contains(p) && !p.Data.IsDead)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-                        else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
-                            TempData.winners.Add(new WinningPlayerData(p.Data));
-
-                    }
-                }
-                else
-                {
-                    AdditionalTempData.winCondition = WinCondition.AkujoSoloWin;
-                    TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-                    TempData.winners.Add(new WinningPlayerData(Akujo.akujo.Data));
-                    TempData.winners.Add(new WinningPlayerData(Akujo.honmei.Data));
+                    if (p == null) continue;
+                    if (p == Akujo.akujo || p == Akujo.honmei)
+                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                    else if (Pursuer.pursuer.Contains(p) && !p.Data.IsDead)
+                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                    else if (Survivor.survivor.Contains(p) && !p.Data.IsDead)
+                        TempData.winners.Add(new WinningPlayerData(p.Data));
+                    else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
+                        TempData.winners.Add(new WinningPlayerData(p.Data));
                 }
             }
             else
@@ -573,97 +553,97 @@ public class EndGameManagerSetUpPatch
         switch (AdditionalTempData.winCondition)
         {
             case WinCondition.Canceled:
-                textRenderer.text = "房主强制结束游戏";
+                textRenderer.text = "CanceledEnd".Translate();
                 textRenderer.color = Color.gray;
                 __instance.BackgroundBar.material.SetColor("_Color", Color.gray);
                 break;
             case WinCondition.EveryoneDied:
-                textRenderer.text = "无人生还";
+                textRenderer.text = "EveryoneDied".Translate();
                 textRenderer.color = Palette.DisabledGrey;
                 __instance.BackgroundBar.material.SetColor("_Color", Palette.DisabledGrey);
                 break;
             case WinCondition.JesterWin:
-                textRenderer.text = "听我说谢谢你";
+                textRenderer.text = "JesterWin".Translate();
                 textRenderer.color = Jester.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Jester.color);
                 break;
             case WinCondition.DoomsayerWin:
-                textRenderer.text = "末日预言家获胜";
+                textRenderer.text = "DoomsayerWin".Translate();
                 textRenderer.color = Doomsayer.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Doomsayer.color);
                 break;
             case WinCondition.ArsonistWin:
-                textRenderer.text = "用火焰净化一切";
+                textRenderer.text = "ArsonistWin".Translate();
                 textRenderer.color = Arsonist.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Arsonist.color);
                 break;
             case WinCondition.VultureWin:
-                textRenderer.text = "吃饱饱！";
+                textRenderer.text = "VultureWin".Translate();
                 textRenderer.color = Vulture.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Vulture.color);
                 break;
             case WinCondition.LawyerSoloWin:
-                textRenderer.text = "律师获胜";
+                textRenderer.text = "LawyerSoloWin".Translate();
                 textRenderer.color = Lawyer.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lawyer.color);
                 break;
             case WinCondition.WerewolfWin:
-                textRenderer.text = "月下狼人获胜！";
+                textRenderer.text = "WerewolfWin".Translate();
                 textRenderer.color = Werewolf.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Werewolf.color);
                 break;
             case WinCondition.WitnessWin:
-                textRenderer.text = "真相只有一个！";
+                textRenderer.text = "WitnessWin".Translate();
                 textRenderer.color = Witness.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Witness.color);
                 break;
             case WinCondition.JuggernautWin:
-                textRenderer.text = "天启获胜";
+                textRenderer.text = "JuggernautWin".Translate();
                 textRenderer.color = Juggernaut.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Juggernaut.color);
                 break;
             case WinCondition.SwooperWin:
-                textRenderer.text = "隐身人获胜!";
+                textRenderer.text = "SwooperWin".Translate();
                 textRenderer.color = Swooper.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Swooper.color);
                 break;
             case WinCondition.ExecutionerWin:
-                textRenderer.text = "小嘴叭叭!";
+                textRenderer.text = "ExecutionerWin".Translate();
                 textRenderer.color = Executioner.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Executioner.color);
                 break;
             case WinCondition.LoversTeamWin:
-                textRenderer.text = "船员和恋人获胜";
+                textRenderer.text = "LoversTeamWin".Translate();
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
                 break;
             case WinCondition.LoversSoloWin:
-                textRenderer.text = "与你的爱恋心意合一~";
+                textRenderer.text = "LoversSoloWin".Translate();
                 textRenderer.color = Lovers.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
                 break;
             case WinCondition.JackalWin:
-                textRenderer.text = "豺狼的全家福.jpg";
+                textRenderer.text = "JackalWin".Translate();
                 textRenderer.color = Jackal.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Jackal.color);
                 break;
             case WinCondition.PavlovsWin:
-                textRenderer.text = "这是乖狗狗的奖励哦";
+                textRenderer.text = "PavlovsWin".Translate();
                 textRenderer.color = Pavlovsdogs.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Pavlovsdogs.color);
                 break;
             case WinCondition.AkujoSoloWin:
-                textRenderer.text = "请给我扭曲你人生的权利！";
+                textRenderer.text = "AkujoSoloWin".Translate();
                 textRenderer.color = Akujo.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Akujo.color);
                 break;
             case WinCondition.AkujoTeamWin:
-                textRenderer.text = "我只是加入你们不是拆散你们！";
+                textRenderer.text = "AkujoTeamWin".Translate();
                 textRenderer.color = Akujo.color;
                 __instance.BackgroundBar.material.SetColor("_Color", Akujo.color);
                 break;
             case WinCondition.MiniLose:
-                textRenderer.text = "他就只是个孩子啊！";
+                textRenderer.text = "MiniLose".Translate();
                 textRenderer.color = Mini.color;
                 break;
         }
@@ -676,13 +656,13 @@ public class EndGameManagerSetUpPatch
             switch (cond)
             {
                 case WinCondition.AdditionalLawyerStolenWin:
-                    winConditionsTexts.Add(cs(Lawyer.color, "律师代替客户胜利"));
+                    winConditionsTexts.Add(cs(Lawyer.color, "LawyerStolenWin".Translate()));
                     break;
                 case WinCondition.AdditionalLawyerBonusWin:
-                    winConditionsTexts.Add(cs(Lawyer.color, "律师和客户胜利"));
+                    winConditionsTexts.Add(cs(Lawyer.color, "LawyerBonusWin".Translate()));
                     break;
                 case WinCondition.AdditionalPartTimerWin:
-                    winConditionsTexts.Add(cs(PartTimer.color, "打工仔跟随胜利"));
+                    winConditionsTexts.Add(cs(PartTimer.color, "PartTimerWin".Translate()));
                     break;
                 case WinCondition.AdditionalAlivePursuerWin:
                     pursuerAlive = true;
@@ -1121,7 +1101,7 @@ internal class RPCEndGamePatch
 {
     public static void Postfix(ref GameOverReason endReason)
     {
-        Message($"游戏结束{(CustomGameOverReason)endReason}");
+        Message($"游戏结束 {(CustomGameOverReason)endReason}", "RpcEndGame");
     }
 }
 

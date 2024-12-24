@@ -11,7 +11,6 @@ namespace TheOtherRoles.Patches;
 public static class LobbyRoleInfo
 {
     public static GameObject RolesSummaryUI { get; set; }
-    public static readonly List<string> Teams = ["Impostors", "Neutrals", "Crewmates", "Modifiers", "GhostRole"];
     private static TextMeshPro infoButtonText;
     private static TextMeshPro infoTitleText;
 
@@ -51,8 +50,8 @@ public static class LobbyRoleInfo
         TextMeshPro newtitle = Object.Instantiate(textTemplate, container.transform);
         newtitle.text = GetString("lobbyInfoSummary");
         newtitle.color = Color.white;
-        newtitle.outlineWidth = 0.01f;
-        newtitle.transform.localPosition = new Vector3(1f, 0.17f, -2f);
+        newtitle.outlineWidth = 0.05f;
+        newtitle.transform.localPosition = new Vector3(1.05f, 0.17f, -2f);
         newtitle.transform.localScale = Vector3.one * 2.5f;
 
         // 添加退出按钮
@@ -72,44 +71,20 @@ public static class LobbyRoleInfo
 
         List<Transform> buttons = new();
 
-        for (int i = 0; i < Teams.Count; i++)
+        foreach (RoleType teamId in Enum.GetValues(typeof(RoleType)))
         {
-            string team = "";
-            RoleType teamid = RoleType.Crewmate;
-            switch (Teams[i])
-            {
-                case "Impostors":
-                    team = cs(Palette.ImpostorRed, GetString("ImpostorRolesText"));
-                    teamid = RoleType.Impostor;
-                    break;
-                case "Neutrals":
-                    team = cs(new Color32(76, 84, 78, 255), GetString("NeutralRolesText"));
-                    teamid = RoleType.Neutral;
-                    break;
-                case "Crewmates":
-                    team = cs(Palette.CrewmateBlue, GetString("CrewmateRolesText"));
-                    teamid = RoleType.Crewmate;
-                    break;
-                case "Modifiers":
-                    team = cs(Color.yellow, GetString("ModifierRolesText"));
-                    teamid = RoleType.Modifier;
-                    break;
-                case "GhostRole":
-                    team = cs(new Color32(159, 127, 209, byte.MaxValue), GetString("GhostRoleText"));
-                    teamid = RoleType.GhostRole;
-                    break;
-            }
+            if (teamId == RoleType.Special) continue;
 
             Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
-            buttonTransform.name = team + " Button";
+            buttonTransform.name = teamId.ToString() + "Button";
             buttonTransform.GetComponent<BoxCollider2D>().size = new Vector2(2.5f, 0.55f);
             buttonTransform.GetComponent<SpriteRenderer>().sprite = new ResourceSprite("TheOtherRoles.Resources.LobbyRoleInfo.RolePlate.png", 215f);
             buttons.Add(buttonTransform);
-            buttonTransform.localPosition = new Vector3(0, 2.2f - (i * 1f), -5);
+            buttonTransform.localPosition = new Vector3(0, 2.2f - (buttons.Count - 1) * 1f, -5);
             buttonTransform.localScale = new Vector3(2f, 1.5f, 1f);
 
             TextMeshPro label = Object.Instantiate(textTemplate, buttonTransform);
-            label.text = team;
+            label.text = cs(getTeamColor(teamId), GetString(teamId.ToString() + "RolesText"));
             label.alignment = TextAlignmentOptions.Center;
             label.transform.localPosition = new Vector3(0, 0, label.transform.localPosition.z);
             label.transform.localScale = new Vector3(1.4f, 2.2f, 1f);
@@ -120,7 +95,7 @@ public static class LobbyRoleInfo
             onClick.AddListener((Action)(() =>
             {
                 Object.Destroy(container.gameObject);
-                roleInfosOnclick(team, teamid);
+                roleInfosOnclick(teamId);
             }));
 
             button.OnMouseOver.RemoveAllListeners();
@@ -137,7 +112,7 @@ public static class LobbyRoleInfo
         }
     }
 
-    public static void roleInfosOnclick(string team, RoleType teamId)
+    public static void roleInfosOnclick(RoleType teamId)
     {
         SpriteRenderer container = new GameObject("RoleListMenuContainer").AddComponent<SpriteRenderer>();
         container.sprite = new ResourceSprite("LobbyRoleInfo.RoleListScreen.png", 110f);
@@ -151,7 +126,7 @@ public static class LobbyRoleInfo
         TextMeshPro textTemplate = HudManager.Instance.TaskPanel.taskText;
 
         TextMeshPro newtitle = Object.Instantiate(textTemplate, container.transform);
-        newtitle.text = team;
+        newtitle.text = GetString(teamId.ToString() + "RolesText");
         newtitle.outlineWidth = 0.01f;
         newtitle.transform.localPosition = new Vector3(0f, 2.8f, -2f);
         newtitle.transform.localScale = Vector3.one * 2.5f;
@@ -196,7 +171,7 @@ public static class LobbyRoleInfo
             else if (roleInfo.roleType == RoleType.Neutral && teamId != RoleType.Neutral) continue;
             else if (roleInfo.roleType == RoleType.Impostor && teamId != RoleType.Impostor) continue;
             else if (roleInfo.roleType == RoleType.Crewmate && teamId != RoleType.Crewmate) continue;
-            else if (roleInfo.roleType == RoleType.GhostRole && teamId != RoleType.GhostRole) continue;
+            else if (roleInfo.roleType == RoleType.Ghost && teamId != RoleType.Ghost) continue;
 
             Transform buttonTransform = Object.Instantiate(buttonTemplate, container.transform);
             buttonTransform.name = cs(roleInfo.color, roleInfo.Name) + " Button";

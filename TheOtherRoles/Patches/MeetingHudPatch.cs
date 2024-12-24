@@ -803,32 +803,6 @@ internal class MeetingHudPatch
                     FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Portalmaker.portalmaker, $"{msg}");
                 }
 
-            // Add trapped Info into Trapper chat
-            if (Trapper.trapper != null &&
-                (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper || shouldShowGhostInfo()) &&
-                !Trapper.trapper.Data.IsDead)
-            {
-                if (Trap.traps.Any(x => x.revealed))
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, "陷阱日志:");
-                foreach (var trap in Trap.traps)
-                {
-                    if (!trap.revealed) continue;
-                    var message = $"陷阱 {trap.instanceId}: \n";
-                    trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
-                    message = trap.trappedPlayer.Aggregate(message, (current, p) => current + Trapper.infoType switch
-                    {
-                        0 => RoleInfo.GetRolesString(p, false, false, false) + "\n",
-                        1 when isEvilNeutral(p) || p.Data.Role.IsImpostor => "邪恶职业 \n",
-                        1 => "善良职业 \n",
-                        _ => p.Data.PlayerName + "\n"
-                    });
-
-                    FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, $"{message}");
-                }
-            }
-
-            Trapper.playersOnMap = new List<PlayerControl>();
-
             // Remove revealed traps
             Trap.clearRevealedTraps();
 
@@ -842,7 +816,6 @@ internal class MeetingHudPatch
 
             // Close In-Game Settings Display if open
             HudManagerUpdate.CloseSettings();
-
         }
     }
 
@@ -932,41 +905,10 @@ internal class MeetingHudPatch
 
             if (PartTimer.partTimer.IsAlive() && PartTimer.target == null) PartTimer.deathTurn--;
 
-            if (InfoSleuth.infoSleuth != null && InfoSleuth.target != null && InfoSleuth.infoSleuth == CachedPlayer.LocalPlayer.PlayerControl)
-            {
-                string msg;
-                var random = rnd.Next(2);
-                var isNotCrew = isNeutral(InfoSleuth.target) || InfoSleuth.target.Data.Role.IsImpostor;
-                var team = "的阵营是 " + teamString(InfoSleuth.target);
-                var info = InfoSleuth.infoType switch
-                {
-                    0 => isNotCrew ? "不是船员" : "是船员",
-                    1 => team,
-                    _ => random == 0 ? isNotCrew ? "不是船员" : "是船员" : team,
-                };
-
-                msg = $"{InfoSleuth.target.Data.PlayerName} {info}";
-
-                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(CachedPlayer.LocalPlayer.PlayerControl, $"{msg}");
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.ShareGhostInfo, SendOption.Reliable);
-                writer.Write(InfoSleuth.infoSleuth.PlayerId);
-                writer.Write((byte)RPCProcedure.GhostInfoTypes.MediumInfo);
-                writer.Write(msg);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-
-                var writer1 = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.InfoSleuthNoTarget, SendOption.Reliable);
-                AmongUsClient.Instance.FinishRpcImmediately(writer1);
-                RPCProcedure.infoSleuthNoTarget();
-            }
-
             if (Balancer.balancer.IsAlive() && PlayerControl.LocalPlayer == Balancer.balancer)
             {
                 Balancer.Balancer_Patch.MeetingHudStartPostfix(__instance);
             }
-
-            if (Witness.player.IsAlive() && Witness.killerTarget == null) Witness.WitnessReport(byte.MaxValue);
 
             foreach (var playerState in Instance?.playerStates ?? Enumerable.Empty<PlayerVoteArea>())
             {
@@ -976,17 +918,6 @@ internal class MeetingHudPatch
                     Object.Destroy(meetingInfoTransform.gameObject);
                 }
             }
-            _ = new LateTask(() =>
-            {
-                foreach (var playerState in Instance?.playerStates ?? Enumerable.Empty<PlayerVoteArea>())
-                {
-                    var meetingInfoTransform = playerState.NameText.transform.parent.Find("WitnessInfo");
-                    if (meetingInfoTransform != null)
-                    {
-                        Object.Destroy(meetingInfoTransform.gameObject);
-                    }
-                }
-            }, 6f);
         }
     }
 }

@@ -258,14 +258,12 @@ internal class IntroPatch
     [HarmonyPatch(typeof(IntroCutscene), nameof(IntroCutscene.ShowRole))]
     private class SetUpRoleTextPatch
     {
-        private static int seed;
-
         public static void SetRoleTexts(IntroCutscene __instance)
         {
             // Don't override the intro of the vanilla roles
             var infos = RoleInfo.getRoleInfoForPlayer(CachedPlayer.LocalPlayer.PlayerControl);
             var roleInfo = infos.FirstOrDefault(info => info.roleType != RoleType.Modifier);
-            var modifierInfo = infos.FirstOrDefault(info => info.roleType == RoleType.Modifier);
+            var modifierInfo = infos.FirstOrDefault(info => info.roleType == RoleType.Modifier && info.roleId != RoleId.Assassin);
 
             __instance.RoleBlurbText.text = "";
             if (roleInfo != null)
@@ -283,18 +281,12 @@ internal class IntroPatch
                 else if (infos.Any(info => info.roleId == RoleId.Deputy))
                     __instance.RoleBlurbText.text = cs(Sheriff.color, $"\n你的警长是 {Sheriff.sheriff?.Data?.PlayerName ?? ""}");
             }
-            else if (Executioner.executioner != null && Executioner.target != null)
-            {
-                if (infos.Any(info => info.roleId == RoleId.Executioner))
-                    __instance.RoleBlurbText.text = cs(Executioner.color, $"\n把 {Executioner.target?.Data?.PlayerName ?? ""} 投出去!");
 
-            }
-            else if (Lawyer.lawyer != null && Lawyer.target != null)
-            {
-                if (infos.Any(info => info.roleId == RoleId.Lawyer))
-                    __instance.RoleBlurbText.text = cs(Lawyer.color, $"\n你的辩护目标是 {Lawyer.target?.Data?.PlayerName ?? ""}");
+            if (Executioner.executioner != null && infos.Any(info => info.roleId == RoleId.Executioner))
+                __instance.RoleBlurbText.text = cs(Executioner.color, $"\n把 {Executioner.target?.Data?.PlayerName ?? ""} 投出去!");
 
-            }
+            if (Lawyer.lawyer != null && infos.Any(info => info.roleId == RoleId.Lawyer))
+                __instance.RoleBlurbText.text = cs(Lawyer.color, $"\n你的辩护目标是 {Lawyer.target?.Data?.PlayerName ?? ""}");
 
             if (modifierInfo != null)
             {
@@ -312,12 +304,10 @@ internal class IntroPatch
                         cs(Lovers.color, $"\n♥ 你和 {otherLover?.Data?.PlayerName ?? ""} 坠入了爱河 ♥");
                 }
             }
-
         }
 
         public static bool Prefix(IntroCutscene __instance)
         {
-            seed = rnd.Next(5000);
             FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(1f,
                 new Action<float>(p => { SetRoleTexts(__instance); })));
             return true;

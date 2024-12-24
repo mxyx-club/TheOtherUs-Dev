@@ -178,13 +178,13 @@ internal class HudManagerUpdatePatch
         {
             var (playerCompleted, playerTotal) = TasksHandler.taskInfo(Snitch.snitch.Data);
             int numberOfTasks = playerTotal - playerCompleted;
-            var snitchIsDead = Snitch.snitch.Data.IsDead;
 
             bool forImp = localPlayer.Data.Role.IsImpostor;
             bool forKillerTeam = Snitch.Team == Snitch.includeNeutralTeam.KillNeutral && isKillerNeutral(localPlayer);
             bool forEvilTeam = Snitch.Team == Snitch.includeNeutralTeam.EvilNeutral && isEvilNeutral(localPlayer);
             bool forNeutraTeam = Snitch.Team == Snitch.includeNeutralTeam.AllNeutral && isNeutral(localPlayer);
-            if (numberOfTasks <= Snitch.taskCountForReveal)
+
+            if (numberOfTasks <= Snitch.taskCountForReveal && Snitch.snitch.IsAlive())
             {
                 foreach (PlayerControl p in CachedPlayer.AllPlayers)
                 {
@@ -194,7 +194,8 @@ internal class HudManagerUpdatePatch
                     }
                 }
             }
-            if (numberOfTasks == 0 && Snitch.seeInMeeting && !snitchIsDead)
+
+            if (numberOfTasks == 0 && Snitch.seeInMeeting && Snitch.snitch.IsAlive())
             {
                 foreach (PlayerControl p in CachedPlayer.AllPlayers)
                 {
@@ -382,9 +383,9 @@ internal class HudManagerUpdatePatch
 
     public static void miniUpdate()
     {
-        if (Mini.mini == null || Camouflager.camouflageTimer > 0f || MushroomSabotageActive() ||
+        if (Mini.mini == null || Camouflager.camouflageTimer > 0f || MushroomSabotageActive ||
             (Mini.mini == Morphling.morphling && Morphling.morphTimer > 0f) ||
-            (Mini.mini == Ninja.ninja && Ninja.isInvisble) || SurveillanceMinigamePatch.nightVisionIsActive ||
+            (Mini.mini == Ninja.ninja && Ninja.isInvisable) || SurveillanceMinigamePatch.nightVisionIsActive ||
             (Mini.mini == Swooper.swooper && Swooper.isInvisable) ||
             (Jackal.jackal.Any(x => x == Mini.mini) && Jackal.isInvisable) || isActiveCamoComms) return;
 

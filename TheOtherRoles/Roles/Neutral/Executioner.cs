@@ -1,5 +1,4 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace TheOtherRoles.Roles.Neutral;
 public static class Executioner
@@ -11,16 +10,18 @@ public static class Executioner
     public static bool triggerExecutionerWin;
     public static bool promotesToLawyer;
     public static bool targetWasGuessed;
-    /*
-    public enum targetDeadBecame
+
+    public static void PromotesRole()
     {
-        Pursuer = 0,
-        Jester = 1,
-        Amnisiac = 2,
-        Crewmate = 3,
-    };
-    public static targetDeadBecame role;
-    */
+        var player = executioner;
+        var target = Executioner.target;
+        if (player.IsAlive() && target.IsDead())
+        {
+            Pursuer.pursuer.Add(player);
+            clearAndReload();
+        }
+    }
+
     public static void clearAndReload(bool clearTarget = true)
     {
         if (clearTarget)
@@ -32,6 +33,5 @@ public static class Executioner
         triggerExecutionerWin = false;
         promotesToLawyer = CustomOptionHolder.executionerPromotesToLawyer.GetBool();
         canCallEmergency = CustomOptionHolder.executionerCanCallEmergency.GetBool();
-        //role = (targetDeadBecame)CustomOptionHolder.executionerOnTargetDead.getSelection();
     }
 }

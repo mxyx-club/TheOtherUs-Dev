@@ -17,6 +17,18 @@ public static class Lawyer
     public static bool targetCanBeJester;
     public static bool targetWasGuessed;
 
+
+    public static void PromotesToPursuer()
+    {
+        var player = lawyer;
+        var target = Lawyer.target;
+
+        if (player.IsAlive() && target.IsDead())
+        {
+            Pursuer.pursuer.Add(player);
+            clearAndReload();
+        }
+    }
     public static void clearAndReload(bool clearTarget = true)
     {
         lawyer = null;

@@ -449,7 +449,7 @@ internal class RoleManagerSelectRolesPatch
                 var w = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.LawyerPromotesToPursuer, SendOption.Reliable);
                 AmongUsClient.Instance.FinishRpcImmediately(w);
-                RPCProcedure.lawyerPromotesToPursuer();
+                Lawyer.PromotesToPursuer();
             }
             else
             {
@@ -477,7 +477,7 @@ internal class RoleManagerSelectRolesPatch
                 var w = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.ExecutionerPromotesRole, SendOption.Reliable);
                 AmongUsClient.Instance.FinishRpcImmediately(w);
-                RPCProcedure.executionerPromotesRole();
+                Executioner.PromotesRole();
             }
             else
             {
@@ -493,10 +493,11 @@ internal class RoleManagerSelectRolesPatch
 
     private static void assignModifiers()
     {
+        var addMaxNum = Cursed.hideModifier ? 1 : 0;
         var modifierMin = CustomOptionHolder.modifiersCountMin.GetSelection();
-        var modifierMax = CustomOptionHolder.modifiersCountMax.GetSelection();
+        var modifierMax = CustomOptionHolder.modifiersCountMax.GetSelection() + addMaxNum;
         if (modifierMin > modifierMax) modifierMin = modifierMax;
-        var modifierCountSettings = rnd.Next(modifierMin, modifierMax + 1);
+        var modifierCountSettings = rnd.Next(modifierMin, modifierMax);
         var players = PlayerControl.AllPlayerControls.ToArray().ToList();
         if (isGuesserGamemode && !CustomOptionHolder.guesserGamemodeHaveModifier.GetBool())
             players.RemoveAll(x => GuesserGM.isGuesser(x.PlayerId));
@@ -508,7 +509,7 @@ internal class RoleManagerSelectRolesPatch
         impPlayerL.RemoveAll(x => !x.Data.Role.IsImpostor);
         crewPlayer.RemoveAll(x => x.Data.Role.IsImpostor || isNeutral(x));
 
-        var modifierCount = Mathf.Min(players.Count + 1, modifierCountSettings);
+        var modifierCount = Mathf.Min(players.Count + addMaxNum, modifierCountSettings);
 
         if (modifierCount == 0) return;
 
@@ -757,23 +758,22 @@ internal class RoleManagerSelectRolesPatch
 
         if (modifiers.Contains(RoleId.Specoality))
         {
-            List<PlayerControl> GuesserList = [];
+            var GuesserList = new List<PlayerControl>();
 
             if (isGuesserGamemode)
             {
-                foreach (var player in GuesserGM.guessers)
+                foreach (var player in playerList.Where(p => GuesserGM.isGuesser(p.PlayerId)))
                 {
-                    GuesserList.Add(player.guesser);
-                    GuesserList.RemoveAll(x => !x.Data.Role.IsImpostor);
+                    GuesserList.Add(player);
+                    if (!Specoality.IsGlobalModifier) GuesserList.RemoveAll(x => !x.isImpostor());
                 }
             }
             else
             {
-                foreach (var player in Assassin.assassin)
+                foreach (var player in playerList.Where(p => Assassin.assassin.Any(x => p.PlayerId == x.PlayerId)))
                 {
                     GuesserList.Add(player);
                 }
-
             }
 
             playerId = setModifierToRandomPlayer((byte)RoleId.Specoality, GuesserList);
@@ -980,13 +980,12 @@ internal class RoleManagerSelectRolesPatch
                 selection = CustomOptionHolder.modifierSpecoality.GetSelection();
                 break;
             case RoleId.PoucherModifier:
-                if (Poucher.spawnModifier) selection = CustomOptionHolder.poucherSpawnRate.GetSelection();
+                if (Poucher.spawnModifier) selection = CustomOptionHolder.modifierPoucher.GetSelection();
                 break;
             case RoleId.Mini:
                 selection = CustomOptionHolder.modifierMini.GetSelection();
                 break;
             case RoleId.Giant:
-                if (isFungle) break;
                 selection = CustomOptionHolder.modifierGiant.GetSelection();
                 break;
             case RoleId.Aftermath:
@@ -1043,12 +1042,9 @@ internal class RoleManagerSelectRolesPatch
                 selection = CustomOptionHolder.modifierShifter.GetSelection();
                 break;
             case RoleId.Assassin:
-                if (!isGuesserGamemode)
-                {
-                    selection = CustomOptionHolder.modifierAssassin.GetSelection();
-                    if (multiplyQuantity)
-                        selection *= CustomOptionHolder.modifierAssassinQuantity.GetQuantity();
-                }
+                if (isGuesserGamemode) break;
+                selection = CustomOptionHolder.modifierAssassin.GetSelection();
+                if (multiplyQuantity) selection *= CustomOptionHolder.modifierAssassinQuantity.GetQuantity();
                 break;
         }
 

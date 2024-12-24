@@ -32,7 +32,7 @@ public static class TransportationToolPatches
                 __instance.playerIdHands.TryGetValue(player.PlayerId, out var hand);
                 if (hand != null)
                 {
-                    if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive())
+                    if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive)
                     {
                         if (player == Morphling.morphling && Morphling.morphTimer > 0)
                         {
@@ -70,7 +70,7 @@ public static class TransportationToolPatches
         var player = __instance.myPlayer;
         __instance.StartCoroutine(Effects.Lerp(5.0f, new Action<float>(p =>
         {
-            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive() &&
+            if (Camouflager.camouflageTimer <= 0 && !MushroomSabotageActive &&
                 player == Morphling.morphling && Morphling.morphTimer > 0.1f)
                 player.RawSetHat(Morphling.morphTarget.Data.DefaultOutfit.HatId,
                     Morphling.morphTarget.Data.DefaultOutfit.ColorId);

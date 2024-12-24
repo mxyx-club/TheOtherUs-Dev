@@ -43,7 +43,7 @@ internal class Bloodytrail
         FastDestroyableSingleton<HudManager>.Instance.StartCoroutine(Effects.Lerp(10f, new Action<float>(p =>
         {
             var c = color;
-            if (Camouflager.camouflageTimer > 0 || MushroomSabotageActive()) c = Palette.PlayerColors[6];
+            if (Camouflager.camouflageTimer > 0 || MushroomSabotageActive) c = Palette.PlayerColors[6];
             if (spriteRenderer) spriteRenderer.color = new Color(c.r, c.g, c.b, Mathf.Clamp01(1 - p));
 
             if ((int)p != 1 || blood == null) return;

@@ -31,11 +31,11 @@ public static class Lovers
                !notAckedExiledIsLover; // ADD NOT ACKED IS LOVER
     }
 
-    public static PlayerControl otherLover(PlayerControl oneLover)
+    public static PlayerControl otherLover(PlayerControl player)
     {
-        if (!existing()) return null;
-        if (oneLover == lover1) return lover2;
-        if (oneLover == lover2) return lover1;
+        if (!existing() || player == null) return null;
+        if (player == lover1) return lover2;
+        if (player == lover2) return lover1;
         return null;
     }
 
@@ -58,16 +58,5 @@ public static class Lovers
         notAckedExiledIsLover = false;
         bothDie = CustomOptionHolder.modifierLoverBothDie.GetBool();
         enableChat = CustomOptionHolder.modifierLoverEnableChat.GetBool();
-    }
-
-    public static PlayerControl getPartner(this PlayerControl player)
-    {
-        if (player == null)
-            return null;
-        if (lover1 == player)
-            return lover2;
-        if (lover2 == player)
-            return lover1;
-        return null;
     }
 }

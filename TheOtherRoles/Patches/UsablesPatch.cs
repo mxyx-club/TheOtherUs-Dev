@@ -241,21 +241,20 @@ internal class VisibleVentPatches
         public static bool Prefix(Vent __instance, PlayerControl pc)
         {
             if (!__instance.EnterVentAnim) return false;
+            if (!hideVentAnim) return true;
 
             var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
 
             var vector = pc.GetTruePosition() - truePosition;
             var magnitude = vector.magnitude;
             if (pc.AmOwner || (hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.ViewDistance &&
-                               !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
-                                   ShipAndObjectsMask)))
-                __instance.GetComponent<SpriteAnim>().Play(__instance.EnterVentAnim);
+                !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, ShipAndObjectsMask)))
+                __instance.GetComponent<SpriteAnim>()?.Play(__instance.EnterVentAnim);
 
             if (pc.AmOwner && Constants.ShouldPlaySfx()) //ShouldPlaySfx
             {
                 SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
-                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false).pitch =
-                    Random.Range(0.8f, 1.2f);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false).pitch = Random.Range(0.8f, 1.2f);
             }
 
             return false;
@@ -268,21 +267,20 @@ internal class VisibleVentPatches
         public static bool Prefix(Vent __instance, PlayerControl pc)
         {
             if (!__instance.ExitVentAnim) return false;
+            if (!hideVentAnim) return true;
 
             var truePosition = PlayerControl.LocalPlayer.GetTruePosition();
 
             var vector = pc.GetTruePosition() - truePosition;
             var magnitude = vector.magnitude;
             if (pc.AmOwner || (hideVentAnim && magnitude < PlayerControl.LocalPlayer.lightSource.ViewDistance &&
-                               !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude,
-                                   ShipAndObjectsMask)))
-                __instance.GetComponent<SpriteAnim>().Play(__instance.ExitVentAnim);
+                !PhysicsHelpers.AnyNonTriggersBetween(truePosition, vector.normalized, magnitude, ShipAndObjectsMask)))
+                __instance.GetComponent<SpriteAnim>()?.Play(__instance.ExitVentAnim);
 
             if (pc.AmOwner && Constants.ShouldPlaySfx()) //ShouldPlaySfx
             {
                 SoundManager.Instance.StopSound(ShipStatus.Instance.VentEnterSound);
-                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false).pitch =
-                    Random.Range(0.8f, 1.2f);
+                SoundManager.Instance.PlaySound(ShipStatus.Instance.VentEnterSound, false).pitch = Random.Range(0.8f, 1.2f);
             }
 
             return false;

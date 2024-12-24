@@ -15,6 +15,6 @@ public static class Poucher
     {
         poucher = null;
         killed.Clear();
-        spawnModifier = CustomOptionHolder.poucherSpawnModifier.GetBool();
+        spawnModifier = CustomOptionHolder.modifierPoucher.GetBool();
     }
 }

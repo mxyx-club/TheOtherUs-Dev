@@ -40,12 +40,14 @@ public static class Medic
 
         bool isMorphedMorphling = target == Morphling.morphling && Morphling.morphTarget != null && Morphling.morphTimer > 0f;
         if (shielded != null && ((target == shielded && !isMorphedMorphling) || (isMorphedMorphling && Morphling.morphTarget == shielded)))
-        {   // Everyone or Ghost info
+        {
+            // Everyone or Ghost info
             hasVisibleShield = showShielded == 0 || shouldShowGhostInfo()
                 || (showShielded == 1 && (CachedPlayer.LocalPlayer.PlayerControl == shielded
                 || CachedPlayer.LocalPlayer.PlayerControl == medic)) // Shielded + Medic
-                || (showShielded == 2 && CachedPlayer.LocalPlayer.PlayerControl == medic); // Medic only
-                                                                                           // Make shield invisible till after the next meeting if the option is set (the medic can already see the shield)
+                || (showShielded == 2 && CachedPlayer.LocalPlayer.PlayerControl == medic);
+            // Medic only                                                                  
+            // Make shield invisible till after the next meeting if the option is set (the medic can already see the shield)
             hasVisibleShield = hasVisibleShield && (meetingAfterShielding
                 || !showShieldAfterMeeting
                 || CachedPlayer.LocalPlayer.PlayerControl == medic

@@ -45,7 +45,7 @@ public static class Chameleon
     {
         foreach (var chameleonPlayer in chameleon)
         {
-            if ((chameleonPlayer == Ninja.ninja && Ninja.isInvisble) ||
+            if ((chameleonPlayer == Ninja.ninja && Ninja.isInvisable) ||
                 (chameleonPlayer == Swooper.swooper && Swooper.isInvisable) ||
                 (Jackal.jackal.Any(x => x == chameleonPlayer) && Jackal.isInvisable)) continue; // Dont make Ninja visible...
             // check movement by animation

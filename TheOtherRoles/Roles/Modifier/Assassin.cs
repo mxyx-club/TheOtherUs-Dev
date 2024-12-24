@@ -4,7 +4,7 @@ using UnityEngine;
 namespace TheOtherRoles.Roles.Modifier;
 public class Assassin
 {
-    public static List<PlayerControl> assassin = [];
+    public static List<PlayerControl> assassin = new();
     public static Color color = Palette.ImpostorRed;
 
     public static int remainingShotsEvilGuesser = 2;

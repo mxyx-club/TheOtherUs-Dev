@@ -81,7 +81,7 @@ public class Portal
             ? "一名玩家 (" + (isLighterColor(playerControl) ? "浅" : "深") + ")"
             : playerControl.Data.PlayerName;
 
-        if (Camouflager.camouflageTimer > 0 || MushroomSabotageActive())
+        if (Camouflager.camouflageTimer > 0 || MushroomSabotageActive)
         {
             playerNameDisplay = "A camouflaged player";
         }

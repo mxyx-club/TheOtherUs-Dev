@@ -5,9 +5,11 @@ using UnityEngine;
 
 namespace TheOtherRoles.Utilities;
 
-#nullable enable
 public class MapData
 {
+
+    public static List<Vector3> PositionCached = new();
+
     public static readonly List<Vector3> SkeldSpawnPosition =
     [
         new Vector3(-2.2f, 2.2f, 0.0f), //cafeteria. botton. top left.
@@ -203,7 +205,8 @@ public class MapData
 
     public static List<Vector3> MapSpawnPosition()
     {
-        return GameOptionsManager.Instance.currentNormalGameOptions.MapId switch
+        if (PositionCached?.Count > 1) return PositionCached;
+        var pos = GameOptionsManager.Instance.currentNormalGameOptions.MapId switch
         {
             0 => SkeldSpawnPosition,
             1 => MiraSpawnPosition,
@@ -213,19 +216,23 @@ public class MapData
             5 => FungleSpawnPosition,
             _ => FindVentSpawnPositions()
         };
+        PositionCached = pos;
+        return pos;
     }
 
     public static List<Vector3> FindVentSpawnPositions()
     {
-        var poss = new List<Vector3>();
+        if (PositionCached?.Count > 1) return PositionCached;
+        var pos = new List<Vector3>();
         foreach (var vent in DestroyableSingleton<ShipStatus>.Instance.AllVents)
         {
             var Transform = vent.transform;
             var position = Transform.position;
-            poss.Add(new Vector3(position.x, position.y + 0.3f, position.z = 0.0f));
+            pos.Add(new Vector3(position.x, position.y + 0.3f, position.z = 0.0f));
         }
 
-        return poss;
+        PositionCached = pos;
+        return pos;
     }
 
     public static void RandomSpawnPlayers()
@@ -279,26 +286,5 @@ public class MapData
             p.NetTransform.RpcSnapTo(poss);
             Message($"Spawn PLayer {p.Data.PlayerName} To {poss}");
         }
-    }
-
-    public static readonly Dictionary<PlayerControl, Vent> PlayerVentDic = new();
-
-    [HarmonyPatch(typeof(Vent), nameof(Vent.EnterVent))]
-    [HarmonyPostfix]
-    public static void OnEnterVent(PlayerControl pc, Vent __instance)
-    {
-        PlayerVentDic[pc] = __instance;
-    }
-
-    [HarmonyPatch(typeof(Vent._ExitVent_d__40), nameof(Vent._ExitVent_d__40.MoveNext))]
-    [HarmonyPostfix]
-    public static void OnExitVent(Vent._ExitVent_d__40 __instance)
-    {
-        if (PlayerVentDic.ContainsKey(__instance.pc)) PlayerVentDic.Remove(__instance.pc);
-    }
-
-    public static void AllPlayerExitVent()
-    {
-        foreach (var (player, vent) in PlayerVentDic) player.MyPhysics.RpcExitVent(vent.Id);
     }
 }

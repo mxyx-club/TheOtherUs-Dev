@@ -103,8 +103,8 @@ public class CustomButton
     public static void HudUpdate()
     {
         buttons.RemoveAll(item => item.actionButton == null);
-
-        foreach (var t in buttons)
+        var list = buttons.ToArray();
+        foreach (var t in list)
         {
             try
             {

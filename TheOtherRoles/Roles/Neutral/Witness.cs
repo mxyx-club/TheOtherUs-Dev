@@ -42,14 +42,9 @@ public class Witness
     {
         var target = playerById(targetId);
 
-        if (!player.IsAlive() || PlayerControl.LocalPlayer != player)
-        {
-            return;
-        }
+        if (target == null || !player.IsAlive() || PlayerControl.LocalPlayer != player) return;
 
-        Message("WitnessReport");
-
-        killerTarget = DetermineKillerTarget(target);
+        killerTarget = DetermineKillerTarget(target) ?? null;
 
         static PlayerControl DetermineKillerTarget(PlayerControl target)
         {
@@ -58,7 +53,8 @@ public class Witness
                 return GameHistory.GetLastKiller();
             }
 
-            var deadPlayer = GameHistory.DeadPlayers?.Where(dp => dp.Player?.PlayerId == target.PlayerId && dp.KillerIfExisting.IsAlive())?
+            var deadPlayer = GameHistory.DeadPlayers?
+                .Where(dp => dp.Player?.PlayerId == target.PlayerId && dp.KillerIfExisting != null && dp.KillerIfExisting.IsAlive())
                 .OrderByDescending(dp => dp.TimeOfDeath)
                 .FirstOrDefault();
 
@@ -90,6 +86,8 @@ public class Witness
         [HarmonyPostfix]
         internal static void MeetingHudStartPostfix(MeetingHud __instance)
         {
+            if (player.IsAlive() && killerTarget == null) WitnessReport(byte.MaxValue);
+
             if (PlayerControl.LocalPlayer == player && PlayerControl.LocalPlayer.IsAlive())
             {
                 foreach (var pva in __instance.playerStates)

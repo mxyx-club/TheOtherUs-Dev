@@ -6,7 +6,7 @@ namespace TheOtherRoles.Objects;
 #nullable enable
 internal class Garlic
 {
-    public static List<Garlic> garlics = [];
+    public static List<Garlic> garlics = new();
     private static Sprite garlicSprite = new ResourceSprite("Garlic.png", 300);
     private static Sprite backgroundSprite = new ResourceSprite("GarlicBackground.png", 60);
     private readonly GameObject background;

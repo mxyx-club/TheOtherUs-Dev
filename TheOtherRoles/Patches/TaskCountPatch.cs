@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using AmongUs.GameOptions;
 using TheOtherRoles.Utilities;
 
 // 参照: https://github.com/SuperNewRoles/SuperNewRoles/blob/master/SuperNewRoles/Patches/TaskCountPatch.cs
@@ -53,41 +51,5 @@ internal class TaskCount
             if (__instance.IsComplete)
                 __instance.Arrows?.DoIf(x => x != null && x.isActiveAndEnabled, x => x.gameObject?.SetActive(false));
         }
-    }
-    public static Tuple<int, int> TaskDateNoClearCheck(GameData.PlayerInfo playerInfo)
-    {
-        int TotalTasks = 0;
-        int CompletedTasks = 0;
-
-        for (int j = 0; j < playerInfo.Tasks.Count; j++)
-        {
-            TotalTasks++;
-            if (playerInfo.Tasks[j].Complete)
-            {
-                CompletedTasks++;
-            }
-        }
-        return Tuple.Create(CompletedTasks, TotalTasks);
-    }
-    public static Tuple<int, int> TaskDate(GameData.PlayerInfo playerInfo)
-    {
-        int TotalTasks = 0;
-        int CompletedTasks = 0;
-        if (!playerInfo.Disconnected && playerInfo.Tasks != null &&
-            playerInfo.Object &&
-            (GameManager.Instance.LogicOptions.currentGameOptions.GetBool(BoolOptionNames.GhostsDoTasks) || !playerInfo.IsDead) &&
-            playerInfo.Role && playerInfo.Role.TasksCountTowardProgress
-            )
-        {
-            for (int j = 0; j < playerInfo.Tasks.Count; j++)
-            {
-                TotalTasks++;
-                if (playerInfo.Tasks[j].Complete)
-                {
-                    CompletedTasks++;
-                }
-            }
-        }
-        return Tuple.Create(CompletedTasks, TotalTasks);
     }
 }

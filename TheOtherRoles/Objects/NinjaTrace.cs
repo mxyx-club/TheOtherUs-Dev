@@ -8,7 +8,7 @@ namespace TheOtherRoles.Objects;
 
 internal class NinjaTrace
 {
-    public static List<NinjaTrace> traces = [];
+    public static List<NinjaTrace> traces = new();
 
     private static Sprite TraceSprite;
 
@@ -73,7 +73,7 @@ internal class NinjaTrace
 
     public static void clearTraces()
     {
-        traces = [];
+        traces = new();
     }
 
     public static void UpdateAll()

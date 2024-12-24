@@ -25,7 +25,7 @@ public class Specter
         var local = player;
         RPCProcedure.erasePlayerRoles(local.PlayerId);
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
-        var roleInfo = targetInfo.FirstOrDefault(info => info.roleType is not RoleType.Modifier and not RoleType.GhostRole);
+        var roleInfo = targetInfo.FirstOrDefault(info => info.roleType is not RoleType.Modifier and not RoleType.Ghost);
         if (target.isImpostor()) turnToImpostor(player);
 
         DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
@@ -297,6 +297,7 @@ public class Specter
                     break;
                 case RoleId.InfoSleuth:
                     if (resetRole) InfoSleuth.clearAndReload();
+                    InfoSleuth.infoSleuth = local;
                     break;
                 case RoleId.Spy:
                     if (Amnisiac.resetRole) Spy.clearAndReload();

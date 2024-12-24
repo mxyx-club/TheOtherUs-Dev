@@ -20,6 +20,7 @@
 | 游戏版本            | 模组版本 | 发布日期  | 链接                                                         |
 | ------------------- | -------- | --------- | ------------------------------------------------------------ |
 | 2024.8.13 ~ 2024.10.29 | v2.0.0.0 | 即将推出     |         |
+| 2024.3.5 ~ 2024.6.4 | v1.1.0.8 | 2024.12.25  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.1.0.8/TheOtherUs-Lite.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.1.0.4 | 2024.12.9  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.1.0.4/TheOtherUs-Lite.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.9.8 | 2024.11.26  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.8/TheOtherUs.zip) |
 | 2024.3.5 ~ 2024.6.4 | v1.0.9.4 | 2024.11.16  | [下载](https://github.com/mxyx-club/TheOtherUs-Edited/releases/download/v1.0.9.4/TheOtherUs.zip) |
@@ -44,6 +45,11 @@
 
 ## 更新日志
 
+详情请查看[Github releases](https://github.com/mxyx-club/TheOtherUs-Edited/releases)
+
+<details>
+  <summary>点我查看更多更新日志</summary>
+
 ### v1.0.9.0: 
 
 * 完善职业介绍
@@ -63,9 +69,6 @@
 * 修复巴甫洛夫无法破坏的问题
 * 修复大神官能多次使用技能的问题
 * 修复一个玩家有可能获得两个附加能力的问题
-
-<details>
-  <summary>点我查看更多更新日志</summary>
 
 ### v1.0.8.7:
 

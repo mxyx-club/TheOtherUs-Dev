@@ -230,9 +230,11 @@ public static class ChatCommands
                     || (CachedPlayer.LocalPlayer.PlayerControl.isLover() && Lovers.enableChat)))
                 __instance.Chat.SetVisible(true);
 
-            if (ModOption.transparentTasks
-                || (Multitasker.multitasker != null
-                && Multitasker.multitasker.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId)))
+            if (!InMeeting && !ModOption.DebugMode && Specter.player != null && PlayerControl.LocalPlayer == Specter.player)
+                __instance.Chat?.SetVisible(false);
+
+
+            if (ModOption.transparentTasks || Multitasker.multitasker.Any(x => x.PlayerId == PlayerControl.LocalPlayer.PlayerId))
             {
                 if (PlayerControl.LocalPlayer.Data.IsDead || PlayerControl.LocalPlayer.Data.Disconnected) return;
                 if (!Minigame.Instance) return;
@@ -271,17 +273,16 @@ public static class ChatCommands
     {
         public static bool Prefix(ChatController __instance, [HarmonyArgument(0)] PlayerControl sourcePlayer)
         {
-            var playerControl = CachedPlayer.LocalPlayer.PlayerControl;
-            var flag = MeetingHud.Instance != null
-                       || LobbyBehaviour.Instance != null
-                       || playerControl.Data.IsDead
-                       || sourcePlayer.PlayerId == CachedPlayer.LocalPlayer.PlayerId;
+            var local = CachedPlayer.LocalPlayer.PlayerControl;
+            if (local == null) return true;
+
+            var flag = MeetingHud.Instance != null || LobbyBehaviour.Instance != null
+                || local.Data.IsDead || sourcePlayer.PlayerId == CachedPlayer.LocalId;
+
             if (__instance != FastDestroyableSingleton<HudManager>.Instance.Chat) return true;
-            if (playerControl == null) return true;
-            if (ModOption.DebugMode) return flag;
-            if (!playerControl.isLover()) return flag;
-            if (playerControl.isLover() && Lovers.enableChat)
-                return sourcePlayer.getChatPartner() == playerControl || playerControl.getChatPartner() == playerControl == (bool)sourcePlayer || flag;
+            if (ModOption.DebugMode || !local.isLover()) return flag;
+            if (local.isLover() && Lovers.enableChat)
+                return sourcePlayer.getPartner() == local || local.getPartner() == local == (bool)sourcePlayer || flag;
             return flag;
         }
     }

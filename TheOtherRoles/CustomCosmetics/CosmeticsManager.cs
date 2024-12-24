@@ -15,7 +15,7 @@ public class CosmeticsManager : ManagerBase<CosmeticsManager>
     internal static string CustomPlatesDir => Path.Combine(CosmeticDir, "CustomPlates");
     internal static string CosmeticsConfigDir => Path.Combine(CosmeticDir, "CosmeticsConfig");
 
-    public readonly HashSet<CosmeticsManagerConfig> configs = [];
+    public readonly HashSet<CosmeticsManagerConfig> configs = new();
     public readonly CosmeticsManagerConfig DefConfig = new()
     {
         ConfigName = "TheOtherHats",

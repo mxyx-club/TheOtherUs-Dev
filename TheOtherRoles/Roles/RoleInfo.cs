@@ -124,8 +124,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
     public static RoleInfo chameleon = new("Chameleon", Color.yellow, RoleId.Chameleon, RoleType.Modifier);
     public static RoleInfo shifter = new("Shifter", Color.yellow, RoleId.Shifter, RoleType.Modifier);
 
-    public static RoleInfo ghostEngineer = new("GhostEngineer", GhostEngineer.color, RoleId.GhostEngineer, RoleType.GhostRole);
-    public static RoleInfo specter = new("Specter", Specter.color, RoleId.Specter, RoleType.GhostRole);
+    public static RoleInfo ghostEngineer = new("GhostEngineer", GhostEngineer.color, RoleId.GhostEngineer, RoleType.Ghost);
+    public static RoleInfo specter = new("Specter", Specter.color, RoleId.Specter, RoleType.Ghost);
 
     public static List<RoleInfo> allRoleInfos =
     [
@@ -374,24 +374,26 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
 
         if (onlyGhostRole)
         {
-            var ghostRoleInfo = getRoleInfoForPlayer(p, false, true).FirstOrDefault(x => x.roleType == RoleType.GhostRole);
+            var ghostRoleInfo = getRoleInfoForPlayer(p, false, true).FirstOrDefault(x => x.roleType == RoleType.Ghost);
 
             if (p.Data.IsDead && ghostRoleInfo != null)
             {
-                roleName = string.Join(" ", getRoleInfoForPlayer(p, false, true).Where(x => x.roleType is RoleType.GhostRole or RoleType.Modifier)
+                roleName = string.Join(" ", getRoleInfoForPlayer(p, false, true).Where(x => x.roleType is RoleType.Ghost or RoleType.Modifier)
                     .Select(x => useColors ? cs(x.color, x.Name) : x.Name).ToArray());
             }
         }
 
-        if (Lawyer.target != null && p.PlayerId == Lawyer.target.PlayerId &&
-            CachedPlayer.LocalPlayer.PlayerControl != Lawyer.target) roleName += useColors ? cs(Lawyer.color, " §") : " §";
+        if (Lawyer.target != null && p.PlayerId == Lawyer.target.PlayerId && PlayerControl.LocalPlayer != Lawyer.target)
+            roleName += useColors ? cs(Lawyer.color, " §") : " §";
 
-        if (Executioner.target != null && p.PlayerId == Executioner.target.PlayerId &&
-            CachedPlayer.LocalPlayer.PlayerControl != Executioner.target) roleName += useColors ? cs(Executioner.color, " §") : " §";
+        if (Executioner.target != null && p.PlayerId == Executioner.target.PlayerId && PlayerControl.LocalPlayer != Executioner.target)
+            roleName += useColors ? cs(Executioner.color, " §") : " §";
 
-        if (Jackal.jackal.Any(x => x == p && x.IsAlive()) && Jackal.canSwoop) roleName += "JackalIsSwooperInfo".Translate();
+        if (Jackal.jackal.Any(x => x == p && x.IsAlive()) && Jackal.canSwoop)
+            roleName += "JackalIsSwooperInfo".Translate();
 
-        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId)) roleName += "GuessserGMInfo".Translate();
+        if (HandleGuesser.isGuesserGm && HandleGuesser.isGuesser(p.PlayerId) && p != Doomsayer.doomsayer)
+            roleName += "GuessserGMInfo".Translate();
 
         if (showGhostInfo && p != null)
         {
@@ -421,7 +423,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
                     roleName = cs(Pursuer.color, "(被塞空包弹) ") + roleName;
                 if (Witch.futureSpelled.Contains(p) && !MeetingHud.Instance) // This is already displayed in meetings!
                     roleName = cs(Witch.color, "☆ ") + roleName;
-                if (BountyHunter.bounty == p)
+                if (BountyHunter.bounty == p && BountyHunter.bountyHunter.IsAlive())
                     roleName = cs(BountyHunter.color, "(被悬赏) ") + roleName;
                 if (p == Arsonist.arsonist)
                     roleName += cs(Arsonist.color,
@@ -431,90 +433,88 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
                 if (p == Akujo.honmei)
                     roleName = cs(Akujo.color, "(真爱) ") + roleName;
 
-                // Death Reason on Ghosts
-                if (p.Data.IsDead)
+                // -----------------------------test---------------------------------
+
+                var deathReasonString = "";
+                var deadPlayer = GameHistory.DeadPlayers.FirstOrDefault(x => x.Player.PlayerId == p.PlayerId);
+
+                Color killerColor = new();
+                if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
+                    killerColor = getRoleInfoForPlayer(deadPlayer.KillerIfExisting, false).FirstOrDefault().color;
+
+                if (deadPlayer != null)
                 {
-                    var deathReasonString = "";
-                    var deadPlayer = GameHistory.DeadPlayers.FirstOrDefault(x => x.Player.PlayerId == p.PlayerId);
-
-                    Color killerColor = new();
-                    if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
-                        killerColor = getRoleInfoForPlayer(deadPlayer.KillerIfExisting, false).FirstOrDefault().color;
-
-                    if (deadPlayer != null)
+                    switch (deadPlayer.DeathReason)
                     {
-                        switch (deadPlayer.DeathReason)
-                        {
-                            case CustomDeathReason.Disconnect:
-                                deathReasonString = " - 断开连接";
-                                break;
-                            case CustomDeathReason.HostCmdKill:
-                                deathReasonString = $" - 被 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)} 制裁";
-                                break;
-                            case CustomDeathReason.SheriffKill:
-                                deathReasonString = $" - 出警 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.SheriffMisfire:
-                                deathReasonString = " - 警长走火";
-                                break;
-                            case CustomDeathReason.SheriffMisadventure:
-                                deathReasonString = $" - 被误杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.Suicide:
-                                deathReasonString = " - 自杀";
-                                break;
-                            case CustomDeathReason.BombVictim:
-                                deathReasonString = " - 恐袭";
-                                break;
-                            case CustomDeathReason.Exile:
-                                deathReasonString = " - 被驱逐";
-                                break;
-                            case CustomDeathReason.Eaten:
-                                deathReasonString = $" - 被吞食于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.Kill:
-                                deathReasonString = $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.Guess:
-                                if (deadPlayer.KillerIfExisting.PlayerId == p.PlayerId)
-                                    deathReasonString = " - 猜测错误";
-                                else
-                                    deathReasonString = $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.Shift:
-                                deathReasonString =
-                                    $" - {cs(Color.yellow, "交换")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)} 失败";
-                                break;
-                            case CustomDeathReason.WitchExile:
-                                deathReasonString =
-                                    $" - {cs(Witch.color, "被咒杀于")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.LoverSuicide:
-                                deathReasonString = $" - {cs(Lovers.color, "殉情")}";
-                                break;
-                            case CustomDeathReason.LawyerSuicide:
-                                deathReasonString = $" - {cs(Lawyer.color, "辩护失败")}";
-                                break;
-                            case CustomDeathReason.Bomb:
-                                deathReasonString =
-                                    $" - 被恐袭于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.Arson:
-                                deathReasonString =
-                                    $" - 被烧死于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                            case CustomDeathReason.LoveStolen:
-                                deathReasonString = $" - {cs(Lovers.color, "爱人被夺")}";
-                                break;
-                            case CustomDeathReason.Loneliness:
-                                deathReasonString = $" - {cs(Akujo.color, "精力衰竭")}";
-                                break;
-                            case CustomDeathReason.FakeSK:
-                                deathReasonString = $" - {cs(Jackal.color, "招募失败")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
-                                break;
-                        }
-                        roleName += deathReasonString;
+                        case CustomDeathReason.Disconnect:
+                            deathReasonString = " - 断开连接";
+                            break;
+                        case CustomDeathReason.HostCmdKill:
+                            deathReasonString = $" - 被 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)} 制裁";
+                            break;
+                        case CustomDeathReason.SheriffKill:
+                            deathReasonString = $" - 出警 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.SheriffMisfire:
+                            deathReasonString = " - 警长走火";
+                            break;
+                        case CustomDeathReason.SheriffMisadventure:
+                            deathReasonString = $" - 被误杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.Suicide:
+                            deathReasonString = " - 自杀";
+                            break;
+                        case CustomDeathReason.BombVictim:
+                            deathReasonString = " - 恐袭";
+                            break;
+                        case CustomDeathReason.Exile:
+                            deathReasonString = " - 被驱逐";
+                            break;
+                        case CustomDeathReason.Eaten:
+                            deathReasonString = $" - 被吞食于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.Kill:
+                            deathReasonString = $" - 被击杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.Guess:
+                            if (deadPlayer.KillerIfExisting.PlayerId == p.PlayerId)
+                                deathReasonString = " - 猜测错误";
+                            else
+                                deathReasonString = $" - 被赌杀于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.Shift:
+                            deathReasonString =
+                                $" - {cs(Color.yellow, "交换")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)} 失败";
+                            break;
+                        case CustomDeathReason.WitchExile:
+                            deathReasonString =
+                                $" - {cs(Witch.color, "被咒杀于")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.LoverSuicide:
+                            deathReasonString = $" - {cs(Lovers.color, "殉情")}";
+                            break;
+                        case CustomDeathReason.LawyerSuicide:
+                            deathReasonString = $" - {cs(Lawyer.color, "辩护失败")}";
+                            break;
+                        case CustomDeathReason.Bomb:
+                            deathReasonString =
+                                $" - 被恐袭于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.Arson:
+                            deathReasonString =
+                                $" - 被烧死于 {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
+                        case CustomDeathReason.LoveStolen:
+                            deathReasonString = $" - {cs(Lovers.color, "爱人被夺")}";
+                            break;
+                        case CustomDeathReason.Loneliness:
+                            deathReasonString = $" - {cs(Akujo.color, "精力衰竭")}";
+                            break;
+                        case CustomDeathReason.FakeSK:
+                            deathReasonString = $" - {cs(Jackal.color, "招募失败")} {cs(killerColor, deadPlayer.KillerIfExisting.Data.PlayerName)}";
+                            break;
                     }
+                    roleName += deathReasonString;
                 }
             }
         }

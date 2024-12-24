@@ -47,7 +47,7 @@ public static class Akujo
     {
         if ((Lovers.lover1 != null && lover == Lovers.lover1) || (Lovers.lover2 != null && lover == Lovers.lover2))
         {
-            PlayerControl otherLover = lover.getPartner();
+            PlayerControl otherLover = Lovers.otherLover(lover);
             if (otherLover != null)
             {
                 Lovers.clearAndReload();

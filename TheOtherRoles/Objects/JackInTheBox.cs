@@ -101,7 +101,7 @@ public class JackInTheBox
         {
             var showBoxToLocalPlayer = CachedPlayer.LocalPlayer.PlayerControl == Trickster.trickster ||
                                        PlayerControl.LocalPlayer.Data.IsDead;
-            box.gameObject.SetActive(showBoxToLocalPlayer);
+            box.gameObject?.SetActive(showBoxToLocalPlayer);
         }
     }
 
@@ -143,6 +143,6 @@ public class JackInTheBox
     public static void clearJackInTheBoxes()
     {
         boxesConvertedToVents = false;
-        AllJackInTheBoxes = [];
+        AllJackInTheBoxes = new();
     }
 }

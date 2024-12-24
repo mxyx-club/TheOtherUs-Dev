@@ -68,7 +68,7 @@ public class CustomOptionHolder
     public static CustomOption vampireCanKillNearGarlics;
 
     public static CustomOption poucherSpawnRate;
-    public static CustomOption poucherSpawnModifier;
+    public static CustomOption modifierPoucher;
 
     public static CustomOption butcherSpawnRate;
     public static CustomOption butcherDissectionCooldown;
@@ -448,7 +448,6 @@ public class CustomOptionHolder
     public static CustomOption trapperMaxCharges;
     public static CustomOption trapperRechargeTasksNumber;
     public static CustomOption trapperTrapNeededTriggerToReveal;
-    public static CustomOption trapperAnonymousMap;
     public static CustomOption trapperInfoType;
     public static CustomOption trapperTrapDuration;
 
@@ -522,7 +521,6 @@ public class CustomOptionHolder
     public static CustomOption modifierMultitaskerQuantity;
 
     public static CustomOption modifierDisperser;
-    //public static CustomOption modifierDisperserRemainingDisperses;
     public static CustomOption modifierDisperserDispersesToVent;
 
     public static CustomOption modifierMini;
@@ -569,6 +567,7 @@ public class CustomOptionHolder
     public static CustomOption modifierShiftALLNeutral;
 
     public static CustomOption modifierSpecoality;
+    public static CustomOption modifierSpecoalityIsGlobal;
 
     public static CustomOption modifierLastImpostor;
     public static CustomOption modifierLastImpostorDeduce;
@@ -614,6 +613,9 @@ public class CustomOptionHolder
     public static CustomOption enableBetterPolus;
 
     public static CustomOption movePolusVents;
+
+    public static CustomOption guessReVote;
+    public static CustomOption guessExtendmeetingTime;
 
     public static CustomOption IsReactorDurationSetting;
     public static CustomOption SkeldLifeSuppTimeLimit;
@@ -717,8 +719,11 @@ public class CustomOptionHolder
         allowModGuess = Create(31, Types.General, "allowModGuess", false);
         //ghostSpeed = Create(33, Types.General, "ghostSpeed", 1f, 0.75f, 5f, 0.125f);
 
-        WireTaskIsRandomOption = Create(221, Types.General, "WireTaskIsRandomOption", false, null, true);
-        WireTaskNumOption = Create(222, Types.General, "WireTaskNumOption", 3f, 1f, 8f, 1f, WireTaskIsRandomOption);
+        guessReVote = Create(221, Types.General, "guessReVote", false, null, true);
+        guessExtendmeetingTime = Create(222, Types.General, "guessExtendmeetingTime", 15f, 0f, 60f, 5f);
+
+        WireTaskIsRandomOption = Create(44, Types.General, "WireTaskIsRandomOption", false, null, true);
+        WireTaskNumOption = Create(45, Types.General, "WireTaskNumOption", 3f, 1f, 8f, 1f, WireTaskIsRandomOption);
         transparentTasks = Create(40, Types.General, "transparentTasks", false);
         disableMedbayWalk = Create(41, Types.General, "disableMedbayWalk", false);
         allowParallelMedBayScans = Create(44, Types.General, "allowParallelMedBayScans", false);
@@ -814,8 +819,10 @@ public class CustomOptionHolder
         eraserCanEraseAnyone = Create(10162, Types.Impostor, "eraserCanEraseAnyone", false, eraserSpawnRate);
         erasercanEraseGuess = Create(10163, Types.Impostor, "erasercanEraseGuess", false, eraserSpawnRate);
 
-        poucherSpawnRate = Create(10320, Types.Impostor, cs(Palette.ImpostorRed, "Poucher"), rates, null, true);
-        poucherSpawnModifier = Create(10321, Types.Impostor, "poucherSpawnModifier", false, poucherSpawnRate);
+        poucherSpawnRate = Create(10320, Types.Impostor, cs(Palette.ImpostorRed, "Poucher"), rates, null, true, () =>
+        {
+            if (modifierPoucher.selection > 0) poucherSpawnRate.selection = 0;
+        });
 
         butcherSpawnRate = Create(10310, Types.Impostor, cs(Palette.ImpostorRed, "Butcher"), rates, null, true);
         butcherDissectionCooldown = Create(10312, Types.Impostor, "butcherDissectionCooldown", 25f, 10f, 60f, 2.5f, butcherSpawnRate);
@@ -938,7 +945,7 @@ public class CustomOptionHolder
 
         witnessSpawnRate = Create(20301, Types.Neutral, cs(Witness.color, "Witness"), rates, null, true);
         witnessMarkTimer = Create(20302, Types.Neutral, "witnessMarkTimer", 30, 20, 90, 5, witnessSpawnRate);
-        witnessWinCount = Create(20303, Types.Neutral, "witnessWinCount", 3, 1, 6, 1, witnessSpawnRate);
+        witnessWinCount = Create(20303, Types.Neutral, "witnessWinCount", 2, 1, 6, 1, witnessSpawnRate);
         witnessMeetingDie = Create(20304, Types.Neutral, "witnessMeetingDie", true, witnessSpawnRate);
 
         jackalSpawnRate = Create(20130, Types.Neutral, cs(Jackal.color, "Jackal"), rates, null, true);
@@ -1228,11 +1235,10 @@ public class CustomOptionHolder
         trapperMaxCharges = Create(30352, Types.Crewmate, "trapperMaxCharges", 5f, 1f, 15f, 1f, trapperSpawnRate);
         trapperRechargeTasksNumber = Create(30353, Types.Crewmate, "trapperRechargeTasksNumber", 2f, 1f, 15f, 1f, trapperSpawnRate);
         trapperTrapNeededTriggerToReveal = Create(30354, Types.Crewmate, "trapperTrapNeededTriggerToReveal", 2f, 1f, 10f, 1f, trapperSpawnRate);
-        trapperAnonymousMap = Create(30355, Types.Crewmate, "trapperAnonymousMap", false, trapperSpawnRate);
         trapperInfoType = Create(30356, Types.Crewmate, "trapperInfoType", ["trapperInfoType1", "trapperInfoType2", "trapperInfoType3"], trapperSpawnRate);
         trapperTrapDuration = Create(30357, Types.Crewmate, "trapperTrapDuration", 5f, 1f, 15f, 0.5f, trapperSpawnRate);
 
-        //-------------------------- Modifier (1000 - 1999) -------------------------- //
+        //-------------------------- Modifier (40000 - 49999) -------------------------- //
 
         modifiersAreHidden = Create(40000, Types.Modifier, cs(Color.yellow, "modifiersAreHidden"), false, null, true);
 
@@ -1251,10 +1257,15 @@ public class CustomOptionHolder
         modifierAssassinKillsThroughShield = Create(10007, Types.Modifier, "modifierAssassinKillsThroughShield", false, modifierAssassin);
 
         modifierSpecoality = Create(40350, Types.Modifier, cs(Palette.ImpostorRed, "Specoality"), rates, null, true);
+        modifierSpecoalityIsGlobal = Create(40351, Types.Modifier, "modifierSpecoalityIsGlobal", false, modifierSpecoality);
 
         modifierDisperser = Create(40100, Types.Modifier, cs(Palette.ImpostorRed, "Disperser"), rates, null, true);
-        //modifierDisperserRemainingDisperses = CustomOption.Create(40102, Types.Modifier, "分散次数", 1f,1f,5f,1f, modifierDisperser);
         modifierDisperserDispersesToVent = Create(40101, Types.Modifier, "modifierDisperserDispersesToVent", true, modifierDisperser);
+
+        modifierPoucher = Create(40370, Types.Modifier, cs(Palette.ImpostorRed, "Poucher"), rates, null, true, () =>
+        {
+            poucherSpawnRate.selection = 0;
+        });
 
         modifierLastImpostor = Create(40110, Types.Modifier, cs(Palette.ImpostorRed, "LastImpostor"), false, null, true);
         modifierLastImpostorDeduce = Create(40111, Types.Modifier, "modifierLastImpostorDeduce", 5f, 2.5f, 15f, 2.5f, modifierLastImpostor);

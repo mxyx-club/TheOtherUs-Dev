@@ -59,7 +59,7 @@ public static class Guesser
         {
             int index = 0;
             RoleButtons.TryGetValue(RoleButton.Key, out var RoleButtonList);
-            RoleButtonList ??= [];
+            RoleButtonList ??= new();
             foreach (var RoleBtn in RoleButtonList)
             {
                 if (RoleBtn == null) continue;
@@ -249,7 +249,7 @@ public static class Guesser
             if (roleInfo.roleType == RoleType.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
                 continue;
 
-            if (roleInfo.roleType == RoleType.GhostRole)
+            if (roleInfo.roleType == RoleType.Ghost)
                 continue;
 
             // remove all roles that cannot spawn due to the settings from the ui.
@@ -288,7 +288,7 @@ public static class Guesser
 
         void CreateRole(RoleInfo roleInfo = null)
         {
-            if (roleInfo.roleType is RoleType.GhostRole or RoleType.Special) return;
+            if (roleInfo.roleType is RoleType.Ghost or RoleType.Special) return;
             RoleType team = roleInfo?.roleType ?? RoleType.Crewmate;
             //Color color = roleInfo?.color ?? Color.white;
             //RoleId role = roleInfo?.roleId ?? RoleId.Crewmate;
@@ -355,7 +355,7 @@ public static class Guesser
                     if (focusedTarget == Indomitable.indomitable)
                     {
                         //showFlash(new Color32(255, 197, 97, byte.MinValue));
-                        Coroutines.Start(showFlashCoroutine(Color.yellow, 1f, 0.3f));
+                        showFlash(Color.yellow, 0.75f);
                         __instance.playerStates.ForEach(x => x.gameObject.SetActive(true));
                         Object.Destroy(container.gameObject);
 

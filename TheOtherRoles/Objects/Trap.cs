@@ -61,7 +61,7 @@ public class Trap
             Object.Destroy(t.trap);
         }
 
-        traps = [];
+        traps = new();
         trapPlayerIdMap = new Dictionary<byte, Trap>();
         instanceCounter = 0;
     }
@@ -112,6 +112,28 @@ public class Trap
 
         t.trappedPlayer.Add(player);
         t.triggerable = true;
+
+        // Add trapped Info into Trapper chat
+        if (Trapper.trapper.IsAlive() && (CachedPlayer.LocalPlayer.PlayerControl == Trapper.trapper || shouldShowGhostInfo()))
+        {
+            foreach (var trap in traps)
+            {
+                if (!trap.revealed) continue;
+                var message = $"陷阱 {trap.instanceId}日志: \n";
+                trap.trappedPlayer = trap.trappedPlayer.OrderBy(x => rnd.Next()).ToList();
+                message = trap.trappedPlayer.Aggregate(message, (current, p) => current + Trapper.infoType switch
+                {
+                    0 => RoleInfo.GetRolesString(p, false, false, false) + "\n",
+                    1 when isEvilNeutral(p) || p.Data.Role.IsImpostor => "邪恶职业 \n",
+                    1 => "善良职业 \n",
+                    _ => p.Data.PlayerName + "\n"
+                });
+
+                FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, $"{message}");
+            }
+        }
+
+        Trapper.playersOnMap = new List<PlayerControl>();
     }
 
     public static void Update()
@@ -391,7 +413,8 @@ public class KillTrap
         {
             if (p == 1f)
             {
-                clearAllTraps();
+                Object.Destroy(trap.killtrap);
+                traps.Remove(trapId);
             }
         })));
         EvilTrapper.isTrapKill = true;

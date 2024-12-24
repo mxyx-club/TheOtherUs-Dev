@@ -18,6 +18,7 @@ public static class Witch
     public static bool canSpellAnyone;
     public static bool triggerBothCooldowns = true;
     public static bool witchVoteSavesTargets = true;
+    public static bool witchWasGuessed;
 
     public static ResourceSprite buttonSprite = new("SpellButton.png");
 
@@ -27,6 +28,7 @@ public static class Witch
     {
         witch = null;
         futureSpelled.Clear();
+        witchWasGuessed = false;
         currentTarget = spellCastingTarget = null;
         cooldown = CustomOptionHolder.witchCooldown.GetFloat();
         cooldownAddition = CustomOptionHolder.witchAdditionalCooldown.GetFloat();

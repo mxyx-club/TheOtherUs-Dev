@@ -13,7 +13,7 @@ public interface IManagerBase
 
 public static class MangerBases
 {
-    private static readonly List<IManagerBase> _managers = [];
+    private static readonly List<IManagerBase> _managers = new();
     public static IReadOnlyList<IManagerBase> AllManager => _managers;
     public static void Add(IManagerBase @base) => _managers.Add(@base);
 }
@@ -50,7 +50,7 @@ public class ManagerBaseLoad : RegisterAttribute
 
 public class ListManager<T, TList> : ManagerBase<T>, IDisposable where T : ListManager<T, TList>, new()
 {
-    protected List<TList> List = [];
+    protected List<TList> List = new();
     public IReadOnlyList<TList> ReadOnlyList => List;
 }
 

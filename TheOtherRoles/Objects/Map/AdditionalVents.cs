@@ -76,6 +76,6 @@ public class AdditionalVents
     {
         Info("AdditionalVents ClearAndReload");
         flag = false;
-        AllVents = [];
+        AllVents = new();
     }
 }

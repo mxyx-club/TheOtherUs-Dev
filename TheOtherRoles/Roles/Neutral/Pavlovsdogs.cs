@@ -39,10 +39,10 @@ public class Pavlovsdogs
             foreach (var arrow in arrow)
                 if (arrow?.arrow != null) Object.Destroy(arrow.arrow);
         }
-        arrow = [];
+        arrow = new();
 
         pavlovsowner = null;
-        pavlovsdogs = [];
+        pavlovsdogs = new();
         currentTarget = null;
         killTarget = null;
 

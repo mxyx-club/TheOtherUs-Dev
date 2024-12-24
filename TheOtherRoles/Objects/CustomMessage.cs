@@ -9,7 +9,7 @@ namespace TheOtherRoles.Objects;
 
 public class CustomMessage
 {
-    private static readonly List<CustomMessage> customMessages = [];
+    private static readonly List<CustomMessage> customMessages = new();
 
     public CustomMessage(string message, float duration)
     {
