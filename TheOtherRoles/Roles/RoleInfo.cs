@@ -339,7 +339,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         if (p == Prophet.prophet) infos.Add(prophet);
         if (p == InfoSleuth.infoSleuth) infos.Add(infoSleuth);
         if (p == Jumper.jumper) infos.Add(jumper);
-        if (p == Witness.player) infos.Add(witness);
+        if (p == Witness.Player) infos.Add(witness);
         if (p == Thief.thief) infos.Add(thief);
         if (p == Juggernaut.juggernaut) infos.Add(juggernaut);
         if (p == Doomsayer.doomsayer) infos.Add(doomsayer);
@@ -347,15 +347,15 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         if (p == Jackal.sidekick) infos.Add(sidekick);
         if (p == Pavlovsdogs.pavlovsowner) infos.Add(pavlovsowner);
         if (Jackal.jackal.Any(x => x != null && x.PlayerId == p.PlayerId)) infos.Add(jackal);
-        if (Amnisiac.player.Any(x => x.PlayerId == p.PlayerId)) infos.Add(amnisiac);
+        if (Amnisiac.Player.Any(x => x.PlayerId == p.PlayerId)) infos.Add(amnisiac);
         if (Pavlovsdogs.pavlovsdogs.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pavlovsdogs);
-        if (Pursuer.pursuer.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pursuer);
-        if (Survivor.survivor.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
+        if (Pursuer.Player.Any(x => x.PlayerId == p.PlayerId)) infos.Add(pursuer);
+        if (Survivor.Player.Any(x => x.PlayerId == p.PlayerId)) infos.Add(survivor);
 
         if (showGhost)
         {
-            if (p == GhostEngineer.player) infos.Add(ghostEngineer);
-            if (p == Specter.player) infos.Add(specter);
+            if (p == GhostEngineer.Player) infos.Add(ghostEngineer);
+            if (p == Specter.Player) infos.Add(specter);
         }
 
         if (infos.Count == count)

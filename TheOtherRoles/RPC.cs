@@ -413,7 +413,7 @@ public static class RPCProcedure
                         TimeMaster.timeMaster = player;
                         break;
                     case RoleId.Amnisiac:
-                        Amnisiac.player.Add(player);
+                        Amnisiac.Player.Add(player);
                         break;
                     case RoleId.PartTimer:
                         PartTimer.partTimer = player;
@@ -449,7 +449,7 @@ public static class RPCProcedure
                         Butcher.butcher = player;
                         break;
                     case RoleId.Witness:
-                        Witness.player = player;
+                        Witness.Player = player;
                         break;
                     case RoleId.Hacker:
                         Hacker.hacker = player;
@@ -524,10 +524,10 @@ public static class RPCProcedure
                         Lawyer.lawyer = player;
                         break;
                     case RoleId.Pursuer:
-                        Pursuer.pursuer.Add(player);
+                        Pursuer.Player.Add(player);
                         break;
                     case RoleId.Survivor:
-                        Survivor.survivor.Add(player);
+                        Survivor.Player.Add(player);
                         break;
                     case RoleId.Executioner:
                         Executioner.executioner = player;
@@ -683,10 +683,10 @@ public static class RPCProcedure
         switch ((RoleId)roleId)
         {
             case RoleId.GhostEngineer:
-                GhostEngineer.player = player;
+                GhostEngineer.Player = player;
                 break;
             case RoleId.Specter:
-                Specter.player = player;
+                Specter.Player = player;
                 break;
         }
     }
@@ -1150,7 +1150,7 @@ public static class RPCProcedure
             }
             else if (!Executioner.promotesToLawyer)
             {
-                Pursuer.pursuer.Add(Executioner.executioner);
+                Pursuer.Player.Add(Executioner.executioner);
                 Executioner.clearAndReload();
             }
         }
@@ -1198,7 +1198,7 @@ public static class RPCProcedure
             }
             else if (!Executioner.promotesToLawyer)
             {
-                Pursuer.pursuer.Add(Executioner.executioner);
+                Pursuer.Player.Add(Executioner.executioner);
                 Executioner.clearAndReload();
             }
         }
@@ -1307,17 +1307,17 @@ public static class RPCProcedure
         if (player == Juggernaut.juggernaut) Juggernaut.clearAndReload();
         if (player == Doomsayer.doomsayer) Doomsayer.clearAndReload();
         if (player == Akujo.akujo) Akujo.clearAndReload();
-        if (player == Witness.player) Witness.ClearAndReload();
+        if (player == Witness.Player) Witness.ClearAndReload();
         if (player == PartTimer.partTimer) PartTimer.clearAndReload();
 
         if (player == Cursed.cursed) Cursed.clearAndReload();
         if (player == Shifter.shifter) Shifter.clearAndReload();
 
         Assassin.assassin.RemoveAll(x => x.PlayerId == player.PlayerId);
-        Amnisiac.player.RemoveAll(x => x.PlayerId == playerId);
+        Amnisiac.Player.RemoveAll(x => x.PlayerId == playerId);
         Pavlovsdogs.pavlovsdogs.RemoveAll(x => x.PlayerId == player.PlayerId);
-        Pursuer.pursuer.RemoveAll(x => x.PlayerId == player.PlayerId);
-        Survivor.survivor.RemoveAll(x => x.PlayerId == player.PlayerId);
+        Pursuer.Player.RemoveAll(x => x.PlayerId == player.PlayerId);
+        Survivor.Player.RemoveAll(x => x.PlayerId == player.PlayerId);
 
         // Modifier
         if (!ignoreModifier)
@@ -1354,8 +1354,8 @@ public static class RPCProcedure
     {
         var player = playerById(playerId);
 
-        if (player == GhostEngineer.player) GhostEngineer.ClearAndReload();
-        if (player == Specter.player) Specter.ClearAndReload();
+        if (player == GhostEngineer.Player) GhostEngineer.ClearAndReload();
+        if (player == Specter.Player) Specter.ClearAndReload();
     }
 
     public static void infoSleuthTarget(byte playerId)
@@ -2052,7 +2052,7 @@ public static class RPCProcedure
 
     public static void seedGuessChat(PlayerControl guesser, PlayerControl guessedTarget, byte guessedRoleId)
     {
-        if (PlayerControl.LocalPlayer.IsDead() && PlayerControl.LocalPlayer != Specter.player)
+        if (PlayerControl.LocalPlayer.IsDead() && PlayerControl.LocalPlayer != Specter.Player)
         {
             var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
             var msg = $"{guesser.Data.PlayerName} 赌怪猜测 {guessedTarget.Data.PlayerName} 是 {roleInfo?.Name ?? ""}!";

@@ -4,7 +4,7 @@ using UnityEngine;
 namespace TheOtherRoles.Roles.Neutral;
 public class Survivor
 {
-    public static List<PlayerControl> survivor = new();
+    public static List<PlayerControl> Player = new();
     public static PlayerControl target;
     public static List<PlayerControl> blankedList = new();
     public static Color color = new Color32(255, 230, 77, byte.MaxValue);
@@ -27,7 +27,7 @@ public class Survivor
 
     public static void clearAndReload()
     {
-        survivor.Clear();
+        Player.Clear();
         target = null;
         blankedList.Clear();
 

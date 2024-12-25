@@ -172,11 +172,11 @@ public static class Shifter
             if (repeat) shiftRole(player2, player1, false);
             Prosecutor.prosecutor = player1;
         }
-        else if (Amnisiac.player != null && Amnisiac.player.Any(x => x.PlayerId == player2.PlayerId))
+        else if (Amnisiac.Player != null && Amnisiac.Player.Any(x => x.PlayerId == player2.PlayerId))
         {
             if (repeat) shiftRole(player2, player1, false);
-            Amnisiac.player.RemoveAll(p => p.PlayerId == player2.PlayerId);
-            Amnisiac.player.Add(player1);
+            Amnisiac.Player.RemoveAll(p => p.PlayerId == player2.PlayerId);
+            Amnisiac.Player.Add(player1);
         }
         else if (Jester.jester != null && Jester.jester == player2)
         {
@@ -198,11 +198,11 @@ public static class Shifter
             if (repeat) shiftRole(player2, player1, false);
             Executioner.executioner = player1;
         }
-        else if (Pursuer.pursuer != null && Pursuer.pursuer.Any(p => p == player2))
+        else if (Pursuer.Player != null && Pursuer.Player.Any(p => p == player2))
         {
             if (repeat) shiftRole(player2, player1, false);
-            Pursuer.pursuer.RemoveAll(p => p.PlayerId == player2.PlayerId);
-            Pursuer.pursuer.Add(player1);
+            Pursuer.Player.RemoveAll(p => p.PlayerId == player2.PlayerId);
+            Pursuer.Player.Add(player1);
         }
         else if (Arsonist.arsonist != null && Arsonist.arsonist == player2)
         {
@@ -234,11 +234,11 @@ public static class Shifter
             if (repeat) shiftRole(player2, player1, false);
             Juggernaut.juggernaut = player1;
         }
-        else if (Survivor.survivor != null && Survivor.survivor.Any(p => p == player2))
+        else if (Survivor.Player != null && Survivor.Player.Any(p => p == player2))
         {
             if (repeat) shiftRole(player2, player1, false);
-            Survivor.survivor.RemoveAll(p => p.PlayerId == player2.PlayerId);
-            Survivor.survivor.Add(player1);
+            Survivor.Player.RemoveAll(p => p.PlayerId == player2.PlayerId);
+            Survivor.Player.Add(player1);
         }
         else if (Akujo.akujo != null && Akujo.akujo == player2)
         {
@@ -255,10 +255,10 @@ public static class Shifter
             if (repeat) shiftRole(player2, player1, false);
             Balancer.balancer = player1;
         }
-        else if (Witness.player != null && Witness.player == player2)
+        else if (Witness.Player != null && Witness.Player == player2)
         {
             if (repeat) shiftRole(player2, player1, false);
-            Witness.player = player1;
+            Witness.Player = player1;
         }
     }
 

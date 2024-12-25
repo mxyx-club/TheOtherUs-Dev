@@ -133,22 +133,22 @@ public static class Thief
 
         if (target == Werewolf.werewolf)
         {
-            Survivor.survivor.Add(target);
+            Survivor.Player.Add(target);
             Werewolf.werewolf = thief;
         }
         if (target == Arsonist.arsonist)
         {
-            Survivor.survivor.Add(target);
+            Survivor.Player.Add(target);
             Arsonist.arsonist = thief;
         }
         if (target == Juggernaut.juggernaut)
         {
-            Survivor.survivor.Add(target);
+            Survivor.Player.Add(target);
             Juggernaut.juggernaut = thief;
         }
         if (target == Swooper.swooper)
         {
-            Survivor.survivor.Add(target);
+            Survivor.Player.Add(target);
             Swooper.swooper = thief;
         }
 

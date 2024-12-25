@@ -25,7 +25,7 @@ public static class Lawyer
 
         if (player.IsAlive() && target.IsDead())
         {
-            Pursuer.pursuer.Add(player);
+            Pursuer.Player.Add(player);
             clearAndReload();
         }
     }

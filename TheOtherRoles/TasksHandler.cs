@@ -30,8 +30,8 @@ public static class TasksHandler
         {
             return !(playerInfo.Object && playerInfo.Object.hasAliveKillingLover())
                 && playerInfo.PlayerId != Thief.thief?.PlayerId
-                && playerInfo.PlayerId != Specter.player?.PlayerId
-                && !Amnisiac.player.Any(x => x.PlayerId == playerInfo.PlayerId)
+                && playerInfo.PlayerId != Specter.Player?.PlayerId
+                && !Amnisiac.Player.Any(x => x.PlayerId == playerInfo.PlayerId)
                 && playerInfo.PlayerId != Akujo.honmei?.PlayerId;
         }
 

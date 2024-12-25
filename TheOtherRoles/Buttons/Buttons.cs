@@ -548,7 +548,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return GhostEngineer.player != null && GhostEngineer.player == CachedPlayer.LocalPlayer.PlayerControl &&
+                return GhostEngineer.Player != null && GhostEngineer.Player == CachedPlayer.LocalPlayer.PlayerControl &&
                        !GhostEngineer.Fixes && CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
@@ -3230,7 +3230,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Amnisiac.player != null && Amnisiac.player.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) &&
+                return Amnisiac.Player != null && Amnisiac.Player.Any(x => x == CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead;
             },
             () =>
@@ -3250,7 +3250,7 @@ internal static class HudManagerStartPatch
             () => { },
             () =>
             {
-                return Specter.player != null && Specter.player == CachedPlayer.LocalPlayer.PlayerControl &&
+                return Specter.Player != null && Specter.Player == CachedPlayer.LocalPlayer.PlayerControl &&
                        CachedPlayer.LocalPlayer.Data.IsDead & Specter.remember;
             },
             () =>
@@ -3427,7 +3427,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Pursuer.pursuer != null && Pursuer.pursuer.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
+                return Pursuer.Player != null && Pursuer.Player.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead && Pursuer.blanks < Pursuer.blanksNumber;
             },
             () =>
@@ -3467,7 +3467,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Survivor.survivor != null && Survivor.survivor.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
+                return Survivor.Player != null && Survivor.Player.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead && Survivor.vestEnable && Survivor.remainingVests > 0;
             },
             () =>
@@ -3522,7 +3522,7 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                return Survivor.survivor != null && Survivor.survivor.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
+                return Survivor.Player != null && Survivor.Player.Contains(CachedPlayer.LocalPlayer.PlayerControl) &&
                        !CachedPlayer.LocalPlayer.Data.IsDead && Survivor.blanksEnable && Survivor.remainingBlanks > 0;
             },
             () =>

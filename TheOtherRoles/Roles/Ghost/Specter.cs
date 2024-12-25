@@ -5,7 +5,7 @@ namespace TheOtherRoles.Roles.Ghost;
 
 public class Specter
 {
-    public static PlayerControl player;
+    public static PlayerControl Player;
     public static Color color = new Color32(154, 147, 80, byte.MaxValue);
     public static bool remember;
 
@@ -13,7 +13,7 @@ public class Specter
 
     public static void ClearAndReload()
     {
-        player = null;
+        Player = null;
         remember = !CustomOptionHolder.specterAfterMeeting.GetBool();
         resetRole = CustomOptionHolder.specterResetRole.GetBool();
     }
@@ -21,12 +21,12 @@ public class Specter
     public static void TakeRole(byte targetId)
     {
         var target = playerById(targetId);
-        if (player == null || target == null) return;
-        var local = player;
+        if (Player == null || target == null) return;
+        var local = Player;
         RPCProcedure.erasePlayerRoles(local.PlayerId);
         var targetInfo = RoleInfo.getRoleInfoForPlayer(target);
         var roleInfo = targetInfo.FirstOrDefault(info => info.roleType is not RoleType.Modifier and not RoleType.Ghost);
-        if (target.isImpostor()) turnToImpostor(player);
+        if (target.isImpostor()) turnToImpostor(local);
 
         DeadBody[] array = Object.FindObjectsOfType<DeadBody>();
         for (var i = 0; i < array.Length; i++)
@@ -41,7 +41,7 @@ public class Specter
         if (roleInfo != null) switch (roleInfo.roleId)
             {
                 case RoleId.Amnisiac:
-                    Amnisiac.player.Add(local);
+                    Amnisiac.Player.Add(local);
                     break;
                 case RoleId.Impostor:
                     break;
@@ -138,46 +138,46 @@ public class Specter
                     Grenadier.grenadier = local;
                     break;
                 case RoleId.Survivor:
-                    Survivor.survivor.RemoveAll(x => x == target);
-                    Survivor.survivor.Add(local);
-                    Amnisiac.player.Add(target);
+                    Survivor.Player.RemoveAll(x => x == target);
+                    Survivor.Player.Add(local);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Jester:
                     Jester.jester = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Vulture:
                     Vulture.vulture = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Lawyer:
                     Lawyer.lawyer = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Executioner:
                     Executioner.executioner = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Pursuer:
-                    Pursuer.pursuer.RemoveAll(x => x == target);
-                    Pursuer.pursuer.Add(local);
-                    Amnisiac.player.Add(target);
+                    Pursuer.Player.RemoveAll(x => x == target);
+                    Pursuer.Player.Add(local);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.PartTimer:
                     PartTimer.partTimer = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Witness:
-                    Witness.player = local;
-                    Amnisiac.player.Add(target);
+                    Witness.Player = local;
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Doomsayer:
                     Doomsayer.doomsayer = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Arsonist:
                     Arsonist.arsonist = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Jackal:
                     Jackal.jackal.Add(local);
@@ -195,23 +195,23 @@ public class Specter
                     break;
                 case RoleId.Werewolf:
                     Werewolf.werewolf = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Swooper:
                     Swooper.swooper = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Juggernaut:
                     Juggernaut.juggernaut = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Akujo:
                     Akujo.akujo = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Thief:
                     Thief.thief = local;
-                    Amnisiac.player.Add(target);
+                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Crewmate:
                     break;

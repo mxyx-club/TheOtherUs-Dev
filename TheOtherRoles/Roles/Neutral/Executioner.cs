@@ -17,7 +17,7 @@ public static class Executioner
         var target = Executioner.target;
         if (player.IsAlive() && target.IsDead())
         {
-            Pursuer.pursuer.Add(player);
+            Pursuer.Player.Add(player);
             clearAndReload();
         }
     }

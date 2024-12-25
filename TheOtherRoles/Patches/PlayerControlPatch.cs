@@ -848,7 +848,7 @@ public static class PlayerControlFixedUpdatePatch
 
     public static void WitnessUpdate()
     {
-        if (Witness.player.IsDead() && !InMeeting) return;
+        if (Witness.Player.IsDead() && !InMeeting) return;
 
         if (MeetingHud.Instance)
         {
@@ -856,7 +856,7 @@ public static class PlayerControlFixedUpdatePatch
             {
                 setInfo(Witness.target.PlayerId, cs(Color.red, "该玩家被标记为凶手"));
             }
-            else if (PlayerControl.LocalPlayer == Witness.player && Witness.killerTarget != null)
+            else if (PlayerControl.LocalPlayer == Witness.Player && Witness.killerTarget != null)
             {
                 setInfo(Witness.killerTarget.PlayerId, cs(Color.red, "该玩家可能为凶手"));
             }
@@ -1200,9 +1200,9 @@ public static class PlayerControlFixedUpdatePatch
 
     private static void amnisiacUpdate()
     {
-        if (Amnisiac.player?.Count == 0 || Amnisiac.localArrows == null || !Amnisiac.showArrows || InMeeting) return;
+        if (Amnisiac.Player?.Count == 0 || Amnisiac.localArrows == null || !Amnisiac.showArrows || InMeeting) return;
 
-        foreach (var p in Amnisiac.player.ToList())
+        foreach (var p in Amnisiac.Player.ToList())
         {
             if (p.Data.IsDead)
             {
@@ -1211,7 +1211,7 @@ public static class PlayerControlFixedUpdatePatch
                 Amnisiac.localArrows.Clear();
             }
         }
-        if (Amnisiac.player.Any(x => x.PlayerId == CachedPlayer.LocalId && x.IsAlive()))
+        if (Amnisiac.Player.Any(x => x.PlayerId == CachedPlayer.LocalId && x.IsAlive()))
         {
             DeadBody[] deadBodies = Object.FindObjectsOfType<DeadBody>();
             bool arrowUpdate = Amnisiac.localArrows.Count != deadBodies.Length;
@@ -1556,14 +1556,14 @@ public static class PlayerControlFixedUpdatePatch
 
     private static void pursuerSetTarget()
     {
-        if (Pursuer.pursuer == null || !Pursuer.pursuer.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return;
+        if (Pursuer.Player == null || !Pursuer.Player.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return;
         Pursuer.target = setTarget();
         setPlayerOutline(Pursuer.target, Pursuer.color);
     }
 
     private static void survivorSetTarget()
     {
-        if (Survivor.survivor == null || !Survivor.survivor.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return;
+        if (Survivor.Player == null || !Survivor.Player.Contains(CachedPlayer.LocalPlayer.PlayerControl)) return;
         Survivor.target = setTarget();
         setPlayerOutline(Survivor.target, Survivor.color);
     }
@@ -1976,7 +1976,7 @@ internal class PlayerControlRevivePatch
     {
         if (PlayerControl.LocalPlayer == __instance) CanSeeRoleInfo = false;
 
-        if (__instance == Specter.player) Specter.player.clearAllTasks();
+        if (__instance == Specter.Player) Specter.Player.clearAllTasks();
 
         RPCProcedure.clearGhostRoles(__instance.PlayerId);
         DeadPlayers.RemoveAll(x => x.Player == __instance);
@@ -2086,7 +2086,7 @@ internal class BodyReportPatch
             }
         }
 
-        if (Witness.player.IsAlive())
+        if (Witness.Player.IsAlive())
         {
             var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessReport);
             writer.Write(target?.PlayerId ?? byte.MaxValue);
@@ -2130,7 +2130,7 @@ public static class MurderPlayerPatch
         if (resetToDead) __instance.Data.IsDead = true;
 
         // Remove fake tasks when player dies
-        if (target.hasFakeTasks() || target == Lawyer.lawyer || Pursuer.pursuer.Contains(target) || target == Thief.thief)
+        if (target.hasFakeTasks() || target == Lawyer.lawyer || Pursuer.Player.Contains(target) || target == Thief.thief)
             target.clearAllTasks();
 
         // First kill (set before lover suicide)
@@ -2436,7 +2436,7 @@ public static class ExilePlayerPatch
         _ = new LateTask(() => { if (__instance == PlayerControl.LocalPlayer) CanSeeRoleInfo = true; }, 1f);
 
         // Remove fake tasks when player dies
-        if (__instance.hasFakeTasks() || __instance == Pursuer.pursuer.Contains(__instance) || __instance == Thief.thief)
+        if (__instance.hasFakeTasks() || __instance == Pursuer.Player.Contains(__instance) || __instance == Thief.thief)
             __instance.clearAllTasks();
 
         // Lover suicide trigger on exile
@@ -2482,9 +2482,9 @@ public static class ExilePlayerPatch
             if (!Lawyer.targetWasGuessed)
             {
                 Lawyer.lawyer?.Exiled();
-                if (Pursuer.pursuer != null)
+                if (Pursuer.Player != null)
                 {
-                    foreach (var pursuer in Pursuer.pursuer.Where(x => x.PlayerId == lawyer.PlayerId)) pursuer?.Exiled();
+                    foreach (var pursuer in Pursuer.Player.Where(x => x.PlayerId == lawyer.PlayerId)) pursuer?.Exiled();
                 }
 
                 RpcOverrideDeathReasonAndKiller(lawyer, CustomDeathReason.LawyerSuicide, lawyer);

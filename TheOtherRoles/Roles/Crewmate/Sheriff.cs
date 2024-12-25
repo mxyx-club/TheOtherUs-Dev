@@ -50,15 +50,15 @@ public static class Sheriff
                 (spyCanDieToSheriff && Spy.spy == target) ||
                 (canKillNeutrals &&
                     (Akujo.akujo == target || isKillerNeutral(target) ||
-                        (Survivor.survivor.Any(p => p == target) && canKillSurvivor) ||
+                        (Survivor.Player.Any(p => p == target) && canKillSurvivor) ||
                         (Jester.jester == target && canKillJester) ||
                         (Vulture.vulture == target && canKillVulture) ||
-                        (Thief.thief == target && canKillThief) || Witness.player == target ||
-                        (Amnisiac.player.Any(p => p == target) && canKillAmnesiac) ||
+                        (Thief.thief == target && canKillThief) || Witness.Player == target ||
+                        (Amnisiac.Player.Any(p => p == target) && canKillAmnesiac) ||
                         (PartTimer.partTimer == target && canKillPartTimer) ||
                         (Lawyer.lawyer == target && canKillLawyer) ||
                         (Executioner.executioner == target && canKillExecutioner) ||
-                        (Pursuer.pursuer.Any(p => p == target) && canKillPursuer) ||
+                        (Pursuer.Player.Any(p => p == target) && canKillPursuer) ||
                         (Doomsayer.doomsayer == target && canKillDoomsayer))));
     }
 

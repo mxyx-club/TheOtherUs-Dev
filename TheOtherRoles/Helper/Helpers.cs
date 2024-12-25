@@ -84,10 +84,10 @@ public static class Helpers
                player == Juggernaut.juggernaut ||
                player == Jester.jester ||
                player == Arsonist.arsonist ||
-               player == Witness.player ||
+               player == Witness.Player ||
                player == PartTimer.partTimer ||
                player == Akujo.akujo ||
-               player == Specter.player ||
+               player == Specter.Player ||
                player == Swooper.swooper ||
                player == Lawyer.lawyer ||
                player == Executioner.executioner ||
@@ -95,8 +95,8 @@ public static class Helpers
                player == Jackal.sidekick ||
                player == Pavlovsdogs.pavlovsowner ||
                Jackal.jackal.Any(x => x == player) ||
-               Pursuer.pursuer.Any(x => x == player) ||
-               Survivor.survivor.Any(x => x == player) ||
+               Pursuer.Player.Any(x => x == player) ||
+               Survivor.Player.Any(x => x == player) ||
                Pavlovsdogs.pavlovsdogs.Any(x => x == player);
     }
 
@@ -263,9 +263,9 @@ public static class Helpers
     {
         return isNeutral(player) &&
                 player != PartTimer.partTimer &&
-                !Amnisiac.player.Contains(player) &&
-                !Pursuer.pursuer.Contains(player) &&
-                !Survivor.survivor.Contains(player);
+                !Amnisiac.Player.Contains(player) &&
+                !Pursuer.Player.Contains(player) &&
+                !Survivor.Player.Contains(player);
     }
 
     public static bool isKiller(this PlayerControl player)
@@ -1189,7 +1189,7 @@ public static class Helpers
             return MurderAttemptResult.SuppressKill;
         }
 
-        if (Survivor.survivor != null && Survivor.survivor.Contains(target) && Survivor.vestActive)
+        if (Survivor.Player != null && Survivor.Player.Contains(target) && Survivor.vestActive)
         {
             CustomButton.resetKillButton(killer, Survivor.vestResetCooldown);
             SoundEffectsManager.play("fail");

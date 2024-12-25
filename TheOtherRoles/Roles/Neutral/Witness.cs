@@ -8,7 +8,7 @@ namespace TheOtherRoles.Roles.Neutral;
 
 public class Witness
 {
-    public static PlayerControl player;
+    public static PlayerControl Player;
     public static Color color = new Color32(123, 170, 255, byte.MaxValue);
     public static PlayerControl target;
     public static PlayerControl killerTarget;
@@ -27,7 +27,7 @@ public class Witness
 
     public static void ClearAndReload()
     {
-        player = null;
+        Player = null;
         target = null;
         killerTarget = null;
         endTime = false;
@@ -42,7 +42,7 @@ public class Witness
     {
         var target = playerById(targetId);
 
-        if (target == null || !player.IsAlive() || PlayerControl.LocalPlayer != player) return;
+        if (target == null || !Player.IsAlive() || PlayerControl.LocalPlayer != Player) return;
 
         killerTarget = DetermineKillerTarget(target) ?? null;
 
@@ -67,7 +67,7 @@ public class Witness
     {
         public static void MeetingOnClick(PlayerVoteArea pva, MeetingHud __instance)
         {
-            if (player == null) return;
+            if (Player == null) return;
             var Target = playerById(pva.TargetPlayerId);
 
             var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessSetTarget);
@@ -86,14 +86,14 @@ public class Witness
         [HarmonyPostfix]
         internal static void MeetingHudStartPostfix(MeetingHud __instance)
         {
-            if (player.IsAlive() && killerTarget == null) WitnessReport(byte.MaxValue);
+            if (Player.IsAlive() && killerTarget == null) WitnessReport(byte.MaxValue);
 
-            if (PlayerControl.LocalPlayer == player && PlayerControl.LocalPlayer.IsAlive())
+            if (PlayerControl.LocalPlayer == Player && PlayerControl.LocalPlayer.IsAlive())
             {
                 foreach (var pva in __instance.playerStates)
                 {
                     var player = playerById(pva.TargetPlayerId);
-                    if (player.IsAlive() && player != Witness.player)
+                    if (player.IsAlive() && player != Witness.Player)
                     {
                         GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
                         GameObject targetBox = Object.Instantiate(template, pva.transform);
@@ -116,7 +116,7 @@ public class Witness
         [HarmonyPostfix]
         internal static void TimeUpdatePostfix(MeetingHud __instance)
         {
-            if (player.IsDead() || endTime || target != null) return;
+            if (Player.IsDead() || endTime || target != null) return;
             timeLeft = markTimer - (float)(DateTime.UtcNow - startTime).TotalSeconds;
             if (timeLeft <= 0)
             {

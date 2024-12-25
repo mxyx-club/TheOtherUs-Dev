@@ -230,7 +230,7 @@ public static class ChatCommands
                     || (CachedPlayer.LocalPlayer.PlayerControl.isLover() && Lovers.enableChat)))
                 __instance.Chat.SetVisible(true);
 
-            if (!InMeeting && !ModOption.DebugMode && Specter.player != null && PlayerControl.LocalPlayer == Specter.player)
+            if (!InMeeting && !ModOption.DebugMode && Specter.Player != null && PlayerControl.LocalPlayer == Specter.Player)
                 __instance.Chat?.SetVisible(false);
 
 

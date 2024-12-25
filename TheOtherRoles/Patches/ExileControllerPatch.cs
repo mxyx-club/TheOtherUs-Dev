@@ -227,7 +227,7 @@ internal class ExileControllerWrapUpPatch
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             Executioner.PromotesRole();
         }
-        else if (Witness.player == CachedPlayer.LocalPlayer.PlayerControl && Witness.target != null && Witness.killerTarget != null)
+        else if (Witness.Player == CachedPlayer.LocalPlayer.PlayerControl && Witness.target != null && Witness.killerTarget != null)
         {
             bool skip = exiled == null;
             bool targetIsKillerAndNotExiled = Witness.target == Witness.killerTarget && (exiled?.Object == null || Witness.target != exiled?.Object);

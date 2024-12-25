@@ -319,7 +319,7 @@ internal class MeetingHudPatch
         {
             meetingInfoText = string.Format(GetString("PartTimerMeetingInfo"), Swapper.charges);
         }
-        else if (PlayerControl.LocalPlayer == Witness.player)
+        else if (PlayerControl.LocalPlayer == Witness.Player)
         {
             if (Witness.timeLeft > 0 && Witness.killerTarget == null)
                 meetingInfoText = string.Format(GetString("WitnessTimerLeft2"), $"{TimeSpan.FromSeconds(Witness.timeLeft):mm\\:ss}");
@@ -680,7 +680,7 @@ internal class MeetingHudPatch
             {
                 Lovers.notAckedExiledIsLover = (Lovers.lover1 != null && Lovers.lover1.PlayerId == exiled.PlayerId) ||
                                                (Lovers.lover2 != null && Lovers.lover2.PlayerId == exiled.PlayerId);
-                Lawyer.notAckedExiled = (Pursuer.pursuer != null && Pursuer.pursuer.Any(id => id.PlayerId == exiled.PlayerId)) ||
+                Lawyer.notAckedExiled = (Pursuer.Player != null && Pursuer.Player.Any(id => id.PlayerId == exiled.PlayerId)) ||
                                          (Lawyer.lawyer != null && Lawyer.target != null &&
                                           Lawyer.target.PlayerId == exiled.PlayerId && Lawyer.target != Jester.jester);
             }

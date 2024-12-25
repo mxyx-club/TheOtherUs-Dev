@@ -155,8 +155,8 @@ public class OnGameEndPatch
             Werewolf.werewolf,
             Lawyer.lawyer,
             Executioner.executioner,
-            Witness.player,
-            Specter.player,
+            Witness.Player,
+            Specter.Player,
             Thief.thief,
             Juggernaut.juggernaut,
             Doomsayer.doomsayer,
@@ -165,11 +165,11 @@ public class OnGameEndPatch
             Pavlovsdogs.pavlovsowner,
         }.Where(p => p != null));
 
-        notWinners.AddRange(Amnisiac.player.Where(p => p != null));
+        notWinners.AddRange(Amnisiac.Player.Where(p => p != null));
         notWinners.AddRange(Pavlovsdogs.pavlovsdogs.Where(p => p != null));
         notWinners.AddRange(Jackal.jackal.Where(p => p != null));
-        notWinners.AddRange(Pursuer.pursuer.Where(p => p != null));
-        notWinners.AddRange(Survivor.survivor.Where(p => p != null));
+        notWinners.AddRange(Pursuer.Player.Where(p => p != null));
+        notWinners.AddRange(Survivor.Player.Where(p => p != null));
         if (Akujo.honmeiCannotFollowWin && Akujo.honmei != null) notWinners.Add(Akujo.honmei);
 
         var winnersToRemove = new List<WinningPlayerData>();
@@ -182,7 +182,7 @@ public class OnGameEndPatch
         var everyoneDead = AdditionalTempData.playerRoles.All(x => !x.IsAlive);
         var miniLose = Mini.mini != null && gameOverReason == (GameOverReason)CustomGameOverReason.MiniLose;
         var jesterWin = Jester.jester != null && gameOverReason == (GameOverReason)CustomGameOverReason.JesterWin;
-        var witnessWin = Witness.player != null && gameOverReason == (GameOverReason)CustomGameOverReason.WitnessWin;
+        var witnessWin = Witness.Player != null && gameOverReason == (GameOverReason)CustomGameOverReason.WitnessWin;
         var impostorWin = gameOverReason is GameOverReason.ImpostorByKill or GameOverReason.ImpostorBySabotage or GameOverReason.ImpostorByVote;
         var werewolfWin = gameOverReason == (GameOverReason)CustomGameOverReason.WerewolfWin && Werewolf.werewolf.IsAlive();
         var juggernautWin = gameOverReason == (GameOverReason)CustomGameOverReason.JuggernautWin && Juggernaut.juggernaut.IsAlive();
@@ -233,7 +233,7 @@ public class OnGameEndPatch
         else if (witnessWin)
         {
             TempData.winners = new Il2CppSystem.Collections.Generic.List<WinningPlayerData>();
-            var wpd = new WinningPlayerData(Witness.player.Data);
+            var wpd = new WinningPlayerData(Witness.Player.Data);
             TempData.winners.Add(wpd);
             AdditionalTempData.winCondition = WinCondition.WitnessWin;
         }
@@ -285,9 +285,9 @@ public class OnGameEndPatch
                     if (p == null) continue;
                     if (p == Lovers.lover1 || p == Lovers.lover2)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
-                    else if (Pursuer.pursuer.Any(pc => pc == p) && Pursuer.pursuer.Any(pc => pc.IsAlive()))
+                    else if (Pursuer.Player.Any(pc => pc == p) && Pursuer.Player.Any(pc => pc.IsAlive()))
                         TempData.winners.Add(new WinningPlayerData(p.Data));
-                    else if (Survivor.survivor.Any(pc => pc == p) && Survivor.survivor.Any(pc => pc.IsAlive()))
+                    else if (Survivor.Player.Any(pc => pc == p) && Survivor.Player.Any(pc => pc.IsAlive()))
                         TempData.winners.Add(new WinningPlayerData(p.Data));
                     else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
@@ -405,9 +405,9 @@ public class OnGameEndPatch
                     if (p == null) continue;
                     if (p == Akujo.akujo || p == Akujo.honmei)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
-                    else if (Pursuer.pursuer.Contains(p) && !p.Data.IsDead)
+                    else if (Pursuer.Player.Contains(p) && !p.Data.IsDead)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
-                    else if (Survivor.survivor.Contains(p) && !p.Data.IsDead)
+                    else if (Survivor.Player.Contains(p) && !p.Data.IsDead)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
                     else if (!notWinners.Contains(p) && !p.Data.Role.IsImpostor)
                         TempData.winners.Add(new WinningPlayerData(p.Data));
@@ -459,9 +459,9 @@ public class OnGameEndPatch
         }
 
         // Possible Additional winner: Pursuer
-        if (Pursuer.pursuer != null && Pursuer.pursuer.Any(p => !p.Data.IsDead) && !Lawyer.notAckedExiled && !isPursurerLose)
+        if (Pursuer.Player != null && Pursuer.Player.Any(p => !p.Data.IsDead) && !Lawyer.notAckedExiled && !isPursurerLose)
         {
-            foreach (var player in Pursuer.pursuer.Where(p => !p.Data.IsDead))
+            foreach (var player in Pursuer.Player.Where(p => !p.Data.IsDead))
             {
                 if (!TempData.winners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
                     TempData.winners.Add(new WinningPlayerData(player.Data));
@@ -470,9 +470,9 @@ public class OnGameEndPatch
         }
 
         // Possible Additional winner: Survivor
-        if (Survivor.survivor != null && Survivor.survivor.Any(p => !p.Data.IsDead) && !isPursurerLose)
+        if (Survivor.Player != null && Survivor.Player.Any(p => !p.Data.IsDead) && !isPursurerLose)
         {
-            foreach (var player in Survivor.survivor.Where(p => !p.Data.IsDead))
+            foreach (var player in Survivor.Player.Where(p => !p.Data.IsDead))
             {
                 if (!TempData.winners.ToArray().Any(x => x.PlayerName == player.Data.PlayerName))
                     TempData.winners.Add(new WinningPlayerData(player.Data));
