@@ -17,11 +17,17 @@ public static class Lawyer
     public static bool targetCanBeJester;
     public static bool targetWasGuessed;
 
-
-    public static void PromotesToPursuer()
+    public static void PromotesToPursuer(bool suicide = false)
     {
         var player = lawyer;
-        var target = Lawyer.target;
+
+        if (suicide)
+        {
+            player?.Exiled();
+            Message("律师辩护失败", "Exiled");
+            GameHistory.RpcOverrideDeathReasonAndKiller(player, CustomDeathReason.LawyerSuicide, player);
+            return;
+        }
 
         if (player.IsAlive() && target.IsDead())
         {
@@ -29,6 +35,7 @@ public static class Lawyer
             clearAndReload();
         }
     }
+
     public static void clearAndReload(bool clearTarget = true)
     {
         lawyer = null;

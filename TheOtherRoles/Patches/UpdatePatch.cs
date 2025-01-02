@@ -44,6 +44,7 @@ internal class HudManagerUpdatePatch
                     player.cosmetics.colorBlindText.gameObject.SetActive(!hidePlayerName(localPlayer, player));
                 }
 
+                player.cosmetics.colorBlindText.gameObject.transform.SetLocalZ(0.0001f);
                 nameText.color = color = amImpostor && data.Role.IsImpostor ? Palette.ImpostorRed : Color.white;
                 nameText.color = nameText.color.SetAlpha(Chameleon.visibility(player.PlayerId));
             }
@@ -107,7 +108,7 @@ internal class HudManagerUpdatePatch
             {
                 foreach (var p in Prophet.examined)
                 {
-                    setPlayerNameColor(p.Key, p.Value ? Palette.ImpostorRed : Color.green);
+                    setPlayerNameColor(p.Key, p.Value ^ Vortox.Reversal ? Palette.ImpostorRed : Color.green);
                 }
             }
         }
@@ -127,6 +128,11 @@ internal class HudManagerUpdatePatch
             setPlayerNameColor(Mayor.mayor, Mayor.color);
         }
 
+        if (WolfLord.Player != null && WolfLord.Revealed)
+        {
+            setPlayerNameColor(WolfLord.Player, WolfLord.color);
+        }
+
         if (Grenadier.grenadier != null && ((localPlayer.isImpostor() && Grenadier.indicatorsMode > 1)
             || localPlayer == Grenadier.grenadier || localPlayer.IsDead()))
         {
@@ -139,8 +145,7 @@ internal class HudManagerUpdatePatch
         if (Jackal.jackal != null && Jackal.jackal.Any(x => x == localPlayer))
         {
             // Jackal can see his sidekick
-            foreach (var p in Jackal.jackal)
-                setPlayerNameColor(p, Jackal.color);
+            foreach (var p in Jackal.jackal) setPlayerNameColor(p, Jackal.color);
             if (Jackal.sidekick != null) setPlayerNameColor(Jackal.sidekick, Jackal.color);
         }
 
@@ -149,28 +154,18 @@ internal class HudManagerUpdatePatch
         {
             // Sidekick can see the jackal
             setPlayerNameColor(Jackal.sidekick, Jackal.color);
-            foreach (var p in Jackal.jackal)
-                setPlayerNameColor(p, Jackal.color);
+            foreach (var p in Jackal.jackal) setPlayerNameColor(p, Jackal.color);
         }
 
         if (Pavlovsdogs.pavlovsowner != null && Pavlovsdogs.pavlovsowner == localPlayer)
         {
             setPlayerNameColor(Pavlovsdogs.pavlovsowner, Pavlovsdogs.color);
-            if (Pavlovsdogs.pavlovsdogs != null)
-            {
-                foreach (var p in Pavlovsdogs.pavlovsdogs)
-                {
-                    setPlayerNameColor(p, Pavlovsdogs.color);
-                }
-            }
+            foreach (var p in Pavlovsdogs.pavlovsdogs) setPlayerNameColor(p, Pavlovsdogs.color);
         }
 
         if (Pavlovsdogs.pavlovsdogs != null && Pavlovsdogs.pavlovsdogs.Any(p => p == localPlayer))
         {
-            foreach (var p in Pavlovsdogs.pavlovsdogs)
-            {
-                setPlayerNameColor(p, Pavlovsdogs.color);
-            }
+            foreach (var p in Pavlovsdogs.pavlovsdogs) setPlayerNameColor(p, Pavlovsdogs.color);
             if (Pavlovsdogs.pavlovsowner != null) setPlayerNameColor(Pavlovsdogs.pavlovsowner, Pavlovsdogs.color);
         }
 
@@ -221,9 +216,6 @@ internal class HudManagerUpdatePatch
 
         // No else if here, as the Impostors need the Spy name to be colored
         if (Spy.spy != null && localPlayer.Data.Role.IsImpostor) setPlayerNameColor(Spy.spy, Spy.color);
-
-        // Crewmate roles with no changes: Mini
-        // Impostor roles with no changes: Morphling, Camouflager, Vampire, Godfather, Eraser, Janitor, Cleaner, Warlock, BountyHunter,  Witch and Mafioso
     }
 
     private static void setNameTags()

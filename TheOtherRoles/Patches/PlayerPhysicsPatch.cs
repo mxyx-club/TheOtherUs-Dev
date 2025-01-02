@@ -14,7 +14,7 @@ public static class PlayerPhysicsUpdatePatch
                 __instance.body.velocity *= -1;
             if (Flash.flash != null && Flash.flash.Any(x => x.PlayerId == CachedPlayer.LocalId))
                 __instance.body.velocity *= Flash.speed;
-            if (Giant.giant != null && Giant.giant == PlayerControl.LocalPlayer && !isCamoComms && Camouflager.camouflageTimer <= 0f)
+            if (Giant.giant != null && Giant.giant == PlayerControl.LocalPlayer && !MushroomSabotageActive && !isCamoComms && Camouflager.camouflageTimer <= 0f)
                 __instance.body.velocity *= Giant.speed;
             if (Swooper.swooper != null && Swooper.swooper == PlayerControl.LocalPlayer && Swooper.isInvisable)
                 __instance.body.velocity *= Swooper.swoopSpeed;

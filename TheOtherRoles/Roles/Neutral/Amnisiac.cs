@@ -377,6 +377,12 @@ public class Amnisiac
                 Warlock.warlock = local;
                 break;
 
+            case RoleId.WolfLord:
+                Player.RemoveAll(x => x.PlayerId == local.PlayerId);
+                if (resetRole) WolfLord.ClearAndReload();
+                WolfLord.Player = local;
+                break;
+
             case RoleId.Grenadier:
                 Player.RemoveAll(x => x.PlayerId == local.PlayerId);
                 if (resetRole) Grenadier.clearAndReload();

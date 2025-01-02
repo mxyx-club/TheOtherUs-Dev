@@ -64,7 +64,23 @@ internal class ExileControllerBeginPatch
                 Helpers.SetActiveAllObject(controller.gameObject.GetChildren(), "RaftAnimation", false);
                 controller.transform.localPosition = new(-3.75f, -0.2f, -60f);
             }
+            if (Lawyer.lawyer != null && exiled?.Object.PlayerId == Lawyer.target.PlayerId && Lawyer.target != Jester.jester)
+            {
+                var writer = StartRPC(PlayerControl.LocalPlayer, CustomRPC.LawyerPromotesToPursuer);
+                writer.Write(true);
+                writer.EndRPC();
+                Lawyer.PromotesToPursuer(true);
+            }
+
             if (!IsSec) return true;
+        }
+
+        if (Lawyer.lawyer != null && exiled?.Object.PlayerId == Lawyer.target.PlayerId && Lawyer.target != Jester.jester)
+        {
+            var writer = StartRPC(PlayerControl.LocalPlayer, CustomRPC.LawyerPromotesToPursuer);
+            writer.Write(true);
+            writer.EndRPC();
+            Lawyer.PromotesToPursuer(true);
         }
 
         // Medic shield
@@ -176,7 +192,7 @@ internal class ExileControllerWrapUpPatch
     public static void Prefix(GameObject obj)
     {
         // Nightvision:
-        if (obj?.name != null && obj.name.Contains("FungleSecurity"))
+        if (obj != null && obj.name != null && obj.name.Contains("FungleSecurity"))
         {
             SurveillanceMinigamePatch.resetNightVision();
             return;
@@ -227,26 +243,30 @@ internal class ExileControllerWrapUpPatch
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             Executioner.PromotesRole();
         }
-        else if (Witness.Player == CachedPlayer.LocalPlayer.PlayerControl && Witness.target != null && Witness.killerTarget != null)
+        if (Witness.target != null && Witness.killerTarget != null)
         {
-            bool skip = exiled == null;
+            bool skip = exiled == null && Witness.skipMeeting;
             bool targetIsKillerAndNotExiled = Witness.target == Witness.killerTarget && (exiled?.Object == null || Witness.target != exiled?.Object);
-            bool targetIsExiledAndNotKiller = (Witness.target == exiled?.Object || (Witness.meetingDie && Witness.target.IsDead()))
-                                           && Witness.target != Witness.killerTarget;
+            bool targetIsExiledAndNotKiller = Witness.target != Witness.killerTarget && (Witness.target == exiled?.Object ||
+                                              (Witness.meetingDie && Witness.target.IsDead()));
 
-            if (targetIsKillerAndNotExiled || targetIsExiledAndNotKiller)
+            if ((!skip && targetIsKillerAndNotExiled) || targetIsExiledAndNotKiller)
             {
                 Witness.exiledCount++;
             }
 
             if (Witness.exiledCount == Witness.exileToWin)
             {
-                var writer = StartRPC(CachedPlayer.LocalPlayer.PlayerControl, CustomRPC.WitnessWin);
-                writer.EndRPC();
                 Witness.triggerWitnessWin = true;
             }
         }
         Witness.target = Witness.killerTarget = null;
+
+        if (Vortox.Player.IsAlive())
+        {
+            Vortox.skipCount++;
+            if (Vortox.skipCount == Vortox.skipMeetingNum) Vortox.triggerImpWin = true;
+        }
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();
@@ -292,7 +312,6 @@ internal class ExileControllerWrapUpPatch
                         })));
                 }
             }
-
             Seer.deadBodyPositions = new List<Vector3>();
         }
 
@@ -436,18 +455,16 @@ internal class ExileControllerWrapUpPatch
 
         if (InfoSleuth.infoSleuth != null && InfoSleuth.target != null && InfoSleuth.infoSleuth == PlayerControl.LocalPlayer)
         {
-            string msg;
-            var random = rnd.Next(2);
-            var isNotCrew = isNeutral(InfoSleuth.target) || InfoSleuth.target.isImpostor();
-            var team = "的阵营是 " + teamString(InfoSleuth.target);
+            var isNotCrew = (isNeutral(InfoSleuth.target) || InfoSleuth.target.isImpostor()) ^ Vortox.Reversal;
+            var team = "的阵营是 " + getTeam(InfoSleuth.target);
             var info = InfoSleuth.infoType switch
             {
                 0 => isNotCrew ? "不是船员" : "是船员",
                 1 => team,
-                _ => random == 0 ? isNotCrew ? "不是船员" : "是船员" : team,
+                _ => rnd.Next(2) == 0 ? isNotCrew ? "不是船员" : "是船员" : team,
             };
 
-            msg = $"{InfoSleuth.target.Data.PlayerName} {info}";
+            string msg = $"{InfoSleuth.target.Data.PlayerName} {info}";
 
             FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(PlayerControl.LocalPlayer, $"{msg}");
             var writer = StartRPC(PlayerControl.LocalPlayer, CustomRPC.ShareGhostInfo);
@@ -459,6 +476,19 @@ internal class ExileControllerWrapUpPatch
             var writer1 = StartRPC(PlayerControl.LocalPlayer, CustomRPC.InfoSleuthNoTarget);
             writer1.EndRPC();
             RPCProcedure.infoSleuthNoTarget();
+
+            static string getTeam(PlayerControl player)
+            {
+                if (Vortox.Player.IsAlive())
+                {
+                    if (player.isCrew()) return rnd.Next(2) == 0 ? "NeutralRolesText".Translate() : "ImpostorRolesText".Translate();
+                    if (isNeutral(player) || player.isImpostor()) return "CrewmateRolesText".Translate();
+                }
+
+                return isNeutral(player) ? "NeutralRolesText".Translate()
+                    : player.isImpostor() ? "ImpostorRolesText".Translate()
+                    : "CrewmateRolesText".Translate();
+            }
         }
 
         // Invert add meeting
@@ -471,8 +501,7 @@ internal class ExileControllerWrapUpPatch
             (GameOptionsManager.Instance.currentNormalGameOptions.KillCooldown / 2) + 2, new Action<float>(p =>
             { if (p == 1f) foreach (var trap in Trap.traps) trap.triggerable = true; })));
 
-        if (!Yoyo.markStaysOverMeeting)
-            Silhouette.clearSilhouettes();
+        if (!Yoyo.markStaysOverMeeting) Silhouette.clearSilhouettes();
 
         if (AmongUsClient.Instance.AmHost)
         {

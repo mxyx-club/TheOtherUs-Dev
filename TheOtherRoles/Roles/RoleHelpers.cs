@@ -107,6 +107,7 @@ public static class RoleHelpers
             { RoleId.Veteran, CustomOptionHolder.veteranSpawnRate.GetSelection() },
             { RoleId.Vigilante, CustomOptionHolder.guesserSpawnRate.GetSelection() },
 
+            { RoleId.WolfLord, CustomOptionHolder.wolfLordSpawnRate.GetSelection() },
             { RoleId.Blackmailer, CustomOptionHolder.blackmailerSpawnRate.GetSelection() },
             { RoleId.Bomber, CustomOptionHolder.bomberSpawnRate.GetSelection() },
             { RoleId.BountyHunter, CustomOptionHolder.bountyHunterSpawnRate.GetSelection() },
@@ -265,6 +266,7 @@ public static class RoleHelpers
         PartTimer.clearAndReload();
         Grenadier.clearAndReload();
         Witness.ClearAndReload();
+        WolfLord.ClearAndReload();
 
         // Modifier
         Assassin.clearAndReload();
@@ -293,6 +295,7 @@ public static class RoleHelpers
         ButtonBarry.clearAndReload();
         LastImpostor.clearAndReload();
         Specoality.clearAndReload();
+        Vortox.ClearAndReload();
 
         GhostEngineer.ClearAndReload();
         Specter.ClearAndReload();

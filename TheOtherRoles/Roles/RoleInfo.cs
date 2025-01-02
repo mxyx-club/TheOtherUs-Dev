@@ -22,6 +22,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
 
     public static RoleInfo impostor = new("Impostor", Palette.ImpostorRed, RoleId.Impostor, RoleType.Impostor);
     public static RoleInfo morphling = new("Morphling", Morphling.color, RoleId.Morphling, RoleType.Impostor);
+    public static RoleInfo wolfLord = new("WolfLord", WolfLord.color, RoleId.WolfLord, RoleType.Impostor);
     public static RoleInfo bomber = new("Bomber", Bomber.color, RoleId.Bomber, RoleType.Impostor);
     public static RoleInfo poucher = new("Poucher", Poucher.color, RoleId.Poucher, RoleType.Impostor);
     public static RoleInfo butcher = new("Butcher", Eraser.color, RoleId.Butcher, RoleType.Impostor);
@@ -98,7 +99,8 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
     public static RoleInfo lover = new("Lover", Lovers.color, RoleId.Lover, RoleType.Modifier, true);
     public static RoleInfo disperser = new("Disperser", Disperser.color, RoleId.Disperser, RoleType.Modifier, true);
     public static RoleInfo specoality = new("Specoality", Specoality.color, RoleId.Specoality, RoleType.Modifier);
-    public static RoleInfo poucherModifier = new("Poucher", Poucher.color, RoleId.PoucherModifier, RoleType.Modifier);
+    public static RoleInfo vortox = new("Vortox", Vortox.color, RoleId.Vortox, RoleType.Modifier, true);
+    public static RoleInfo poucherModifier = new("Poucher", Poucher.color, RoleId.PoucherModifier, RoleType.Modifier, true);
     public static RoleInfo lastImpostor = new("LastImpostor", LastImpostor.color, RoleId.LastImpostor, RoleType.Modifier);
     public static RoleInfo bloody = new("Bloody", Color.yellow, RoleId.Bloody, RoleType.Modifier, true);
     public static RoleInfo antiTeleport = new("AntiTeleport", Color.yellow, RoleId.AntiTeleport, RoleType.Modifier);
@@ -111,7 +113,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
     public static RoleInfo multitasker = new("Multitasker", Color.yellow, RoleId.Multitasker, RoleType.Modifier, true);
     public static RoleInfo giant = new("Giant", Color.yellow, RoleId.Giant, RoleType.Modifier);
     public static RoleInfo mini = new("Mini", Color.yellow, RoleId.Mini, RoleType.Modifier);
-    public static RoleInfo vip = new("Vip", Color.yellow, RoleId.Vip, RoleType.Modifier, true);
+    public static RoleInfo vip = new("Vip", Color.yellow, RoleId.Vip, RoleType.Modifier);
     public static RoleInfo indomitable = new("Indomitable", Color.yellow, RoleId.Indomitable, RoleType.Modifier);
     public static RoleInfo slueth = new("Slueth", Color.yellow, RoleId.Slueth, RoleType.Modifier, true);
     public static RoleInfo cursed = new("Cursed", Color.yellow, RoleId.Cursed, RoleType.Modifier, true);
@@ -130,6 +132,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
     public static List<RoleInfo> allRoleInfos =
     [
         impostor,
+        wolfLord,
         morphling,
         bomber,
         poucher,
@@ -207,6 +210,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         poucherModifier,
         disperser,
         specoality,
+        vortox,
         lastImpostor,
         bloody,
         antiTeleport,
@@ -274,6 +278,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
             if (p == Specoality.specoality) infos.Add(specoality);
             if (p == Poucher.poucher && Poucher.spawnModifier) infos.Add(poucherModifier);
             if (p == Giant.giant) infos.Add(giant);
+            if (p == Vortox.Player) infos.Add(vortox);
             if (Invert.invert.Any(x => x.PlayerId == p.PlayerId)) infos.Add(invert);
             if (Chameleon.chameleon.Any(x => x.PlayerId == p.PlayerId)) infos.Add(chameleon);
             if (p == Shifter.shifter) infos.Add(shifter);
@@ -290,6 +295,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
         if (p == Miner.miner) infos.Add(miner);
         if (p == Poucher.poucher && !Poucher.spawnModifier) infos.Add(poucher);
         if (p == Butcher.butcher) infos.Add(butcher);
+        if (p == WolfLord.Player) infos.Add(wolfLord);
         if (p == Morphling.morphling) infos.Add(morphling);
         if (p == Bomber.bomber) infos.Add(bomber);
         if (p == Camouflager.camouflager) infos.Add(camouflager);
@@ -397,11 +403,13 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
 
         if (showGhostInfo && p != null)
         {
-            if (p == Shifter.shifter &&
-                (CachedPlayer.LocalPlayer.PlayerControl == Shifter.shifter || shouldShowGhostInfo()) && Shifter.futureShift != null)
+            if (p == Shifter.shifter && (CachedPlayer.LocalPlayer.PlayerControl == Shifter.shifter || shouldShowGhostInfo()) && Shifter.futureShift != null)
                 roleName += cs(Color.yellow, " ← " + Shifter.futureShift.Data.PlayerName);
             if (p == Vulture.vulture && (CachedPlayer.LocalPlayer.PlayerControl == Vulture.vulture || shouldShowGhostInfo()))
                 roleName += cs(Vulture.color, string.Format("roleInfoRemaining".Translate(), Vulture.vultureNumberToWin - Vulture.eatenBodies));
+            if (p == Witness.Player && (CachedPlayer.LocalPlayer.PlayerControl == Witness.Player || shouldShowGhostInfo()))
+                roleName += cs(Witness.color, string.Format("roleInfoRemaining".Translate(), Witness.exileToWin - Witness.exiledCount));
+
             if (shouldShowGhostInfo())
             {
                 if (Eraser.futureErased.Contains(p))
