@@ -40,6 +40,8 @@ public class CustomOptionHolder
     public static CustomOption yoyoAdminTableCooldown;
     public static CustomOption yoyoSilhouetteVisibility;
 
+    public static CustomOption wolfLordSpawnRate;
+
     public static CustomOption morphlingSpawnRate;
     public static CustomOption morphlingCooldown;
     public static CustomOption morphlingDuration;
@@ -69,6 +71,10 @@ public class CustomOptionHolder
 
     public static CustomOption poucherSpawnRate;
     public static CustomOption modifierPoucher;
+
+    public static CustomOption modifierVortox;
+    public static CustomOption modifierVortoxSkipMeeting;
+    public static CustomOption modifierVortoxSkipNum;
 
     public static CustomOption butcherSpawnRate;
     public static CustomOption butcherDissectionCooldown;
@@ -390,6 +396,7 @@ public class CustomOptionHolder
     public static CustomOption witnessMarkTimer;
     public static CustomOption witnessWinCount;
     public static CustomOption witnessMeetingDie;
+    public static CustomOption witnessSkipMeeting;
 
     public static CustomOption balancerSpawnRate;
     public static CustomOption balancerCount;
@@ -787,6 +794,8 @@ public class CustomOptionHolder
 
         //-------------------------- Impostor Options 10000-19999 -------------------------- //
 
+        wolfLordSpawnRate = Create(10100, Types.Impostor, cs(WolfLord.color, "WolfLord"), rates, null, true);
+
         morphlingSpawnRate = Create(10110, Types.Impostor, cs(Morphling.color, "Morphling"), rates, null, true);
         morphlingCooldown = Create(10111, Types.Impostor, "morphlingCooldown", 15f, 10f, 60f, 2.5f, morphlingSpawnRate);
         morphlingDuration = Create(10112, Types.Impostor, "morphlingDuration", 15f, 1f, 20f, 0.5f, morphlingSpawnRate);
@@ -947,6 +956,7 @@ public class CustomOptionHolder
         witnessMarkTimer = Create(20302, Types.Neutral, "witnessMarkTimer", 30, 20, 90, 5, witnessSpawnRate);
         witnessWinCount = Create(20303, Types.Neutral, "witnessWinCount", 2, 1, 6, 1, witnessSpawnRate);
         witnessMeetingDie = Create(20304, Types.Neutral, "witnessMeetingDie", true, witnessSpawnRate);
+        witnessSkipMeeting = Create(20305, Types.Neutral, "witnessSkipMeeting", true, witnessSpawnRate);
 
         jackalSpawnRate = Create(20130, Types.Neutral, cs(Jackal.color, "Jackal"), rates, null, true);
         jackalChanceSwoop = Create(20142, Types.Neutral, cs(Swooper.color, "jackalChanceSwoop"), rates, jackalSpawnRate);
@@ -1266,6 +1276,10 @@ public class CustomOptionHolder
         {
             poucherSpawnRate.selection = 0;
         });
+
+        modifierVortox = Create(40380, Types.Modifier, cs(Vortox.color, "Vortox"), rates, null, true);
+        modifierVortoxSkipMeeting = Create(40381, Types.Modifier, "modifierVortoxSkipMeeting", true, modifierVortox);
+        modifierVortoxSkipNum = Create(40382, Types.Modifier, "modifierVortoxSkipNum", 4, 1, 10, 1, modifierVortoxSkipMeeting);
 
         modifierLastImpostor = Create(40110, Types.Modifier, cs(Palette.ImpostorRed, "LastImpostor"), false, null, true);
         modifierLastImpostorDeduce = Create(40111, Types.Modifier, "modifierLastImpostorDeduce", 5f, 2.5f, 15f, 2.5f, modifierLastImpostor);

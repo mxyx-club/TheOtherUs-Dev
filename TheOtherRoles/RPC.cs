@@ -30,6 +30,7 @@ public enum RoleId
 
     Impostor,
     Morphling,
+    WolfLord,
     Bomber,
     Poucher,
     Butcher,
@@ -106,6 +107,7 @@ public enum RoleId
     Assassin,
     Disperser,
     PoucherModifier,
+    Vortox,
     Specoality,
     LastImpostor,
     Bloody,
@@ -236,7 +238,7 @@ public enum CustomRPC
     GrenadierFlash,
     WitnessReport,
     WitnessSetTarget,
-    WitnessWin,
+    WolfLordkilled,
 
     TrapperKill,
     PlaceTrap,
@@ -293,7 +295,7 @@ public static class RPCProcedure
         reloadPluginOptions();
         clearAndReloadMapOptions();
         clearAndReloadRoles();
-        MapData.PositionCached.Clear();
+        MapData.Clear();
         Garlic.clearGarlics();
         JackInTheBox.clearJackInTheBoxes();
         NinjaTrace.clearTraces();
@@ -372,6 +374,9 @@ public static class RPCProcedure
                         break;
                     case RoleId.Werewolf:
                         Werewolf.werewolf = player;
+                        break;
+                    case RoleId.WolfLord:
+                        WolfLord.Player = player;
                         break;
                     case RoleId.Blackmailer:
                         Blackmailer.blackmailer = player;
@@ -637,6 +642,9 @@ public static class RPCProcedure
                 break;
             case RoleId.Radar:
                 Radar.radar = player;
+                break;
+            case RoleId.Vortox:
+                Vortox.Player = player;
                 break;
             case RoleId.Tunneler:
                 Tunneler.tunneler = player;
@@ -1268,6 +1276,7 @@ public static class RPCProcedure
         if (player == Cleaner.cleaner) Cleaner.clearAndReload();
         if (player == Undertaker.undertaker) Undertaker.clearAndReload();
         if (player == Mimic.mimic) Mimic.clearAndReload();
+        if (player == WolfLord.Player) WolfLord.ClearAndReload();
         if (player == Warlock.warlock) Warlock.clearAndReload();
         if (player == Butcher.butcher) Butcher.clearAndReload();
         if (player == Witch.witch) Witch.clearAndReload();
@@ -1309,6 +1318,7 @@ public static class RPCProcedure
         if (player == Akujo.akujo) Akujo.clearAndReload();
         if (player == Witness.Player) Witness.ClearAndReload();
         if (player == PartTimer.partTimer) PartTimer.clearAndReload();
+        if (player == Vortox.Player) Vortox.ClearAndReload();
 
         if (player == Cursed.cursed) Cursed.clearAndReload();
         if (player == Shifter.shifter) Shifter.clearAndReload();
@@ -1915,154 +1925,6 @@ public static class RPCProcedure
         Executioner.target = playerById(playerId);
     }
 
-    public static void guesserShoot(byte killerId, byte dyingTargetId, byte guessedTargetId, byte guessedRoleId)
-    {
-        var dyingTarget = playerById(dyingTargetId);
-        var guessedTarget = playerById(guessedTargetId);
-        var guesser = playerById(killerId);
-        if (dyingTarget == null) return;
-
-        var dyingPartner = dyingTarget.getPartner();
-
-        // Lawyer shouldn't be exiled with the client for guesses
-        if (Lawyer.target != null && (dyingTarget == Lawyer.target || dyingPartner == Lawyer.target))
-            Lawyer.targetWasGuessed = true;
-
-        if (Executioner.target != null && (dyingTarget == Executioner.target || dyingPartner == Executioner.target))
-            Executioner.targetWasGuessed = true;
-
-        if (Witch.witch != null && (dyingTarget == Witch.witch || dyingPartner == Witch.witch))
-            Witch.witchWasGuessed = true;
-
-        if (Thief.thief != null && Thief.thief.PlayerId == killerId && Thief.canStealWithGuess)
-        {
-            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
-            if (Thief.thief.IsAlive() && Thief.tiefCanKill(dyingTarget, guesser))
-                Thief.StealsRole(dyingTarget.PlayerId);
-        }
-
-        if (Doomsayer.doomsayer != null && Doomsayer.doomsayer == guesser && Doomsayer.canGuess)
-        {
-            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
-            if (!Doomsayer.doomsayer.Data.IsDead && guessedTargetId == dyingTargetId)
-            {
-                Doomsayer.killedToWin++;
-                if (Doomsayer.killedToWin >= Doomsayer.killToWin) Doomsayer.triggerDoomsayerrWin = true;
-                if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-            else
-            {
-                seedGuessChat(guesser, guessedTarget, guessedRoleId);
-                return;
-            }
-        }
-
-        bool lawyerDiedAdditionally = false;
-        if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == killerId && Lawyer.target != null && Lawyer.target.PlayerId == dyingTargetId)
-        {
-            // Lawyer guessed client.
-            if (CachedPlayer.LocalPlayer.PlayerControl == Lawyer.lawyer)
-            {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(Lawyer.lawyer.Data, Lawyer.lawyer.Data);
-                if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-
-            Lawyer.lawyer.Exiled();
-            lawyerDiedAdditionally = true;
-            OverrideDeathReasonAndKiller(Lawyer.lawyer, CustomDeathReason.LawyerSuicide, guesser);
-        }
-
-        byte partnerId = dyingPartner != null ? dyingPartner.PlayerId : dyingTargetId;
-
-        dyingTarget.Exiled();
-        OverrideDeathReasonAndKiller(dyingTarget, CustomDeathReason.Guess, guesser);
-        if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
-
-        if (MeetingHud.Instance)
-        {
-            MeetingHud.Instance.discussionTimer -= CustomOptionHolder.guessExtendmeetingTime.GetFloat();
-            MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, dyingTargetId);
-
-            foreach (var pva in MeetingHud.Instance.playerStates)
-            {
-                bool shouldClearVote = CustomOptionHolder.guessReVote.GetBool()
-                    || pva.VotedFor == dyingTargetId || pva.VotedFor == partnerId
-                    || (lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId);
-
-                if (shouldClearVote)
-                {
-                    pva.UnsetVote();
-                    var voteAreaPlayer = playerById(pva.TargetPlayerId);
-                    if (voteAreaPlayer?.AmOwner == false) continue;
-                    MeetingHud.Instance.ClearVote();
-                    MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, partnerId);
-                }
-            }
-
-            if (AmongUsClient.Instance.AmHost)
-                MeetingHud.Instance.CheckForEndVoting();
-        }
-
-        if (Doomsayer.doomsayer == null || Doomsayer.doomsayer != guesser)
-        {
-            HandleGuesser.remainingShots(killerId, true);
-        }
-
-        if (FastDestroyableSingleton<HudManager>.Instance != null && guesser != null)
-        {
-            if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget)
-            {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
-                if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-            else if (dyingPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingPartner)
-            {
-                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingPartner.Data, dyingPartner.Data);
-                if (Guesser.guesserUI != null) Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-        }
-
-        // remove shoot button from targets for all guessers and close their guesserUI
-        if (GuesserGM.isGuesser(PlayerControl.LocalPlayer.PlayerId) && PlayerControl.LocalPlayer != guesser &&
-            !PlayerControl.LocalPlayer.Data.IsDead &&
-            GuesserGM.remainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance)
-        {
-            MeetingHud.Instance.playerStates.ToList().ForEach(x =>
-            {
-                if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null)
-                    Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
-            });
-
-            if (dyingPartner != null)
-            {
-                MeetingHud.Instance.playerStates.ToList().ForEach(x =>
-                {
-                    if (x.TargetPlayerId == dyingPartner.PlayerId && x.transform.FindChild("ShootButton") != null)
-                        Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
-                });
-            }
-
-            if (Guesser.guesserUI != null && Guesser.guesserUIExitButton != null)
-            {
-                Guesser.guesserUIExitButton.OnClick.Invoke();
-            }
-        }
-        if (guesser != null && guessedTarget != null) seedGuessChat(guesser, guessedTarget, guessedRoleId);
-    }
-
-    public static void seedGuessChat(PlayerControl guesser, PlayerControl guessedTarget, byte guessedRoleId)
-    {
-        if (PlayerControl.LocalPlayer.IsDead() && PlayerControl.LocalPlayer != Specter.Player)
-        {
-            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
-            var msg = $"{guesser.Data.PlayerName} 赌怪猜测 {guessedTarget.Data.PlayerName} 是 {roleInfo?.Name ?? ""}!";
-            if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
-            {
-                _ = new LateTask(() => { FastDestroyableSingleton<HudManager>.Instance!.Chat.AddChat(guesser, msg); }, 0.1f, "Guess Chat");
-            }
-        }
-    }
-
     public static void useCameraTime(float time)
     {
         restrictCamerasTime -= time;
@@ -2560,11 +2422,7 @@ internal class RPCHandlerPatch
                 break;
 
             case CustomRPC.GuesserShoot:
-                var killerId = reader.ReadByte();
-                var dyingTarget = reader.ReadByte();
-                var guessedTarget = reader.ReadByte();
-                var guessedRoleId = reader.ReadByte();
-                RPCProcedure.guesserShoot(killerId, dyingTarget, guessedTarget, guessedRoleId);
+                Guesser.guesserShoot(reader.ReadByte(), reader.ReadByte(), reader.ReadByte(), reader.ReadByte());
                 break;
 
             case CustomRPC.LawyerSetTarget:
@@ -2572,7 +2430,7 @@ internal class RPCHandlerPatch
                 break;
 
             case CustomRPC.LawyerPromotesToPursuer:
-                Lawyer.PromotesToPursuer();
+                Lawyer.PromotesToPursuer(reader.ReadBoolean());
                 break;
 
             case CustomRPC.ExecutionerSetTarget:
@@ -2738,9 +2596,8 @@ internal class RPCHandlerPatch
             case CustomRPC.WitnessSetTarget:
                 Witness.target = playerById(reader.ReadByte());
                 break;
-            case CustomRPC.WitnessWin:
-                Witness.triggerWitnessWin = true;
-                Message("WitnessWin!");
+            case CustomRPC.WolfLordkilled:
+                WolfLord.WolfLordkilled(reader.ReadByte());
                 break;
             case CustomRPC.YoyoBlink:
                 RPCProcedure.yoyoBlink(reader.ReadByte() == byte.MaxValue, reader.ReadBytesAndSize());

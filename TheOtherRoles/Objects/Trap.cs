@@ -124,7 +124,7 @@ public class Trap
                 message = trap.trappedPlayer.Aggregate(message, (current, p) => current + Trapper.infoType switch
                 {
                     0 => RoleInfo.GetRolesString(p, false, false, false) + "\n",
-                    1 when isEvilNeutral(p) || p.Data.Role.IsImpostor => "邪恶职业 \n",
+                    1 when (isEvilNeutral(p) || p.isImpostor()) ^ Vortox.Reversal => "邪恶职业 \n",
                     1 => "善良职业 \n",
                     _ => p.Data.PlayerName + "\n"
                 });
@@ -132,7 +132,6 @@ public class Trap
                 FastDestroyableSingleton<HudManager>.Instance.Chat.AddChat(Trapper.trapper, $"{message}");
             }
         }
-
         Trapper.playersOnMap = new List<PlayerControl>();
     }
 

@@ -35,9 +35,8 @@ public static class Chameleon
             }
         }
 
-        if (PlayerControl.LocalPlayer.Data.IsDead && visibility < 0.1f)
-            // Ghosts can always see!
-            visibility = 0.1f;
+        // Ghosts can always see!
+        if (PlayerControl.LocalPlayer.Data.IsDead && visibility < 0.1f) visibility = 0.1f;
         return visibility;
     }
 
@@ -80,9 +79,7 @@ public static class Chameleon
                 foreach (var shadowRend in chameleonPlayer.cosmetics.currentPet.shadows)
                     shadowRend.color = shadowRend.color.SetAlpha(petVisibility);
             }
-            catch
-            {
-            }
+            catch { }
         }
     }
 }

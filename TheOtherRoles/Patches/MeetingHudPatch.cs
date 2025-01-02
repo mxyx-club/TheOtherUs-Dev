@@ -136,14 +136,7 @@ internal class MeetingHudPatch
         __instance.playerStates[0].Cancel(); // This will stop the underlying buttons of the template from showing up
         if (__instance.state == VoteStates.Results || Mayor.mayor.Data.IsDead) return;
 
-        // Only accept changes until the mayor voted
-        var mayorPVA = __instance.playerStates.FirstOrDefault(x => x.TargetPlayerId == Mayor.mayor.PlayerId);
-        if (Mayor.Revealed && mayorPVA != null && mayorPVA.DidVote)
-        {
-            SoundEffectsManager.play("fail");
-            return;
-        }
-        Mayor.Revealed = !Mayor.Revealed;
+        Mayor.Revealed = true;
 
         var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
             (byte)CustomRPC.MayorRevealed, SendOption.Reliable);
@@ -261,7 +254,8 @@ internal class MeetingHudPatch
 
         // Add Guesser Buttons
         var GuesserRemainingShots = HandleGuesser.remainingShots(CachedPlayer.LocalPlayer.PlayerId);
-        if (!isGuesser || CachedPlayer.LocalPlayer.Data.IsDead || GuesserRemainingShots <= 0) return;
+        if (!isGuesser || CachedPlayer.LocalPlayer.IsDead || GuesserRemainingShots <= 0 ||
+            (PlayerControl.LocalPlayer == WolfLord.Player && WolfLord.Revealed)) return;
         {
             Doomsayer.CanShoot = true;
             for (var i = 0; i < __instance.playerStates.Length; i++)
@@ -515,7 +509,7 @@ internal class MeetingHudPatch
         public static bool Prefix(MeetingHud __instance, GameData.PlayerInfo voterPlayer, int index, Transform parent)
         {
             var spriteRenderer = Object.Instantiate(__instance.PlayerVotePrefab);
-            var showVoteColors = !GameManager.Instance.LogicOptions.GetAnonymousVotes() || CachedPlayer.LocalPlayer.Data.IsDead ||
+            var showVoteColors = !GameManager.Instance.LogicOptions.GetAnonymousVotes() || shouldShowGhostInfo() ||
                                  (Prosecutor.prosecutor != null && Prosecutor.prosecutor == CachedPlayer.LocalPlayer.PlayerControl &&
                                   Prosecutor.canSeeVoteColors && TasksHandler.taskInfo(CachedPlayer.LocalPlayer.Data).Item1 >=
                                   Prosecutor.tasksNeededToSeeVoteColors) ||
@@ -734,8 +728,7 @@ internal class MeetingHudPatch
     [HarmonyPatch(typeof(MeetingHud), nameof(MeetingHud.Deserialize))]
     private class MeetingDeserializePatch
     {
-        private static void Postfix(MeetingHud __instance, [HarmonyArgument(0)] MessageReader reader,
-            [HarmonyArgument(1)] bool initialState)
+        private static void Postfix(MeetingHud __instance, [HarmonyArgument(0)] MessageReader reader, [HarmonyArgument(1)] bool initialState)
         {
             // Add swapper buttons
             if (initialState) populateButtonsPostfix(__instance);

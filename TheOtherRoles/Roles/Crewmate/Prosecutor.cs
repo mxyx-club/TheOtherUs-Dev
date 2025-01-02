@@ -151,7 +151,6 @@ public static class Prosecutor
                         var writer = AmongUsClient.Instance.StartRpcImmediately(prosecutor.NetId,
                             (byte)CustomRPC.Prosecute, SendOption.Reliable, -1);
                         AmongUsClient.Instance.FinishRpcImmediately(writer);
-                        Message($"检察官会议: {ProsecuteThisMeeting}");
                     }
                     return true;
                 }

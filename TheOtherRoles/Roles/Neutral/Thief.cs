@@ -97,6 +97,7 @@ public static class Thief
         if (target == Cleaner.cleaner) Cleaner.cleaner = thief;
         if (target == Warlock.warlock) Warlock.warlock = thief;
         if (target == Grenadier.grenadier) Grenadier.grenadier = thief;
+        if (target == WolfLord.Player) WolfLord.Player = thief;
         if (target == BountyHunter.bountyHunter) BountyHunter.bountyHunter = thief;
         if (target == Witch.witch)
         {

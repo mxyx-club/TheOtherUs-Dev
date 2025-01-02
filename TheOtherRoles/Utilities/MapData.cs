@@ -1,14 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
-using Reactor.Utilities.Extensions;
 using UnityEngine;
 
 namespace TheOtherRoles.Utilities;
 
 public class MapData
 {
-
     public static List<Vector3> PositionCached = new();
+    public static List<Vector3> VentCached = new();
 
     public static readonly List<Vector3> SkeldSpawnPosition =
     [
@@ -217,12 +216,13 @@ public class MapData
             _ => FindVentSpawnPositions()
         };
         PositionCached = pos;
+        Message("缓存出生点", "MapPos");
         return pos;
     }
 
     public static List<Vector3> FindVentSpawnPositions()
     {
-        if (PositionCached?.Count > 1) return PositionCached;
+        if (VentCached?.Count > 1) return VentCached;
         var pos = new List<Vector3>();
         foreach (var vent in DestroyableSingleton<ShipStatus>.Instance.AllVents)
         {
@@ -231,7 +231,8 @@ public class MapData
             pos.Add(new Vector3(position.x, position.y + 0.3f, position.z = 0.0f));
         }
 
-        PositionCached = pos;
+        VentCached = pos;
+        Message("缓存出生点", "VentPos");
         return pos;
     }
 
@@ -252,39 +253,9 @@ public class MapData
         Message($"Span to Vector3: {newPosition.x}, {newPosition.y}, {newPosition.z}");
     }
 
-    public static void RandomSpawnAllPlayers() => RandomSpawnPlayers(PlayerControl.AllPlayerControls.ToArray());
-
-    public static void RandomSpawnAllPlayersToVent() => RandomSpawnToVent(PlayerControl.AllPlayerControls.ToArray().Where(n => n.IsAlive()));
-
-    public static void RandomSpawnAllPlayersToMap() => RandomSpawnToMap(PlayerControl.AllPlayerControls.ToArray().Where(n => n.IsAlive()));
-
-    public static void RandomSpawnPlayers(IEnumerable<PlayerControl> players)
+    public static void Clear()
     {
-        if (CustomOptionHolder.randomGameStartToVents.GetBool()) RandomSpawnToVent(players);
-        else RandomSpawnToMap(players);
-    }
-
-    public static void RandomSpawnToVent(IEnumerable<PlayerControl> spawnPlayer)
-    {
-        var players = spawnPlayer.Where(p => !AntiTeleport.antiTeleport.Contains(p, player => player.PlayerId));
-
-        foreach (var p in players)
-        {
-            var poss = FindVentSpawnPositions().Random();
-            p.NetTransform.RpcSnapTo(poss);
-            Message($"Spawn PLayer {p.Data.PlayerName} To {poss}");
-        }
-    }
-
-    public static void RandomSpawnToMap(IEnumerable<PlayerControl> spawnPlayer)
-    {
-        var players = spawnPlayer.Where(p => !AntiTeleport.antiTeleport.Contains(p, player => player.PlayerId));
-
-        foreach (var p in players)
-        {
-            var poss = MapSpawnPosition().Random();
-            p.NetTransform.RpcSnapTo(poss);
-            Message($"Spawn PLayer {p.Data.PlayerName} To {poss}");
-        }
+        VentCached.Clear();
+        PositionCached.Clear();
     }
 }

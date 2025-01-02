@@ -85,6 +85,10 @@ public class Specter
                     if (resetRole) Undertaker.clearAndReload();
                     Undertaker.undertaker = local;
                     break;
+                case RoleId.WolfLord:
+                    if (resetRole) WolfLord.ClearAndReload();
+                    WolfLord.Player = local;
+                    break;
                 case RoleId.Escapist:
                     if (resetRole) Escapist.clearAndReload();
                     Escapist.escapist = local;
@@ -320,6 +324,7 @@ public class Specter
                     Balancer.balancer = local;
                     break;
             }
+        AntiTeleport.antiTeleport.RemoveAll(x => x.PlayerId == local.PlayerId);
         RPCProcedure.clearGhostRoles(local.PlayerId);
         local.Revive();
     }

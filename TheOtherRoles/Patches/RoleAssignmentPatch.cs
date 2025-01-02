@@ -139,6 +139,7 @@ internal class RoleManagerSelectRolesPatch
         impSettings.Add((byte)RoleId.EvilTrapper, CustomOptionHolder.evilTrapperSpawnRate.GetSelection());
         impSettings.Add((byte)RoleId.Gambler, CustomOptionHolder.gamblerSpawnRate.GetSelection());
         impSettings.Add((byte)RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.GetSelection());
+        impSettings.Add((byte)RoleId.WolfLord, CustomOptionHolder.wolfLordSpawnRate.GetSelection());
 
         neutralSettings.Add((byte)RoleId.Survivor, CustomOptionHolder.survivorSpawnRate.GetSelection());
         //neutralSettings.Add((byte)RoleId.Pursuer, CustomOptionHolder.pursuerSpawnRate.getSelection());
@@ -544,6 +545,7 @@ internal class RoleManagerSelectRolesPatch
             RoleId.Radar,
             RoleId.Disperser,
             RoleId.Specoality,
+            RoleId.Vortox,
             RoleId.PoucherModifier,
             RoleId.Cursed,
             RoleId.Chameleon,
@@ -782,6 +784,14 @@ internal class RoleManagerSelectRolesPatch
             modifiers.RemoveAll(x => x == RoleId.Specoality);
         }
 
+        if (modifiers.Contains(RoleId.Vortox))
+        {
+            playerId = setModifierToRandomPlayer((byte)RoleId.Vortox, impPlayer);
+            impPlayer.RemoveAll(x => x.PlayerId == playerId);
+            playerList.RemoveAll(x => x.PlayerId == playerId);
+            modifiers.RemoveAll(x => x == RoleId.Vortox);
+        }
+
         if (modifiers.Contains(RoleId.PoucherModifier))
         {
             playerId = setModifierToRandomPlayer((byte)RoleId.PoucherModifier, impPlayer);
@@ -981,6 +991,9 @@ internal class RoleManagerSelectRolesPatch
                 break;
             case RoleId.PoucherModifier:
                 if (Poucher.spawnModifier) selection = CustomOptionHolder.modifierPoucher.GetSelection();
+                break;
+            case RoleId.Vortox:
+                selection = CustomOptionHolder.modifierVortox.GetSelection();
                 break;
             case RoleId.Mini:
                 selection = CustomOptionHolder.modifierMini.GetSelection();

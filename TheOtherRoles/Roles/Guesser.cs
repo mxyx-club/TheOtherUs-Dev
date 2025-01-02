@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using Hazel;
 using Reactor.Utilities;
+using TheOtherRoles.CustomGameModes;
+using TheOtherRoles.Patches;
 using TheOtherRoles.Utilities;
 using TMPro;
 using UnityEngine;
+using static TheOtherRoles.GameHistory;
 using Object = UnityEngine.Object;
 
 namespace TheOtherRoles.Roles;
@@ -249,7 +252,7 @@ public static class Guesser
             if (roleInfo.roleType == RoleType.Modifier && ModOption.allowModGuess && !roleInfo.isGuessable)
                 continue;
 
-            if (roleInfo.roleType == RoleType.Ghost)
+            if (roleInfo.roleType is not RoleType.Crewmate and not RoleType.Neutral and not RoleType.Impostor and not RoleType.Modifier)
                 continue;
 
             // remove all roles that cannot spawn due to the settings from the ui.
@@ -264,6 +267,8 @@ public static class Guesser
                 case RoleId.Spy when PlayerControl.LocalPlayer.isImpostor() && !HandleGuesser.evilGuesserCanGuessSpy:
                     continue;
                 case RoleId.Mayor when Mayor.Revealed:
+                    continue;
+                case RoleId.WolfLord when WolfLord.Revealed:
                     continue;
                 case RoleId.Vigilante when HandleGuesser.isGuesserGm || CachedPlayer.LocalPlayer.PlayerId == Vigilante.vigilante?.PlayerId:
                     continue;
@@ -354,8 +359,7 @@ public static class Guesser
                     }
                     if (focusedTarget == Indomitable.indomitable)
                     {
-                        //showFlash(new Color32(255, 197, 97, byte.MinValue));
-                        showFlash(Color.yellow, 0.75f);
+                        showFlash(new Color32(255, 197, 97, byte.MinValue));
                         __instance.playerStates.ForEach(x => x.gameObject.SetActive(true));
                         Object.Destroy(container.gameObject);
 
@@ -364,7 +368,7 @@ public static class Guesser
                         AmongUsClient.Instance.FinishRpcImmediately(murderAttemptWriter);
                         RPCProcedure.shieldedMurderAttempt(0);
                         SoundEffectsManager.play("fail");
-                        RPCProcedure.seedGuessChat(CachedPlayer.LocalPlayer.PlayerControl, dyingTarget, (byte)roleInfo.roleId);
+                        seedGuessChat(CachedPlayer.LocalPlayer.PlayerControl, dyingTarget, (byte)roleInfo.roleId);
                         return;
                     }
 
@@ -393,7 +397,6 @@ public static class Guesser
                             {
                                 if (x.TargetPlayerId == focusedTarget.PlayerId && x.transform.FindChild("ShootButton") != null)
                                 {
-                                    Message("清除按钮");
                                     Object.Destroy(x.transform.FindChild("ShootButton").gameObject);
                                 }
                             });
@@ -409,7 +412,7 @@ public static class Guesser
                     writer.Write(focusedTarget.PlayerId);
                     writer.Write((byte)roleInfo.roleId);
                     AmongUsClient.Instance.FinishRpcImmediately(writer);
-                    RPCProcedure.guesserShoot(CachedPlayer.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.roleId);
+                    guesserShoot(CachedPlayer.LocalPlayer.PlayerId, dyingTarget.PlayerId, focusedTarget.PlayerId, (byte)roleInfo.roleId);
 
                     // Reset the GUI
                     __instance.playerStates.ForEach(x => x.gameObject.SetActive(true));
@@ -437,5 +440,151 @@ public static class Guesser
         }
         guesserSelectRole(RoleType.Crewmate);
         ReloadPage();
+    }
+
+    public static void guesserShoot(byte killerId, byte dyingTargetId, byte guessedTargetId, byte guessedRoleId)
+    {
+        var dyingTarget = playerById(dyingTargetId);
+        var guessedTarget = playerById(guessedTargetId);
+        var guesser = playerById(killerId);
+        if (dyingTarget == null) return;
+
+        var dyingPartner = dyingTarget.getPartner();
+
+        // Lawyer shouldn't be exiled with the client for guesses
+        if (Lawyer.target != null && (dyingTarget == Lawyer.target || dyingPartner == Lawyer.target))
+            Lawyer.targetWasGuessed = true;
+
+        if (Executioner.target != null && (dyingTarget == Executioner.target || dyingPartner == Executioner.target))
+            Executioner.targetWasGuessed = true;
+
+        if (Witch.witch != null && (dyingTarget == Witch.witch || dyingPartner == Witch.witch))
+            Witch.witchWasGuessed = true;
+
+        if (Thief.thief != null && Thief.thief.PlayerId == killerId && Thief.canStealWithGuess)
+        {
+            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
+            if (Thief.thief.IsAlive() && Thief.tiefCanKill(dyingTarget, guesser))
+                Thief.StealsRole(dyingTarget.PlayerId);
+        }
+
+        if (Doomsayer.doomsayer != null && Doomsayer.doomsayer == guesser && Doomsayer.canGuess)
+        {
+            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
+            if (!Doomsayer.doomsayer.Data.IsDead && guessedTargetId == dyingTargetId)
+            {
+                Doomsayer.killedToWin++;
+                if (Doomsayer.killedToWin >= Doomsayer.killToWin) Doomsayer.triggerDoomsayerrWin = true;
+                if (guesserUI != null) guesserUIExitButton.OnClick.Invoke();
+            }
+            else
+            {
+                seedGuessChat(guesser, guessedTarget, guessedRoleId);
+                return;
+            }
+        }
+
+        bool lawyerDiedAdditionally = false;
+        if (Lawyer.lawyer != null && Lawyer.lawyer.PlayerId == killerId && Lawyer.target != null && Lawyer.target.PlayerId == dyingTargetId)
+        {
+            // Lawyer guessed client.
+            if (CachedPlayer.LocalPlayer.PlayerControl == Lawyer.lawyer)
+            {
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(Lawyer.lawyer.Data, Lawyer.lawyer.Data);
+            }
+
+            Lawyer.lawyer.Exiled();
+            lawyerDiedAdditionally = true;
+            OverrideDeathReasonAndKiller(Lawyer.lawyer, CustomDeathReason.LawyerSuicide, guesser);
+        }
+
+        byte partnerId = dyingPartner != null ? dyingPartner.PlayerId : dyingTargetId;
+
+        dyingTarget.Exiled();
+        OverrideDeathReasonAndKiller(dyingTarget, CustomDeathReason.Guess, guesser);
+        if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(dyingTarget.KillSfx, false, 0.8f);
+
+        if (MeetingHud.Instance)
+        {
+            MeetingHud.Instance.discussionTimer -= CustomOptionHolder.guessExtendmeetingTime.GetFloat();
+            MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, dyingTargetId);
+
+            foreach (var pva in MeetingHud.Instance.playerStates)
+            {
+                bool shouldClearVote = CustomOptionHolder.guessReVote.GetBool()
+                    || pva.VotedFor == dyingTargetId || pva.VotedFor == partnerId
+                    || (lawyerDiedAdditionally && Lawyer.lawyer?.PlayerId == pva.TargetPlayerId);
+
+                if (shouldClearVote)
+                {
+                    pva.UnsetVote();
+                    var voteAreaPlayer = playerById(pva.TargetPlayerId);
+                    if (voteAreaPlayer?.AmOwner == false) continue;
+                    MeetingHud.Instance.ClearVote();
+                    MeetingHudPatch.swapperCheckAndReturnSwap(MeetingHud.Instance, partnerId);
+                }
+            }
+            if (AmongUsClient.Instance.AmHost) MeetingHud.Instance.CheckForEndVoting();
+        }
+
+        HandleGuesser.remainingShots(killerId, true);
+
+        if (FastDestroyableSingleton<HudManager>.Instance != null && guesser != null)
+        {
+            if (CachedPlayer.LocalPlayer.PlayerControl == dyingTarget)
+            {
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(guesser.Data, dyingTarget.Data);
+            }
+            else if (dyingPartner != null && CachedPlayer.LocalPlayer.PlayerControl == dyingPartner)
+            {
+                FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(dyingPartner.Data, dyingPartner.Data);
+            }
+        }
+
+        // remove shoot button from targets for all guessers and close their guesserUI
+        if (GuesserGM.isGuesser(PlayerControl.LocalPlayer.PlayerId) && PlayerControl.LocalPlayer != guesser && !PlayerControl.LocalPlayer.Data.IsDead &&
+            GuesserGM.remainingShots(PlayerControl.LocalPlayer.PlayerId) > 0 && MeetingHud.Instance)
+        {
+            MeetingHud.Instance.playerStates.ToList().ForEach(x =>
+            {
+                if (x.TargetPlayerId == dyingTarget.PlayerId && x.transform.FindChild("ShootButton") != null)
+                    Object.Destroy(x.transform.FindChild("ShootButton")?.gameObject);
+            });
+
+            if (dyingPartner != null)
+            {
+                MeetingHud.Instance.playerStates.ToList().ForEach(x =>
+                {
+                    if (x.TargetPlayerId == dyingPartner.PlayerId && x.transform.FindChild("ShootButton") != null)
+                        Object.Destroy(x.transform.FindChild("ShootButton")?.gameObject);
+                });
+            }
+
+            if (lawyerDiedAdditionally)
+            {
+                MeetingHud.Instance.playerStates.ToList().ForEach(x =>
+                {
+                    if (x.TargetPlayerId == Lawyer.lawyer?.PlayerId && x.transform.FindChild("ShootButton") != null)
+                        Object.Destroy(x.transform.FindChild("ShootButton")?.gameObject);
+                });
+            }
+        }
+
+        if (guesserUI != null && guesserUIExitButton != null) guesserUIExitButton.OnClick.Invoke();
+        if (guesser != null && guessedTarget != null) seedGuessChat(guesser, guessedTarget, guessedRoleId);
+        if (WolfLord.Player == guesser && !WolfLord.Revealed && PlayerControl.LocalPlayer == guesser) WolfLord.WolfLord_Patch.ClearButton();
+    }
+
+    public static void seedGuessChat(PlayerControl guesser, PlayerControl guessedTarget, byte guessedRoleId)
+    {
+        if (PlayerControl.LocalPlayer.IsDead() && PlayerControl.LocalPlayer != Specter.Player)
+        {
+            var roleInfo = RoleInfo.allRoleInfos.FirstOrDefault(x => (byte)x.roleId == guessedRoleId);
+            var msg = $"{guesser.Data.PlayerName} 赌怪猜测 {guessedTarget.Data.PlayerName} 是 {roleInfo?.Name ?? ""}!";
+            if (AmongUsClient.Instance.AmClient && FastDestroyableSingleton<HudManager>.Instance)
+            {
+                _ = new LateTask(() => { FastDestroyableSingleton<HudManager>.Instance!.Chat.AddChat(guesser, msg); }, 0.1f, "Guess Chat");
+            }
+        }
     }
 }

@@ -16,6 +16,7 @@ public class Witness
     public static int markTimer;
     public static int exileToWin;
     public static bool meetingDie;
+    public static bool skipMeeting;
 
     public static Sprite TargetSprite = new ResourceSprite("TargetIcon.png", 150);
 
@@ -36,15 +37,16 @@ public class Witness
         markTimer = CustomOptionHolder.witnessMarkTimer.GetInt() + 8;
         exileToWin = CustomOptionHolder.witnessWinCount.GetInt();
         meetingDie = CustomOptionHolder.witnessMeetingDie.GetBool();
+        skipMeeting = CustomOptionHolder.witnessSkipMeeting.GetBool();
     }
 
     internal static void WitnessReport(byte targetId)
     {
         var target = playerById(targetId);
 
-        if (target == null || !Player.IsAlive() || PlayerControl.LocalPlayer != Player) return;
+        if (!Player.IsAlive()) return;
 
-        killerTarget = DetermineKillerTarget(target) ?? null;
+        killerTarget = DetermineKillerTarget(target);
 
         static PlayerControl DetermineKillerTarget(PlayerControl target)
         {
@@ -77,8 +79,8 @@ public class Witness
 
             foreach (var playerState in __instance.playerStates)
             {
-                var witnessIcon = playerState.transform.FindChild("WitnessIcon");
-                if (witnessIcon != null) Object.Destroy(witnessIcon.gameObject);
+                var icon = playerState.transform.FindChild("WitnessIcon");
+                if (icon != null) Object.Destroy(icon.gameObject);
             }
         }
 
@@ -93,7 +95,7 @@ public class Witness
                 foreach (var pva in __instance.playerStates)
                 {
                     var player = playerById(pva.TargetPlayerId);
-                    if (player.IsAlive() && player != Witness.Player)
+                    if (player.IsAlive())
                     {
                         GameObject template = pva.Buttons.transform.Find("CancelButton").gameObject;
                         GameObject targetBox = Object.Instantiate(template, pva.transform);
@@ -122,11 +124,8 @@ public class Witness
             {
                 foreach (var playerState in __instance.playerStates)
                 {
-                    var witnessIcon = playerState.transform.FindChild("WitnessIcon");
-                    if (witnessIcon != null)
-                    {
-                        Object.Destroy(witnessIcon.gameObject);
-                    }
+                    var icon = playerState.transform.FindChild("WitnessIcon");
+                    if (icon != null) Object.Destroy(icon.gameObject);
                 }
                 endTime = true;
             }
