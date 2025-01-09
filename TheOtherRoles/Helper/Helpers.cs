@@ -598,6 +598,20 @@ public static class Helpers
         return list.Any(x => keySelector(x).Equals(keySelector(item)));
     }
 
+    public static int Count<T>(this Il2CppSystem.Collections.Generic.List<T> list, Func<T, bool> func = null)
+    {
+        int count = 0;
+        foreach (T obj in list)
+            if (func == null || func(obj))
+                count++;
+        return count;
+    }
+    public static Color HexToColor(string hex)
+    {
+        _ = ColorUtility.TryParseHtmlString("#" + hex, out var color);
+        return color;
+    }
+
     public static string readTextFromResources(string path)
     {
         var assembly = Assembly.GetExecutingAssembly();

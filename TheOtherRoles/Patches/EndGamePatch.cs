@@ -543,7 +543,39 @@ public class EndGameManagerSetUpPatch
             }
         }
 
-        // Additional code
+        // Create a dictionary for win conditions
+        var winConditionTexts = new Dictionary<WinCondition, (Color, string)>
+        {
+            { WinCondition.Canceled, (Color.gray, "CanceledEnd") },
+            { WinCondition.EveryoneDied, (Palette.DisabledGrey, "EveryoneDied") },
+            { WinCondition.JesterWin, (Jester.color, "JesterWin") },
+            { WinCondition.DoomsayerWin, (Doomsayer.color, "DoomsayerWin") },
+            { WinCondition.ArsonistWin, (Arsonist.color, "ArsonistWin") },
+            { WinCondition.VultureWin, (Vulture.color, "VultureWin") },
+            { WinCondition.LawyerSoloWin, (Lawyer.color, "LawyerSoloWin") },
+            { WinCondition.WerewolfWin, (Werewolf.color, "WerewolfWin") },
+            { WinCondition.WitnessWin, (Witness.color, "WitnessWin") },
+            { WinCondition.JuggernautWin, (Juggernaut.color, "JuggernautWin") },
+            { WinCondition.SwooperWin, (Swooper.color, "SwooperWin") },
+            { WinCondition.ExecutionerWin, (Executioner.color, "ExecutionerWin") },
+            { WinCondition.LoversTeamWin, (Lovers.color, "LoversTeamWin") },
+            { WinCondition.LoversSoloWin, (Lovers.color, "LoversSoloWin") },
+            { WinCondition.JackalWin, (Jackal.color, "JackalWin") },
+            { WinCondition.PavlovsWin, (Pavlovsdogs.color, "PavlovsWin") },
+            { WinCondition.AkujoSoloWin, (Akujo.color, "AkujoSoloWin") },
+            { WinCondition.AkujoTeamWin, (Akujo.color, "AkujoTeamWin") },
+            { WinCondition.MiniLose, (Mini.color, "MiniLose") },
+        };
+
+        var winConditionMappings = new Dictionary<WinCondition, (Color, string)>
+        {
+            { WinCondition.AdditionalLawyerStolenWin, (Lawyer.color, "LawyerStolenWin") },
+            { WinCondition.AdditionalLawyerBonusWin, (Lawyer.color, "LawyerBonusWin") },
+            { WinCondition.AdditionalPartTimerWin, (PartTimer.color, "PartTimerWin") },
+            { WinCondition.AdditionalAlivePursuerWin, (Pursuer.color, "起诉人存活") },
+            { WinCondition.AdditionalAliveSurvivorWin, (Survivor.color, "幸存者存活") }
+        };
+
         var bonusText = Object.Instantiate(__instance.WinText.gameObject);
         var position1 = __instance.WinText.transform.position;
         bonusText.transform.position = new Vector3(position1.x, position1.y - 0.5f, position1.z);
@@ -551,137 +583,20 @@ public class EndGameManagerSetUpPatch
         var textRenderer = bonusText.GetComponent<TMP_Text>();
         textRenderer.text = "";
 
-        switch (AdditionalTempData.winCondition)
+        if (winConditionTexts.TryGetValue(AdditionalTempData.winCondition, out var winText))
         {
-            case WinCondition.Canceled:
-                textRenderer.text = "CanceledEnd".Translate();
-                textRenderer.color = Color.gray;
-                __instance.BackgroundBar.material.SetColor("_Color", Color.gray);
-                break;
-            case WinCondition.EveryoneDied:
-                textRenderer.text = "EveryoneDied".Translate();
-                textRenderer.color = Palette.DisabledGrey;
-                __instance.BackgroundBar.material.SetColor("_Color", Palette.DisabledGrey);
-                break;
-            case WinCondition.JesterWin:
-                textRenderer.text = "JesterWin".Translate();
-                textRenderer.color = Jester.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Jester.color);
-                break;
-            case WinCondition.DoomsayerWin:
-                textRenderer.text = "DoomsayerWin".Translate();
-                textRenderer.color = Doomsayer.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Doomsayer.color);
-                break;
-            case WinCondition.ArsonistWin:
-                textRenderer.text = "ArsonistWin".Translate();
-                textRenderer.color = Arsonist.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Arsonist.color);
-                break;
-            case WinCondition.VultureWin:
-                textRenderer.text = "VultureWin".Translate();
-                textRenderer.color = Vulture.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Vulture.color);
-                break;
-            case WinCondition.LawyerSoloWin:
-                textRenderer.text = "LawyerSoloWin".Translate();
-                textRenderer.color = Lawyer.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Lawyer.color);
-                break;
-            case WinCondition.WerewolfWin:
-                textRenderer.text = "WerewolfWin".Translate();
-                textRenderer.color = Werewolf.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Werewolf.color);
-                break;
-            case WinCondition.WitnessWin:
-                textRenderer.text = "WitnessWin".Translate();
-                textRenderer.color = Witness.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Witness.color);
-                break;
-            case WinCondition.JuggernautWin:
-                textRenderer.text = "JuggernautWin".Translate();
-                textRenderer.color = Juggernaut.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Juggernaut.color);
-                break;
-            case WinCondition.SwooperWin:
-                textRenderer.text = "SwooperWin".Translate();
-                textRenderer.color = Swooper.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Swooper.color);
-                break;
-            case WinCondition.ExecutionerWin:
-                textRenderer.text = "ExecutionerWin".Translate();
-                textRenderer.color = Executioner.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Executioner.color);
-                break;
-            case WinCondition.LoversTeamWin:
-                textRenderer.text = "LoversTeamWin".Translate();
-                textRenderer.color = Lovers.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
-                break;
-            case WinCondition.LoversSoloWin:
-                textRenderer.text = "LoversSoloWin".Translate();
-                textRenderer.color = Lovers.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Lovers.color);
-                break;
-            case WinCondition.JackalWin:
-                textRenderer.text = "JackalWin".Translate();
-                textRenderer.color = Jackal.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Jackal.color);
-                break;
-            case WinCondition.PavlovsWin:
-                textRenderer.text = "PavlovsWin".Translate();
-                textRenderer.color = Pavlovsdogs.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Pavlovsdogs.color);
-                break;
-            case WinCondition.AkujoSoloWin:
-                textRenderer.text = "AkujoSoloWin".Translate();
-                textRenderer.color = Akujo.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Akujo.color);
-                break;
-            case WinCondition.AkujoTeamWin:
-                textRenderer.text = "AkujoTeamWin".Translate();
-                textRenderer.color = Akujo.color;
-                __instance.BackgroundBar.material.SetColor("_Color", Akujo.color);
-                break;
-            case WinCondition.MiniLose:
-                textRenderer.text = "MiniLose".Translate();
-                textRenderer.color = Mini.color;
-                break;
+            textRenderer.text = winText.Item2.Translate();
+            textRenderer.color = winText.Item1;
+            __instance.BackgroundBar.material.SetColor("_Color", winText.Item1);
         }
 
         var winConditionsTexts = new List<string>();
-        var pursuerAlive = false;
-        var survivorAlive = false;
         foreach (var cond in AdditionalTempData.additionalWinConditions)
         {
-            switch (cond)
+            if (winConditionMappings.TryGetValue(cond, out var mapping))
             {
-                case WinCondition.AdditionalLawyerStolenWin:
-                    winConditionsTexts.Add(cs(Lawyer.color, "LawyerStolenWin".Translate()));
-                    break;
-                case WinCondition.AdditionalLawyerBonusWin:
-                    winConditionsTexts.Add(cs(Lawyer.color, "LawyerBonusWin".Translate()));
-                    break;
-                case WinCondition.AdditionalPartTimerWin:
-                    winConditionsTexts.Add(cs(PartTimer.color, "PartTimerWin".Translate()));
-                    break;
-                case WinCondition.AdditionalAlivePursuerWin:
-                    pursuerAlive = true;
-                    break;
-                case WinCondition.AdditionalAliveSurvivorWin:
-                    survivorAlive = true;
-                    break;
+                winConditionsTexts.Add(cs(mapping.Item1, mapping.Item2.Translate()));
             }
-        }
-
-        if (pursuerAlive && survivorAlive)
-        {
-            winConditionsTexts.Add($"{cs(Pursuer.color, "起诉人")} & {cs(Survivor.color, "幸存者存活")}");
-        }
-        else
-        {
-            if (pursuerAlive) winConditionsTexts.Add(cs(Pursuer.color, "起诉人存活"));
-            if (survivorAlive) winConditionsTexts.Add(cs(Survivor.color, "幸存者存活"));
         }
 
         if (winConditionsTexts.Count == 1)
@@ -1102,7 +1017,7 @@ internal class RPCEndGamePatch
 {
     public static void Postfix(ref GameOverReason endReason)
     {
-        Message($"游戏结束 {(CustomGameOverReason)endReason}", "RpcEndGame");
+        Message($"游戏结束 {(CustomGameOverReason)endReason} {endReason}", "RpcEndGame");
     }
 }
 

@@ -450,7 +450,7 @@ public class RoleInfo(string name, Color color, RoleId roleId, RoleType roleType
                 if (deadPlayer != null && deadPlayer.KillerIfExisting != null)
                     killerColor = getRoleInfoForPlayer(deadPlayer.KillerIfExisting, false).FirstOrDefault().color;
 
-                if (deadPlayer != null)
+                if (deadPlayer != null && p.IsDead())
                 {
                     switch (deadPlayer.DeathReason)
                     {

@@ -48,11 +48,12 @@ public class CustomOption
     public int selection;
     public object[] selections;
     public CustomOptionType type;
+    public bool isHidden;
 
     // Option creation
 
     public CustomOption(int id, CustomOptionType type, string name, object[] selections, object defaultValue,
-        CustomOption parent, bool isHeader, Action onChange = null)
+        CustomOption parent, bool isHeader, bool isHidden = false, Action onChange = null)
     {
         this.id = id;
         //this.name = parent == null ? name : " - " + name;
@@ -64,6 +65,7 @@ public class CustomOption
         this.isHeader = isHeader;
         this.type = type;
         this.onChange = onChange;
+        this.isHidden = isHidden;
         selection = 0;
         if (id != 0)
         {
@@ -75,23 +77,23 @@ public class CustomOption
     }
 
     public static CustomOption Create(int id, CustomOptionType type, string name, string[] selections,
-        CustomOption parent = null, bool isHeader = false, Action onChange = null)
+        CustomOption parent = null, bool isHeader = false, bool isHidden = false, Action onChange = null)
     {
-        return new CustomOption(id, type, name, selections, "", parent, isHeader, onChange);
+        return new CustomOption(id, type, name, selections, "", parent, isHeader, isHidden, onChange);
     }
 
     public static CustomOption Create(int id, CustomOptionType type, string name, float defaultValue, float min,
-        float max, float step, CustomOption parent = null, bool isHeader = false, Action onChange = null)
+        float max, float step, CustomOption parent = null, bool isHeader = false, bool isHidden = false, Action onChange = null)
     {
         List<object> selections = new();
         for (var s = min; s <= max; s += step) selections.Add(s);
-        return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, onChange);
+        return new CustomOption(id, type, name, selections.ToArray(), defaultValue, parent, isHeader, isHidden, onChange);
     }
 
     public static CustomOption Create(int id, CustomOptionType type, string name, bool defaultValue,
-        CustomOption parent = null, bool isHeader = false, Action onChange = null)
+        CustomOption parent = null, bool isHeader = false, bool isHidden = false, Action onChange = null)
     {
-        return new CustomOption(id, type, name, ["optionOff", "optionOn"], defaultValue ? "optionOn" : "optionOff", parent, isHeader, onChange);
+        return new CustomOption(id, type, name, ["optionOff", "optionOn"], defaultValue ? "optionOn" : "optionOff", parent, isHeader, isHidden, onChange);
     }
 
     // Static behaviour
@@ -256,6 +258,7 @@ public class CustomOption
             switchPreset(selection);
             ShareOptionSelections(); // Share all selections
         }
+        if (AmongUsClient.Instance?.AmHost == true) GameOptionsMenuUpdatePatch.update = true;
     }
 
     public static byte[] serializeOptions()
@@ -342,6 +345,27 @@ public class CustomOption
             SoundEffectsManager.play("fail");
             return false;
         }
+    }
+}
+
+public static class CustomOptionsExtensions
+{
+    public static bool IsHidden(this CustomOption option)
+    {
+        return option.isHidden;
+    }
+
+    public static bool IsEnbaled(this CustomOption option)
+    {
+        var enabled = true;
+        var parent = option.parent;
+        while (parent != null && enabled)
+        {
+            enabled = parent.selection != 0;
+            parent = parent.parent;
+        }
+
+        return !option.IsHidden() && enabled;
     }
 }
 
@@ -482,7 +506,11 @@ internal class GameOptionsMenuStartPatch
             if (button == null) continue;
             var copiedIndex = i;
             button.OnClick = new Button.ButtonClickedEvent();
-            button.OnClick.AddListener((Action)(() => { setListener(settingsHighlightMap, copiedIndex); }));
+            button.OnClick.AddListener((Action)(() =>
+            {
+                GameOptionsMenuUpdatePatch.update = true;
+                setListener(settingsHighlightMap, copiedIndex);
+            }));
         }
 
         destroyOptions(new List<List<OptionBehaviour>>
@@ -629,7 +657,11 @@ internal class GameOptionsMenuStartPatch
             if (button == null) continue;
             var copiedIndex = i;
             button.OnClick = new Button.ButtonClickedEvent();
-            button.OnClick.AddListener((Action)(() => { setListener(settingsHighlightMap, copiedIndex); }));
+            button.OnClick.AddListener((Action)(() =>
+            {
+                GameOptionsMenuUpdatePatch.update = true;
+                setListener(settingsHighlightMap, copiedIndex);
+            }));
         }
 
         destroyOptions(new List<List<OptionBehaviour>>
@@ -862,8 +894,8 @@ public class AmongUsClientOnPlayerJoinedPatch
 [HarmonyPatch(typeof(GameOptionsMenu), nameof(GameOptionsMenu.Update))]
 internal class GameOptionsMenuUpdatePatch
 {
-    private static float timer = 1f;
-
+    //private static float timer = 1f;
+    public static bool update;
     public static void Postfix(GameOptionsMenu __instance)
     {
         // Return Menu Update if in normal among us settings 
@@ -871,9 +903,9 @@ internal class GameOptionsMenuUpdatePatch
         if (gameSettingMenu.RegularGameSettings.active || gameSettingMenu.RolesSettings.gameObject.active) return;
 
         __instance.GetComponentInParent<Scroller>().ContentYBounds.max = -0.5F + (__instance.Children.Length * 0.55F);
-        timer += Time.deltaTime;
-        if (timer < 0.2f) return;
-        timer = 0f;
+        //timer += Time.deltaTime;
+        if (/*timer < 0.2f || */!update) return;
+        //timer = 0f;
 
         var offset = 2.75f;
         foreach (var option in options)
@@ -908,6 +940,7 @@ internal class GameOptionsMenuUpdatePatch
                 }
             }
         }
+        update = false;
     }
 }
 

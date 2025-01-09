@@ -3265,7 +3265,6 @@ internal static class HudManagerStartPatch
             },
             () =>
             {
-                Specter.remember = true;
                 specterRememberButton.Timer = 10f;
             },
             Amnisiac.buttonSprite,

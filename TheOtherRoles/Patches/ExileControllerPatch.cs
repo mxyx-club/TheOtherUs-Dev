@@ -258,15 +258,18 @@ internal class ExileControllerWrapUpPatch
             if (Witness.exiledCount == Witness.exileToWin)
             {
                 Witness.triggerWitnessWin = true;
-            }
+            } 
         }
         Witness.target = Witness.killerTarget = null;
 
-        if (Vortox.Player.IsAlive())
+        if (Vortox.Player.IsAlive() && exiled == null)
         {
             Vortox.skipCount++;
+            Message($"迷乱旋涡胜利计数{Vortox.skipCount}");
             if (Vortox.skipCount == Vortox.skipMeetingNum) Vortox.triggerImpWin = true;
         }
+
+        if (Specter.Player == PlayerControl.LocalPlayer) Specter.remember = true;
 
         // Reset custom button timers where necessary
         CustomButton.MeetingEndedUpdate();
