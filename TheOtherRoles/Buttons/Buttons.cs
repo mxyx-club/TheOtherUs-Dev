@@ -804,13 +804,6 @@ internal static class HudManagerStartPatch
                 if (checkAndDoVetKill(Doomsayer.currentTarget)) return;
 
                 doomsayerButton.Timer = doomsayerButton.MaxTimer;
-                /*
-                var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
-                    (byte)CustomRPC.SetFutureReveal, SendOption.Reliable);
-                writer.Write(Doomsayer.currentTarget.PlayerId);
-                AmongUsClient.Instance.FinishRpcImmediately(writer);
-                RPCProcedure.setFutureReveal(Doomsayer.currentTarget.PlayerId);
-                */
                 SoundEffectsManager.play("knockKnock");
             },
             () =>
@@ -850,11 +843,7 @@ internal static class HudManagerStartPatch
         akujoHonmeiButton = new CustomButton(
             () =>
             {
-                if (Veteran.veteran != null && Akujo.currentTarget == Veteran.veteran && Veteran.alertActive)
-                {
-                    checkMurderAttemptAndKill(Veteran.veteran, Akujo.akujo);
-                    return;
-                }
+                if (checkAndDoVetKill(Doomsayer.currentTarget)) return;
 
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId, (byte)CustomRPC.AkujoSetHonmei, SendOption.Reliable, -1);
                 writer.Write(Akujo.akujo.PlayerId);
@@ -894,11 +883,7 @@ internal static class HudManagerStartPatch
         akujoBackupButton = new CustomButton(
             () =>
             {
-                if (Veteran.veteran != null && Akujo.currentTarget == Veteran.veteran && Veteran.alertActive)
-                {
-                    checkMurderAttemptAndKill(Veteran.veteran, Akujo.akujo);
-                    return;
-                }
+                if (checkAndDoVetKill(Doomsayer.currentTarget)) return;
 
                 var writer = AmongUsClient.Instance.StartRpcImmediately(CachedPlayer.LocalPlayer.PlayerControl.NetId,
                     (byte)CustomRPC.AkujoSetKeep, SendOption.Reliable, -1);
@@ -2380,7 +2365,7 @@ internal static class HudManagerStartPatch
             },
             () => { werewolfKillButton.Timer = werewolfKillButton.MaxTimer; },
             __instance.KillButton.graphic.sprite,
-            new Vector3(0, 1f, 0),
+            ButtonPositions.upperRowRight,
             __instance,
             modKillInput.keyCode
         );
@@ -2391,6 +2376,7 @@ internal static class HudManagerStartPatch
                 Werewolf.canKill = true;
                 Werewolf.hasImpostorVision = true;
                 werewolfKillButton.Timer = 0f;
+                werewolfRampageButton.PositionOffset = new Vector3(0, 1.92f, 0);
             },
             () =>
             {
@@ -2412,15 +2398,17 @@ internal static class HudManagerStartPatch
                 Werewolf.canKill = false;
                 //  Werewolf.canUseVents = false;
                 Werewolf.hasImpostorVision = false;
+                werewolfRampageButton.PositionOffset = ButtonPositions.upperRowRight;
             },
             Werewolf.buttonSprite,
-            ButtonPositions.lowerRowRight, //brb
+            ButtonPositions.upperRowRight,
             __instance,
             modKillInput.keyCode,
             true,
             Werewolf.rampageDuration,
             () =>
             {
+                werewolfRampageButton.PositionOffset = ButtonPositions.upperRowRight;
                 werewolfRampageButton.Timer = werewolfRampageButton.MaxTimer;
                 Werewolf.canKill = false;
                 Werewolf.hasImpostorVision = false;
@@ -2455,7 +2443,7 @@ internal static class HudManagerStartPatch
             },
             () => { juggernautKillButton.Timer = juggernautKillButton.MaxTimer; },
             __instance.KillButton.graphic.sprite,
-            new Vector3(0, 1f, 0),
+            ButtonPositions.upperRowRight,
             __instance,
             modKillInput.keyCode
         );

@@ -198,10 +198,6 @@ public static class PlayerControlFixedUpdatePatch
                     }
                     meetingInfoText = $"{allRoleText} {taskInfo}".Trim();
                 }
-                else if (reported)
-                {
-                    meetingInfoText = playerInfoText = mainRole;
-                }
                 else if (local.IsAlive() && Mayor.mayor == p && Mayor.Revealed)
                 {
                     meetingInfoText = cs(Mayor.color, "Mayor".Translate());
@@ -213,6 +209,10 @@ public static class PlayerControlFixedUpdatePatch
                 else if (canSeeRole)
                 {
                     meetingInfoText = playerInfoText = roleNames;
+                }
+                else if (reported)
+                {
+                    meetingInfoText = playerInfoText = mainRole;
                 }
                 else
                 {
@@ -2072,8 +2072,12 @@ public static class MurderPlayerPatch
 
     public static void Postfix(PlayerControl __instance, [HarmonyArgument(0)] PlayerControl target)
     {
-        // Collect dead player info
+        HandleMurderPostfix(__instance, target);
+    }
 
+    public static void HandleMurderPostfix(PlayerControl __instance, PlayerControl target)
+    {
+        // Collect dead player info
         var deadPlayer = new DeadPlayer(target, DateTime.UtcNow, CustomDeathReason.Kill, __instance);
         if (__instance == target) deadPlayer = new DeadPlayer(target, DateTime.UtcNow, CustomDeathReason.Suicide, __instance);
         DeadPlayers.Add(deadPlayer);

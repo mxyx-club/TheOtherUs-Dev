@@ -1639,7 +1639,7 @@ public static class RPCProcedure
             akujo.Exiled();
             OverrideDeathReasonAndKiller(akujo, CustomDeathReason.Loneliness);
 
-            if (Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
+            if (InMeeting && Constants.ShouldPlaySfx()) SoundManager.Instance.PlaySound(akujo.KillSfx, false, 0.8f);
             if (PlayerControl.LocalPlayer == Akujo.akujo)
                 FastDestroyableSingleton<HudManager>.Instance.KillOverlay.ShowKillAnimation(akujo.Data, akujo.Data);
         }

@@ -127,7 +127,6 @@ public static class RoleHelpers
             { RoleId.Undertaker, CustomOptionHolder.undertakerSpawnRate.GetSelection() },
             { RoleId.Vampire, CustomOptionHolder.vampireSpawnRate.GetSelection() },
             { RoleId.Warlock, CustomOptionHolder.warlockSpawnRate.GetSelection() },
-            { RoleId.Witness, CustomOptionHolder.witnessSpawnRate.GetSelection() },
             { RoleId.Witch, CustomOptionHolder.witchSpawnRate.GetSelection() },
             { RoleId.Yoyo, CustomOptionHolder.yoyoSpawnRate.GetSelection() },
             { RoleId.Grenadier, CustomOptionHolder.grenadierSpawnRate.GetSelection() },
@@ -149,6 +148,7 @@ public static class RoleHelpers
             { RoleId.Swooper, CustomOptionHolder.swooperSpawnRate.GetSelection() },
             { RoleId.Thief, CustomOptionHolder.thiefSpawnRate.GetSelection() },
             { RoleId.Vulture, CustomOptionHolder.vultureSpawnRate.GetSelection() },
+            { RoleId.Witness, CustomOptionHolder.witnessSpawnRate.GetSelection() },
             { RoleId.Werewolf, CustomOptionHolder.werewolfSpawnRate.GetSelection() },
             { RoleId.Pursuer, CustomOptionHolder.lawyerSpawnRate.GetSelection() + CustomOptionHolder.executionerSpawnRate.GetSelection() },
 

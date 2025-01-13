@@ -1172,8 +1172,7 @@ public static class Helpers
             AmongUsClient.Instance.FinishRpcImmediately(writer);
             RPCProcedure.shieldedMurderAttempt(killer.PlayerId);
             SoundEffectsManager.play("fail");
-            CustomButton.resetKillButton(killer);
-            return MurderAttemptResult.SuppressKill;
+            return MurderAttemptResult.BlankKill;
         }
 
         if (Aftermath.aftermath != null && Aftermath.aftermath == target)
@@ -1196,11 +1195,10 @@ public static class Helpers
                 var writer = AmongUsClient.Instance.StartRpcImmediately(killer.NetId,
                     (byte)CustomRPC.TimeMasterRewindTime, SendOption.Reliable);
                 AmongUsClient.Instance.FinishRpcImmediately(writer);
-                CustomButton.resetKillButton(killer);
                 RPCProcedure.timeMasterRewindTime();
             }
 
-            return MurderAttemptResult.SuppressKill;
+            return MurderAttemptResult.BlankKill;
         }
 
         if (Survivor.Player != null && Survivor.Player.Contains(target) && Survivor.vestActive)

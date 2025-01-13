@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using UnityEngine;
 
 namespace TheOtherRoles.Roles.Ghost;
@@ -142,9 +142,7 @@ public class Specter
                     Grenadier.grenadier = local;
                     break;
                 case RoleId.Survivor:
-                    Survivor.Player.RemoveAll(x => x == target);
                     Survivor.Player.Add(local);
-                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Jester:
                     Jester.jester = local;
@@ -163,9 +161,7 @@ public class Specter
                     Amnisiac.Player.Add(target);
                     break;
                 case RoleId.Pursuer:
-                    Pursuer.Player.RemoveAll(x => x == target);
                     Pursuer.Player.Add(local);
-                    Amnisiac.Player.Add(target);
                     break;
                 case RoleId.PartTimer:
                     PartTimer.partTimer = local;
